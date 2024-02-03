@@ -36,7 +36,8 @@
 
 const database = require('./database');
 
-createExample();
+//createExample();
+readExample();
 
 // Example usage of createDocument
 async function createExample() {
@@ -44,3 +45,13 @@ async function createExample() {
     const result = await database.addUser(data);
     console.log("New document created:", result);
   }
+
+  // Example usage of updateDocument
+async function readExample() {
+  const result1 = await database.findUser({ Firstname: "Waleed"});
+  console.log("found user: " + result1.Firstname);
+  // const idToUpdate = "";
+  // const newData = { $set: { age: 31 } };
+  // const result2 = await database.updateDocument(idToUpdate, newData);
+  // console.log("Document updated:", result);
+}
