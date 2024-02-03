@@ -1,3 +1,5 @@
+import { query } from 'express';
+
 require('dotenv').config();
 const { MongoClient, ObjectID } = require('mongodb');
 // Connection URI
@@ -55,22 +57,27 @@ async function findUser(query = {}, collectionName = 'users') {
 
 /*
 Update a user in the database. 
-id parameter must have the following structure:
-<document_id>, can be taken from the getUser method
+
+The query parameter can take in any attribute the User has, and if it exists,
+it will update that user. For certainty with update, the id of
+the User can be taken and put in as a parameter like so:
+
+const result1 = await database.findUser({ Firstname: "Waleed"});
+const query = { _id: result1._id};
 
 data parameter must have the following structure:
-{ $set: { email: "reza@gmail.com" } }
+{ email: "reza@gmail.com" }
 
 Returns success status of updating user.
 */
-async function updateUser(id, newData, collectionName = 'users') {
+async function updateUser(query, newData, collectionName = 'users') {
   const client = new MongoClient(uri);
 
   try {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    const result = await collection.updateOne({ _id: ObjectID(id) }, { $set: newData });
+    const result = await collection.updateOne(query, { $set: newData });
     return result;
   } finally {
     await client.close();
@@ -79,19 +86,23 @@ async function updateUser(id, newData, collectionName = 'users') {
 
 /*
 Delete a user in the database. 
-id parameter must have the following structure:
-<document_id>, can be taken from the getUser method
+The query parameter can take in any attribute the User has, and if it exists,
+it will delete that user. For certainty with delete, the id of
+the user can be taken and put in as a parameter like so:
+
+const result1 = await database.findUser({ Firstname: "Waleed"});
+const query = { _id: result1._id};
 
 Returns delete status.
 */
-async function deleteUser(id, collectionName = 'users') {
+async function deleteUser(query, collectionName = 'users') {
   const client = new MongoClient(uri);
 
   try {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    const result = await collection.deleteOne({ _id: ObjectID(id) });
+    const result = await collection.deleteOne(query);
     return result;
   } finally {
     await client.close();
@@ -119,10 +130,10 @@ async function addGroup(data, collectionName = 'groups') {
 }
 
 /*
-Find a group in the database. If multiple groups fit the query, all are returned.
+Find a group in the database.
 query parameter must have the following structure:
 { Name: "SquadUp" }, where any of the group's fields can be used to query a group.
-Returns group(s) as an array.
+Returns group as an object, where result.Name etc can be used to get individual attributes..
 */
 async function findGroup(query = {}, collectionName = 'groups') {
   const client = new MongoClient(uri);
@@ -140,11 +151,16 @@ async function findGroup(query = {}, collectionName = 'groups') {
 
 /*
 Update a group in the database. 
-id parameter must have the following structure:
-<document_id>, can be taken from the getgroup method
+
+The query parameter can take in any attribute the Group has, and if it exists,
+it will update that group. For certainty with update, the id of
+the Group can be taken and put in as a parameter like so:
+
+const result1 = await database.findGroup({ Name: "SquadUp"});
+const query = { _id: result1._id};
 
 data parameter must have the following structure:
-{ $set: { Name: "South-Common" } }
+{ Name: "South-Common" }
 
 Returns success status of updating group.
 */
@@ -155,7 +171,7 @@ async function updateGroup(id, newData, collectionName = 'groups') {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    const result = await collection.updateOne({ _id: ObjectID(id) }, { $set: newData });
+    const result = await collection.updateOne(query, { $set: newData });
     return result;
   } finally {
     await client.close();
@@ -164,19 +180,23 @@ async function updateGroup(id, newData, collectionName = 'groups') {
 
 /*
 Delete a group in the database. 
-id parameter must have the following structure:
-<document_id>, can be taken from the getGroup method
+The query parameter can take in any attribute the Group has, and if it exists,
+it will delete that group. For certainty with delete, the id of
+the Group can be taken and put in as a parameter like so:
+
+const result1 = await database.findGroup({ Name: "SquadUp"});
+const query = { _id: result1._id};
 
 Returns delete status.
 */
-async function deleteGroup(id, collectionName = 'groups') {
+async function deleteGroup(query, collectionName = 'groups') {
   const client = new MongoClient(uri);
 
   try {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    const result = await collection.deleteOne({ _id: ObjectID(id) });
+    const result = await collection.deleteOne(query);
     return result;
   } finally {
     await client.close();
