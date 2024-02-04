@@ -1,3 +1,70 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* LoginPage.css */
+
+.login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+}
+
+.welcome-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-container {
+    margin-top: 50px;
+    width: 400px;
+}
+
+.form-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.form-input {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.form-button {
+    background-color: #3490dc;
+    color: white;
+    font-weight: bold;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-button:hover {
+    background-color: #276496;
+}
+
+/* Add the styles for the Create New Account button */
+.form-button.create-account {
+    background-color: #38a169;
+    /* Adjust other styles as needed */
+}
+
+.form-button.create-account:hover {
+    background-color: #2f855a;
+    /* Adjust other styles as needed */
+}

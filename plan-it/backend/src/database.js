@@ -1,5 +1,4 @@
-import { query } from 'express';
-
+const { query } = require('express');
 require('dotenv').config();
 const { MongoClient, ObjectID } = require('mongodb');
 // Connection URI
@@ -22,7 +21,7 @@ data parameter must have the following structure:
 Returns success status of adding user.
 */
 async function addUser(data, collectionName = 'users') {
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  const client = new MongoClient(uri);
 
   try {
     await client.connect();
@@ -49,6 +48,7 @@ async function findUser(query = {}, collectionName = 'users') {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
     const documents = await collection.findOne(query);
+    console.log("made it here");
     return documents;
   } finally {
     await client.close();
