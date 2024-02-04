@@ -9,9 +9,12 @@ import '.././index.css';
 //     updateGroup,
 //     deleteGroup
 //   } from '../../../backend/src/database';
+import axios from 'axios';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const baseURL = `http://localhost:14000/api/users/login`;
+
     
 
     const handleEmailChange = (e) => {
@@ -24,10 +27,8 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-          // Make a GET request to your login endpoint with email and password
-          const response = await axios.get(`/api/login?email=${email}&password=${password}`);
+          const response = await axios.post(baseURL, { email, password });
     
-          // Access the user data from the response
           const user = response.data;
     
           // Log the user data
@@ -35,12 +36,12 @@ const LoginPage = () => {
     
           // Perform additional logic based on the response
           // For example, redirect to a different page on successful login
+          alert("Successful Login");
     
         } catch (error) {
-          // Handle errors (e.g., incorrect credentials)
-          console.error('Error logging in:', error.message);
+          alert("Invalid Email or Password");
         }
-    }
+      };
 
     const handleCreateAccount = () => {
         // Perform logic to navigate to create account page or show registration form

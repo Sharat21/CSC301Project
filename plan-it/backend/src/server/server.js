@@ -2,19 +2,20 @@
  * To start the server, use the following command:
  *  node backend/src/server/server.js  (from the plan-it directory)
  */
-
-const express = require("express");
+const express = require('express');
 const app = express();
-const cors = require("cors");
+const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5100;
 app.use(cors());
 app.use(express.json());
 
 // =============== UNCOMMENT WHEN YOU IMPLEMENT ================== //
-// const usersRoutes = require("./routes/usersRoutes");
+const usersRoutes = require('./routes/users');
 // const groupsRoutes = require("./routes/groupsRoutes");
 // const ideasRoutes = require("./routes/ideasRoutes");
+
+app.use('/api/users', usersRoutes);
 
 const dbo = require("../database.js");
 app.listen(port, () => {

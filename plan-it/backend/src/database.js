@@ -48,7 +48,6 @@ async function findUser(query = {}, collectionName = 'users') {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
     const documents = await collection.findOne(query);
-    console.log("made it here");
     return documents;
   } finally {
     await client.close();
