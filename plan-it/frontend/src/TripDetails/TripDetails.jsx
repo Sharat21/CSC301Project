@@ -9,22 +9,15 @@ import Restaurants from "./pages/Restaurants";
 import './TripDetails.css';
 
 const TripDetails = () => {
-    return (
-      <Router>
-        <div>
-          <TripDetailsHeader />
-          <NavBar />
-          <Routes>
-            <Route path="/" element={<Navigate to="/trip-details/destinationtransportation" />} />
-            <Route path="/trip-details/destinationtransportation" element={<DestinationTransportation />} />
-            <Route path="/trip-details/accommodation" element={<Accommodation />} />
-            <Route path="/trip-details/activities" element={<Activities />} />
-            <Route path="/trip-details/restaurants" element={<Restaurants />} />
-            <Route path="/trip-details/budgetsheet" element={<BudgetSheet />} />
-          </Routes>
-        </div>
-      </Router>
-    );
-  };
-  
-  export default TripDetails;
+  return (
+    <div className="bg-black text-white py-12" id="home">
+      {/* <TripDetailsHeader /> */}
+      <div className="h-screen w-full text-5xl font-bold py-12">
+        Trip Details
+      </div>
+      {/* Add any other content specific to this page */}
+    </div>
+  );
+};
+
+export default TripDetails;

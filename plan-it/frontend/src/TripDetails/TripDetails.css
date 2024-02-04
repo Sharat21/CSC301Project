@@ -8,6 +8,9 @@ header {
     padding-top: 5px;
 }
 
+.navbarcolor{
+    background-color: #181919;
+}
 .sidebar {
     background-color: black;
     color: white;
