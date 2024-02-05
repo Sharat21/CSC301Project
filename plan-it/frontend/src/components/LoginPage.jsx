@@ -1,21 +1,12 @@
-// LoginPage.js
 import React, { useState } from 'react';
 import '.././index.css';
-// import {
-//     findUser,
-//     updateUser,
-//     deleteUser,
-//     findGroup,
-//     updateGroup,
-//     deleteGroup
-//   } from '../../../backend/src/database';
 import axios from 'axios';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const baseURL = `http://localhost:14000/api/users/login`;
 
-    
+
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -27,21 +18,19 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-          const response = await axios.post(baseURL, { email, password });
-    
-          const user = response.data;
-    
-          // Log the user data
-          console.log('User data:', user);
-    
-          // Perform additional logic based on the response
-          // For example, redirect to a different page on successful login
-          alert("Successful Login");
-    
+            const response = await axios.post(baseURL, { email, password });
+
+            const user = response.data;
+            console.log('User data:', user);
+
+            // Perform additional logic based on the response
+            // For example, redirect to a different page on successful login
+            alert("Successful Login");
+
         } catch (error) {
-          alert("Invalid Email or Password");
+            alert("Invalid Email or Password");
         }
-      };
+    };
 
     const handleCreateAccount = () => {
         // Perform logic to navigate to create account page or show registration form
