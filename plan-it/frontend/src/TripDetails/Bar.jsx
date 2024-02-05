@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { FaBars, FaTimes } from "react-icons/fa";
 import './TripDetails.css';
+import { Link } from 'react-scroll';
+
 const Bar = () => {
     const links = [
         { id: 1, site: "home" },
@@ -32,7 +34,10 @@ const Bar = () => {
                 <ul className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static md:z-auto left-0 w-full md:w-auto md:pl-0 pl-9 flex transition-all duration-500 ease-in ${menuOpen ? 'top-12' : 'top-[-490px]'}`}>
                     {links.map(({ id, site }) => (
                         <li key={id} className="px-6 cursor-pointer capitalize font-medium hover:text-slate-400 duration-200 my-5 md:my-1 flex-grow">
+                                
+                         <Link to={site} spy={true} smooth={true} offset={-50} duration={500}>
                             {site}
+                        </Link>
                         </li>
                     ))}
                 </ul>
