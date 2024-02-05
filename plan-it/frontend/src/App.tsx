@@ -6,16 +6,8 @@ import Restaurants from "./TripDetails/pages/Restaurants"
 
 function App() {
   return (
-    <>
-      <LoginPage />
-    </>
-  );
-  // return <p>Hello World</p>;
-  return (
     <div>
-      <Bar/>
-      <TripDetails/>
-      <Restaurants/>
+      <TripDetails />
     </div>
   );
 
