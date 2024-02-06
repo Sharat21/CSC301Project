@@ -3,7 +3,7 @@ import { Container, CssBaseline, Typography } from '@mui/material';
 import IdeaList from './components/IdeaList';
 
 const Ideas = () => {
-  const [ideas, setIdeas] = useState([{id: 0, content: "hello", date: new Date().toLocaleString()}, {id: 1, content: "yessir", date: new Date().toLocaleString()}]);
+  const [ideas, setIdeas] = useState([]);
 
   const addIdea = (newIdea) => {
     setIdeas([...ideas, { id: ideas.length + 1, ...newIdea }]);
