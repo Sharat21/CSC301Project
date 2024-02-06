@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Navigate, Routes } from "react-router-dom"; 
 import NavBar from './pages/components/NavBar';
 import TripDetailsHeader from "./pages/components/TripDetailsHeader";
-import Accommodation from "./pages/Accomodation";
+import Accommodation from "./pages/Accommodation";
 import Activities from "./pages/Activities";
 import BudgetSheet from "./pages/BudgetSheet";
 import DestinationTransportation from "./pages/DestinationTransportation";
