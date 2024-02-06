@@ -15,7 +15,7 @@ const IdeaForm = ({ onAddIdea }) => {
   return (
     <form onSubmit={handleSubmit}>
       <TextField
-        label="Add a Note"
+        label="Add a Idea"
         variant="outlined"
         fullWidth
         value={content}
