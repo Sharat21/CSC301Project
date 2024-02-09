@@ -13,6 +13,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@mui/material": "^5.15.9",
     "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.3.6",
     "dotenv": "^16.4.1",

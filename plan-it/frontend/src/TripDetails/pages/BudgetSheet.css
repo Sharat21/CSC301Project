@@ -1,0 +1,38 @@
+/* Styling for the BudgetSheet component */
+
+/* Apply background color to the entire page */
+body {
+    background-color: #f5f5f5; /* Light greyish background color */
+  }
+  
+  /* Add padding to the container */
+  .container {
+    padding: 200px; /* Increase the padding value as needed */
+  }
+  
+  /* Professional title */
+  .fancy-title {
+    font-family: 'Arial', sans-serif; /* Use a professional font */
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333; /* Dark grey color */
+  }
+  
+  /* Container for budget cards */
+  .budget-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  /* Styling for budget cards */
+  .budget-card {
+    background-color: #fff; /* White background color */
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
+  }
+  
+  /* Add more styles as needed */
+  

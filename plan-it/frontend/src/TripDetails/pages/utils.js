@@ -1,1 +1,0 @@
-// export const currencyFormatter = newIntl.NumberFormat(undefined, {currency: "usd", style: "currency", minimumFractionDigits: 0})
