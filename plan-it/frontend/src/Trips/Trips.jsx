@@ -18,7 +18,12 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Grid,
+  IconButton,
 } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from "@mui/icons-material/Delete";
+
 let tripsData = [
   {
     name: "Trip 1",
@@ -74,7 +79,15 @@ const Trips = () => {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedTrip, setEditedTrip] = useState({});
   const [selectedTrip, setSelectedTrip] = useState(null);
-
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const [newTrip, setNewTrip] = useState({
+    name: "",
+    duration: "",
+    startDate: "",
+    endDate: "",
+    description: "",
+    status: "",
+  });
   const handleEditDetails = (trip) => {
     setEditedTrip(trip);
     setOpenEditDialog(true);
@@ -101,6 +114,42 @@ const Trips = () => {
     setSelectedTrip(trip);
   };
 
+  const handleCreateTrip = () => {
+    setOpenCreateDialog(true);
+  };
+
+  const handleCreateDialogClose = () => {
+    setOpenCreateDialog(false);
+  };
+
+  const handleCreateDialogSave = () => {
+    // Add the new trip to tripsData
+    tripsData.push(newTrip);
+
+    // Clear the new trip state
+    setNewTrip({
+      name: "",
+      duration: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+      status: "",
+    });
+
+    // Close the dialog
+    setOpenCreateDialog(false);
+  };
+  const handleDeleteTrip = (tripIndex) => {
+    // Remove the trip at the specified index from the tripsData array
+    const updatedTripsData = [...tripsData];
+    updatedTripsData.splice(tripIndex, 1);
+    tripsData = updatedTripsData;
+  
+    // Trigger a re-render by updating the state or forceUpdate
+    // For example, if you're using React state:
+    setTripsData(updatedTripsData);
+  };
+
   return (
     <div style={{ width: '100%' }}>
       <AppBar position="static" sx={{ width: '100%' }}>
@@ -119,6 +168,7 @@ const Trips = () => {
               width: '100%',
               marginBottom: 2,
               cursor: 'pointer',
+              position: "relative",
               "&:hover": {
                 backgroundColor: '#f0f0f0',
               },
@@ -126,7 +176,7 @@ const Trips = () => {
             }}
             onMouseEnter={() => handleCardHover(trip)}
             onMouseLeave={() => handleCardHover(null)}
-            onClick={() => handleEditDetails(trip)}
+            //onClick={() => handleEditDetails(trip)}
           >
             <CardContent>
               <Typography variant="h6">{trip.name}</Typography>
@@ -147,16 +197,53 @@ const Trips = () => {
               </Typography>
 
               {/* Edit Details Button */}
-              <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
+              <Button variant="outlined" color="primary" onClick={() => handleEditDetails(trip)} sx={{ marginTop: 2 }}>
                 Edit Details
+                
               </Button>
+              {/* Delete button */}
+              <IconButton
+                color="error"
+                aria-label="delete trip"
+                onClick={() => handleDeleteTrip(index)}
+                sx={{ position: "absolute", top: 8, right: 8 }}
+              >
+                <DeleteIcon />
+              </IconButton>
             </CardContent>
           </Card>
         ))}
       </Container>
 
+      {/* Create Trip Button */}
+      <Grid
+        container
+        justifyContent="flex-end" // Align items to the end of the container (right side)
+        alignItems="flex-end" // Align items to the bottom of the container
+        sx={{
+          position: "fixed",
+          bottom: "16px", // Adjust the distance from the bottom
+          right: "16px", // Adjust the distance from the right
+          zIndex: 999, // Set a high z-index to ensure the button appears above other content
+          marginRight: "20px", // Adjust the margin to avoid overlapping with dialog buttons
+          marginBottom: "20px", // Adjust the margin to avoid overlapping with dialog buttons
+        }}
+      >
+        <IconButton
+          color="primary"
+          aria-label="create trip"
+          sx={{
+            width: '64px', // Set the width of the button
+            height: '64px', // Set the height of the button
+          }}
+          onClick={handleCreateTrip}
+        >
+        <AddIcon sx={{ fontSize: '36px' }} /> {/* Set the font size of the icon */}
+        </IconButton>
+      </Grid>
+
       {/* Edit Details Dialog */}
-      <Dialog open={openEditDialog} onClose={handleCloseDialog}>
+      <Dialog open={openEditDialog} onClose={handleCloseDialog} sx={{ zIndex: 1000 }}>
         <DialogTitle>Edit Details</DialogTitle>
         <DialogContent>
           <TextField
@@ -216,6 +303,78 @@ const Trips = () => {
           </Button>
           <Button onClick={handleSaveChanges} color="primary">
             Save Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openCreateDialog} onClose={handleCreateDialogClose} sx={{ zIndex: 1000 }}>
+        <DialogTitle>Create Trip</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Name"
+            value={newTrip.name}
+            onChange={(e) => setNewTrip({ ...newTrip, name: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Duration"
+            value={newTrip.duration}
+            onChange={(e) =>
+              setNewTrip({ ...newTrip, duration: e.target.value })
+            }
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Start Date"
+            type="date"
+            value={newTrip.startDate}
+            onChange={(e) =>
+              setNewTrip({ ...newTrip, startDate: e.target.value })
+            }
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="End Date"
+            type="date"
+            value={newTrip.endDate}
+            onChange={(e) => setNewTrip({ ...newTrip, endDate: e.target.value })}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Description"
+            multiline
+            rows={4}
+            value={newTrip.description}
+            onChange={(e) =>
+              setNewTrip({ ...newTrip, description: e.target.value })
+            }
+            fullWidth
+            margin="normal"
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Status</InputLabel>
+            <Select
+              value={newTrip.status}
+              onChange={(e) =>
+                setNewTrip({ ...newTrip, status: e.target.value })
+              }
+            >
+              <MenuItem value="Planned">Planned</MenuItem>
+              <MenuItem value="In Progress">In Progress</MenuItem>
+              <MenuItem value="Completed">Completed</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCreateDialogClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleCreateDialogSave} color="primary">
+            Create
           </Button>
         </DialogActions>
       </Dialog>
