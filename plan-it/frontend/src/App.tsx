@@ -4,6 +4,7 @@ import React from "react";
 //function App() {
   // return <p>Hello World</p>;
   //return <div ><Trips /></div>
+  //return <div> <Ideas /> </div>
 import LoginPage from "./components/LoginPage";
 
 function App() {
