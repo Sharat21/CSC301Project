@@ -1,10 +1,18 @@
 import React from "react";
-// @ts-ignore
-import Ideas from './Ideas/Ideas';
+//import Trips from "./Trips/Trips";
+
+//function App() {
+  // return <p>Hello World</p>;
+  //return <div ><Trips /></div>
+  //return <div> <Ideas /> </div>
+import LoginPage from "./components/LoginPage";
 
 function App() {
-  // return <p>Hello World</p>;
-  return <div> <Ideas /> </div>
+  return (
+    <>
+      <LoginPage />
+    </>
+  );
 }
 
 export default App;
