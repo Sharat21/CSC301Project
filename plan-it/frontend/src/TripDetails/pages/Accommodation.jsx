@@ -14,25 +14,25 @@ import {
   DialogActions
 } from '@mui/material';
 
-const Activities = () => {
-  const [confirmedActivities, setConfirmedActivities] = useState([]);
+const Accommodation = () => {
+  const [confirmedAccommodation, setConfirmedAccommodation] = useState([]);
   const [error, setError] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [editedActivity, setEditedActivity] = useState({});
-  const [selectedActivity, setSelectedActivity] = useState(null);
-  const [activitiesData, setActivitiesData] = useState([]);
+  const [editedAccommodation, setEditedAccommodation] = useState({});
+  const [selectedAccommodation, setSelectedAccommodation] = useState(null);
+  const [accommodationData, setAccommodationData] = useState([]);
   const baseURL = `http://localhost:5100/api/ideas`;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/confirmed-ideas/Activity`);
-        setConfirmedActivities(response.data);
-        setActivitiesData(response.data);
-        console.log('Confirmed Activities: ', response.data);
+        const response = await axios.get(`${baseURL}/confirmed-ideas/Accommodation`);
+        setConfirmedAccommodation(response.data);
+        setAccommodationData(response.data);
+        console.log('Confirmed Accommodation: ', response.data);
       } catch (error) {
         setError(error.message);
-        console.log('Could not retrieve confirmed activities.');
+        console.log('Could not retrieve confirmed accomodation.');
       }
     }
 
@@ -43,25 +43,17 @@ const Activities = () => {
     return <div>Error: {error}</div>;
   }
 
-  const handleEditDetails = (activity) => {
-    setEditedActivity(activity);
+  const handleEditDetails = (Accommodation) => {
+    setEditedAccommodation(Accommodation);
     setOpenEditDialog(true);
   }
-
-  // const handleSaveChanges = () => {
-  //   // const updatedActivitiesData = activitiesData.map((activity) =>
-  //   //   activity.name === editedActivity.name ? { ...activity, ...editedActivity } : activity
-  //   // );
-  //   // activitiesData = updatedActivitiesData;
-  //   setOpenEditDialog(false);
-  // };
 
   const handleCloseDialog = () => {
     setOpenEditDialog(false);
   }
 
-  const handleCardHover = (activity) => {
-    setSelectedActivity(activity);
+  const handleCardHover = (Accommodation) => {
+    setSelectedAccommodation(Accommodation);
   }
 
   return (
@@ -69,7 +61,7 @@ const Activities = () => {
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>
-            Activities
+            Accommodation
           </Typography>
         </Toolbar>
       </AppBar>
@@ -79,7 +71,7 @@ const Activities = () => {
         maxWidth={false}
         sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '200px' }}
       >
-        {activitiesData.map((activity, index) => (
+        {accommodationData.map((Accommodation, index) => (
           <Card
             key={index}
             sx={{
@@ -89,16 +81,16 @@ const Activities = () => {
               '&:hover': {
                 backgroundColor: '#f0f0f0',
               },
-              border: selectedActivity && selectedActivity.id === activity.id ? '2px solid #1976D2' : '1px solid #ddd',
+              border: selectedAccommodation && selectedAccommodation.id === Accommodation.id ? '2px solid #1976D2' : '1px solid #ddd',
             }}
-            onMouseEnter={() => handleCardHover(activity)}
+            onMouseEnter={() => handleCardHover(Accommodation)}
             onMouseLeave={() => handleCardHover(null)}
-            onClick={() => handleEditDetails(activity)}
+            onClick={() => handleEditDetails(Accommodation)}
           >
             <CardContent>
-              <Typography variant="h6">{activity.Name}</Typography>
+              <Typography variant="h6">{Accommodation.Name}</Typography>
               <Typography variant="body2" color="text.secondary">
-                Type: {activity.Type}
+                Type: {Accommodation.Type}
               </Typography>
               {/* Add more details as needed */}
               <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
@@ -110,9 +102,9 @@ const Activities = () => {
       </Container>
 
       <Dialog open={openEditDialog} onClose={handleCloseDialog}>
-      <DialogTitle>Activity Details</DialogTitle>
+      <DialogTitle>Accommodation Details</DialogTitle>
         <DialogContent>
-          {Object.entries(editedActivity).map(([key, value]) => (
+          {Object.entries(editedAccommodation).map(([key, value]) => (
             <div key={key}>
               <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: 2 }}>{key}:</Typography>
               <Typography variant="body1" sx={{ marginTop: 1 }}>{value}</Typography>
@@ -129,4 +121,4 @@ const Activities = () => {
   );
 };
 
-export default Activities;
+export default Accommodation;

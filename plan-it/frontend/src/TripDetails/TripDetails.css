@@ -46,7 +46,14 @@ header {
 .page-name {
     font-size: 40px;
     position: absolute;
-    top: 150px;
+    top: 120px;
     left: 240px;
     font-weight: bold;
+}
+
+pre {
+    position: absolute;
+    right: 500px;
+    top: 300px;
+
 }
