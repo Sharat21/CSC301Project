@@ -54,10 +54,10 @@ const BudgetSheet = () => {
   };
 
   const handleEditBudget = () => {
-    if (!currentCategoryIndex || !currentBudgetIndex || !newBudgetName || !newBudgetAmount || !newBudgetMax || newBudgetAmount < 0 || newBudgetMax < 0) {
-      alert('Please fill in all fields and select a category and budget!');
-      return;
-    }
+    // if (!currentCategoryIndex || !currentBudgetIndex || !newBudgetName || !newBudgetAmount || !newBudgetMax || newBudgetAmount < 0 || newBudgetMax < 0) {
+    //   alert('Please fill in all fields and select a category and budget!');
+    //   return;
+    // }
 
     const updatedCategories = [...categories];
     const editedBudget = {
@@ -214,7 +214,7 @@ const BudgetSheet = () => {
             fullWidth
             value={currentCategoryIndex}
             onChange={(e) => setCurrentCategoryIndex(e.target.value)}
-            style={{ marginBottom: '10px' }}
+            style={{ marginBottom: '10px',  marginTop: '10px'}}
           >
             {categories.map((category, index) => (
               <MenuItem key={index} value={index}>
@@ -278,7 +278,7 @@ const BudgetSheet = () => {
       fullWidth
       value={currentCategoryIndex}
       onChange={(e) => setCurrentCategoryIndex(e.target.value)}
-      style={{ marginBottom: '20px' }}
+      style={{ marginBottom: '20px',  marginTop: '10px' }}
     >
       {categories.map((category, index) => (
         <MenuItem key={index} value={index}>
