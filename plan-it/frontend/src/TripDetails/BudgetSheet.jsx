@@ -14,6 +14,8 @@ import {
 } from '@mui/material';
 import './BudgetSheet.css';
 
+// All dependencies and budget sheet functions
+
 const BudgetSheet = () => {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -278,7 +280,7 @@ const BudgetSheet = () => {
       fullWidth
       value={currentCategoryIndex}
       onChange={(e) => setCurrentCategoryIndex(e.target.value)}
-      style={{ marginBottom: '20px',  marginTop: '10px' }}
+      style={{ marginBottom: '20px',  marginTop: '11px' }}
     >
       {categories.map((category, index) => (
         <MenuItem key={index} value={index}>
