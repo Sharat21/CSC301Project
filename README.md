@@ -15,7 +15,7 @@ Main features:
 - Ideas that have been accepted (or ideas already on the itinerary) will have their expenses placed on a budget sheet for everyone to see how much the trip costs so far
 4. Feedback and Rating System (distinct from Voting System)
 - Members will be able to "thumbs up" or "thumbs down" ideas on the planning board and provide feedback on why their like/dislike the idea so each member that posted an idea can receive constructive feedback
-5. AI Tracking (Allah permitting)
+5. AI Tracking
 - Use a AI API to give suggestions on trip info
 
 What makes this app different from existing apps:
