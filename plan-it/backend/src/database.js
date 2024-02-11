@@ -1,5 +1,4 @@
-import { query } from 'express';
-
+const { query } = require('express');
 require('dotenv').config();
 const { MongoClient, ObjectID } = require('mongodb');
 // Connection URI
@@ -22,7 +21,7 @@ data parameter must have the following structure:
 Returns success status of adding user.
 */
 async function addUser(data, collectionName = 'users') {
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  const client = new MongoClient(uri);
 
   try {
     await client.connect();
@@ -203,6 +202,65 @@ async function deleteGroup(query, collectionName = 'groups') {
   }
 }
 
+
+/* Fetch all ideas from the database. 
+
+Returns an array of ideas as objects 
+*/
+async function fetchAllIdeas(query = {}, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+  
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.find(query).toArray();
+    return result;
+  } finally {
+    await client.close();
+  }
+
+}
+
+/* Fetch all confirmed trip ideas from the database. 
+
+Returns an array of ideas as objects 
+*/
+async function fetchConfirmedIdeas(userQuery = {}, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+  
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {Confirmed: true, ...userQuery}
+    const result = await collection.find(query).toArray();
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+/* Fetch all confirmed trip ideas from the database based on the idea type.
+Type parameter specifies the type of ideas to be retrieved. 
+
+Returns an array of ideas as objects 
+*/
+async function fetchConfirmedByType(type, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+    
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {Confirmed: true, Type: type}
+    const result = await collection.find(query).toArray();
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
 module.exports = {
   addUser,
   findUser,
@@ -211,5 +269,9 @@ module.exports = {
   addGroup,
   findGroup,
   updateGroup,
-  deleteGroup
+  deleteGroup,
+  fetchAllIdeas,
+  fetchConfirmedIdeas,
+  fetchConfirmedByType
 };
+
