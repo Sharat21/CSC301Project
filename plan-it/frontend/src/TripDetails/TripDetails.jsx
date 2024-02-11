@@ -3,7 +3,6 @@ import NavBar from './pages/components/NavBar';
 import TripDetailsHeader from "./pages/components/TripDetailsHeader";
 import Accommodation from "./pages/Accomodation";
 import Activities from "./pages/Activities";
-import BudgetSheet from "./pages/BudgetSheet";
 import DestinationTransportation from "./pages/DestinationTransportation";
 import Restaurants from "./pages/Restaurants";
 import './TripDetails.css';

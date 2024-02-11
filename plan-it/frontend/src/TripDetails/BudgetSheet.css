@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f2f2f2;
+  margin: 0;
+  padding: 0;
+}
+
+.category-header {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.category-card {
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.budget-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.budget-card {
+  border-radius: 40px; /* Rounder edges */
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  width: calc(25% - 20px); /* 4 cards per row */
+  margin-bottom: 20px;
+  margin-right: 20px;
+}
+
+.progress-bar {
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar .MuiLinearProgress-bar {
+  background: linear-gradient(to right, #00ff00, #ff0000);
+}
