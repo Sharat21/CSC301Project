@@ -1,5 +1,6 @@
 import React from "react";
-//import Trips from "./Trips/Trips";
+import Trips from "./Trips/Trips";
+import Groups from "./Groups/Groups";
 
 //function App() {
   // return <p>Hello World</p>;
@@ -13,11 +14,8 @@ import React from "react";
 // import BudgetSheet from "./TripDetails/pages/BudgetSheet";
 
 function App() {
-  return (
-    <div>
-      {/* <TripDetails /> */}
-    </div>
-  );
+  // return <p>Hello World</p>;
+  return <div ><Groups /></div>
 }
 
 export default App;
