@@ -202,6 +202,79 @@ async function deleteGroup(query, collectionName = 'groups') {
   }
 }
 
+/*
+Add a new idea into the database. 
+data parameter must have the following structure:
+{ Name: "Chik-Fil-A", Type: "Restaurant", Votes: 0, Confirmed: false, Proposed_by: [UID], Trip: [TID], Date_Proposed: 2024-02-30,
+  Voting_End: 2024-04-30, link: "https://www.chick-fil-a.ca/locations/on/rutherford-rd-hwy-400?utm_source=yext&utm_medium=link", price: 13.5 };
+Returns success status of adding idea.
+*/
+async function addIdea(data, collectionName = 'ideas') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.insertOne(data);
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+/*
+Update an idea in the database. 
+
+The query parameter can take in any attribute the Idea has, and if it exists,
+it will update that idea. For certainty with update, the id of
+the Idea can be taken and put in as a parameter like so:
+
+const query = { _id: [idea id] };
+
+data parameter must have the following structure:
+{ Name: "South-Common" }
+
+Returns success status of updating idea.
+*/
+async function updateIdea(id, newData, collectionName = 'ideas') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.updateOne(query, { $set: newData });
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+
+/*
+Delete an idea in the database. 
+The query parameter can take in any attribute the idea has, and if it exists,
+it will delete that group. For certainty with delete, the id of
+the idea can be taken and put in as a parameter like so:
+
+const query = { _id: [idea id] };
+
+Returns delete status.
+*/
+async function deleteIdea(query, collectionName = 'ideas') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.deleteOne(query);
+    return result;
+  } finally {
+    await client.close();
+  }
+}
 
 /* Fetch all ideas from the database. 
 
@@ -209,7 +282,7 @@ Returns an array of ideas as objects
 */
 async function fetchAllIdeas(query = {}, collectionName = "ideas") {
   const client = new MongoClient(uri);
-  
+
   try {
     await client.connect();
     const db = client.db(dbName);
@@ -228,12 +301,12 @@ Returns an array of ideas as objects
 */
 async function fetchConfirmedIdeas(userQuery = {}, collectionName = "ideas") {
   const client = new MongoClient(uri);
-  
+
   try {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    const query = {Confirmed: true, ...userQuery}
+    const query = { Confirmed: true, ...userQuery }
     const result = await collection.find(query).toArray();
     return result;
   } finally {
@@ -248,12 +321,12 @@ Returns an array of ideas as objects
 */
 async function fetchConfirmedByType(type, collectionName = "ideas") {
   const client = new MongoClient(uri);
-    
+
   try {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    const query = {Confirmed: true, Type: type}
+    const query = { Confirmed: true, Type: type }
     const result = await collection.find(query).toArray();
     return result;
   } finally {
@@ -270,6 +343,9 @@ module.exports = {
   findGroup,
   updateGroup,
   deleteGroup,
+  addIdea,
+  updateIdea,
+  deleteIdea,
   fetchAllIdeas,
   fetchConfirmedIdeas,
   fetchConfirmedByType
