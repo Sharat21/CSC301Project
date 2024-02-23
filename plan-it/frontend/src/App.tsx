@@ -1,6 +1,8 @@
 import React from "react";
 //import Trips from "./Trips/Trips";
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
 //function App() {
   // return <p>Hello World</p>;
   //return <div ><Trips /></div>
@@ -14,9 +16,12 @@ import React from "react";
 
 function App() {
   return (
-    <div>
-      {/* <TripDetails /> */}
-    </div>
+      <Router>
+          <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+          </Routes>
+      </Router>
   );
 }
 
