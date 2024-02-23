@@ -21,6 +21,8 @@ const Activities = () => {
   const [editedActivity, setEditedActivity] = useState({});
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [activitiesData, setActivitiesData] = useState([]);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [activityToDelete, setActivityToDelete] = useState(null);
   const baseURL = `http://localhost:5100/api/ideas`;
 
   useEffect(() => {
@@ -52,8 +54,51 @@ const Activities = () => {
     setOpenEditDialog(false);
   }
 
+  const handleOpenDeleteDialog = () => {
+    setOpenConfirmDialog(true);
+  }
+
+  const handleCloseDeleteDialog = () => {
+    setOpenConfirmDialog(false);
+  }
+
   const handleCardHover = (activity) => {
     setSelectedActivity(activity);
+  }
+
+  const handleDeleteRequest = (activityID) => {
+    setActivityToDelete(activityID);
+    setOpenConfirmDialog(true); // Show confirmation dialog
+  };
+
+  const handleDeleteActivity = async (activityID) => {
+    try {
+      const response = await axios.delete(`${baseURL}/confirmed-ideas`);
+      console.log(response.data.message);
+
+      const updatedActivities = confirmedActivities.filter(activity => activity._id != activityID);
+      setConfirmedActivities(updatedActivities);
+      setActivityToDelete(null);
+      setOpenEditDialog(false);
+    } catch (error) {
+      console.error(activityID);
+      console.error("Error deleting activity: ", error.message);
+    }
+  };
+
+  const DeleteDialog = ({ open, onClose }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this activity?
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={() => setOpenConfirmDialog(false)}>Cancel</Button>
+            <Button onClick={() => handleDeleteActivity(activityToDelete)} color="error" autoFocus>Delete</Button>
+        </DialogActions>
+      </Dialog>
+    )
   }
 
   const ActivityDialog = ({ open, onClose, activity }) => {
@@ -77,6 +122,7 @@ const Activities = () => {
           <div style={{ height: '10px' }}></div>
         </DialogContent>
         <DialogActions>
+          <Button onClick={() => handleDeleteRequest(activity._id)} color="error">Delete Activity</Button>
           <Button onClick={onClose}>Close</Button>
         </DialogActions>
       </Dialog>
@@ -128,6 +174,8 @@ const Activities = () => {
       </Container>
 
       <ActivityDialog open={openEditDialog} onClose={handleCloseDialog} activity={editedActivity} />
+
+      <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} activity={editedActivity} />
 
     </div>
   );

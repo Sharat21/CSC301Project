@@ -1,6 +1,6 @@
 const { query } = require('express');
 require('dotenv').config();
-const { MongoClient, ObjectID } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 // Connection URI
 const uri = process.env.MONGO_URI;
 // Database Name
@@ -261,6 +261,30 @@ async function fetchConfirmedByType(type, collectionName = "ideas") {
   }
 }
 
+/*
+Delete an idea in the database. 
+The query parameter can take in any attribute the idea has, and if it exists,
+it will delete that idea. For certainty with delete, the id of
+the idea can be taken and put in as a parameter like so:
+
+const query = { _id: [idea id] };
+
+Returns delete status.
+*/
+async function deleteIdea(query, collectionName = 'ideas') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.deleteOne(query);
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
 module.exports = {
   addUser,
   findUser,
@@ -272,6 +296,7 @@ module.exports = {
   deleteGroup,
   fetchAllIdeas,
   fetchConfirmedIdeas,
-  fetchConfirmedByType
+  fetchConfirmedByType,
+  deleteIdea
 };
 

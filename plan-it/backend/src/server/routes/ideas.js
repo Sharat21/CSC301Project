@@ -1,6 +1,7 @@
 const express = require('express');
+const { ObjectId } = require('mongodb');
 const router = express.Router();
-const { fetchAllIdeas, fetchConfirmedIdeas, fetchConfirmedByType } = require('../../database');
+const { fetchAllIdeas, fetchConfirmedIdeas, fetchConfirmedByType, deleteIdea } = require('../../database');
 
 // Define routes for Ideas endpoint
 
@@ -31,6 +32,21 @@ router.get('/confirmed-ideas/:type', async (req, res) => {
         res.json(ideasByType);
     } catch(error) {
         console.log("Fetching ideas by type failed: ", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.delete('/confirmed-ideas', async (req, res) => {
+    try {
+        const { id } = req.body;
+        const query = { _id: new ObjectId(id) };
+        const result = await deleteIdea(query);
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: 'Idea not found' });
+        }
+        res.json({ message: 'Idea deleted successfully'});
+    } catch (error) {
+        console.log("Deleting idea failed: ", error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
