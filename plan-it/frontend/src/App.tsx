@@ -1,4 +1,10 @@
-import React from "react";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
+import TripDetails from "./TripDetails/TripDetails";
+import Restaurants from "./TripDetails/pages/Restaurants"
+
 //import Trips from "./Trips/Trips";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
@@ -8,13 +14,10 @@ import RegisterPage from './components/RegisterPage';
   //return <div ><Trips /></div>
   //return <div> <Ideas /> </div>
 // import LoginPage from "./components/LoginPage";
-// import Bar  from "./TripDetails/Bar";
-// import TripDetails from "./TripDetails/TripDetails";
-// import Restaurants from "./TripDetails/pages/Restaurants"
+// import Bar from "./TripDetails/Bar";
 // import BudgetSheet from "./TripDetails/BudgetSheet";
 // import BudgetSheet from "./TripDetails/pages/BudgetSheet";
-
-function App() {
+const App = () => {
   return (
       <Router>
           <Routes>
@@ -23,6 +26,6 @@ function App() {
           </Routes>
       </Router>
   );
-}
+};
 
 export default App;

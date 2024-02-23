@@ -12,6 +12,14 @@
     min-height: 100vh;
     background-color: #f4f4f4;
 }
+.register-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+}
 
 .welcome-header {
     text-align: center;
@@ -19,6 +27,10 @@
 }
 
 .login-container {
+    margin-top: 50px;
+    width: 400px;
+}
+.register-container {
     margin-top: 50px;
     width: 400px;
 }

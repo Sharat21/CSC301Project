@@ -34,6 +34,7 @@ const RegisterPage = () => {
             console.log('User data:', user);
             alert("Successful Registration");
             navigate('/login');
+          
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 alert(error.response.data.error);
@@ -46,7 +47,6 @@ const RegisterPage = () => {
 
     const handleLogin = () => {
         navigate('/login');
-
         console.log('Navigating to login page...');
     };
 
