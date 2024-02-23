@@ -205,7 +205,7 @@ async function deleteGroup(query, collectionName = 'groups') {
 /*
 Add a new idea into the database. 
 data parameter must have the following structure:
-{ Name: "Chik-Fil-A", Type: "Restaurant", Votes: 0, Confirmed: false, Proposed_by: [UID], Trip: [TID], Date_Proposed: 2024-02-30,
+{ Name: "Chik-Fil-A", Type: "Restaurant", Description: "A delicacy, as described by Jamdaar Junior.", Votes: 0, Confirmed: false, Proposed_by: [UID], Trip: [TID], Date_Proposed: 2024-02-30,
   Voting_End: 2024-04-30, link: "https://www.chick-fil-a.ca/locations/on/rutherford-rd-hwy-400?utm_source=yext&utm_medium=link", price: 13.5 };
 Returns success status of adding idea.
 */
