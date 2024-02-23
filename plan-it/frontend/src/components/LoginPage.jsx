@@ -7,7 +7,8 @@ const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const baseURL = `http://localhost:14000/api/users/login`;
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
+
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -35,7 +36,7 @@ const LoginPage = () => {
 
     const handleCreateAccount = () => {
         // Perform logic to navigate to create account page or show registration form
-        // navigate('/register');
+        navigate('/register');
         console.log('Creating a new account...');
     };
 

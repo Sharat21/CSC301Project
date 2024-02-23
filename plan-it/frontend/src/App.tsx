@@ -6,7 +6,9 @@ import TripDetails from "./TripDetails/TripDetails";
 import Restaurants from "./TripDetails/pages/Restaurants"
 
 //import Trips from "./Trips/Trips";
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
 //function App() {
   // return <p>Hello World</p>;
   //return <div ><Trips /></div>
@@ -17,13 +19,12 @@ import Restaurants from "./TripDetails/pages/Restaurants"
 // import BudgetSheet from "./TripDetails/pages/BudgetSheet";
 const App = () => {
   return (
-      // <Router>
-      //     <Routes>
-      //         <Route path="/login" element={<LoginPage />} />
-      //         <Route path="/register" element={<RegisterPage />} />
-      //     </Routes>
-      // </Router>
-      <RegisterPage />
+      <Router>
+          <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+          </Routes>
+      </Router>
   );
 };
 

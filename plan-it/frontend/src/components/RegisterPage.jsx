@@ -8,7 +8,7 @@ const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const baseURL = `http://localhost:14000/api/users/register`;
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     
@@ -33,7 +33,8 @@ const RegisterPage = () => {
             const user = response.data;
             console.log('User data:', user);
             alert("Successful Registration");
-            // navigate('/login');
+            navigate('/login');
+          
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 alert(error.response.data.error);
@@ -45,8 +46,7 @@ const RegisterPage = () => {
     };
 
     const handleLogin = () => {
-        // navigate('/login');
-
+        navigate('/login');
         console.log('Navigating to login page...');
     };
 
