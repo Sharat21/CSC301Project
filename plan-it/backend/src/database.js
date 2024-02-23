@@ -22,7 +22,6 @@ Returns success status of adding user.
 */
 async function addUser(data, collectionName = 'users') {
   const client = new MongoClient(uri);
-
   try {
     await client.connect();
     const db = client.db(dbName);
@@ -42,7 +41,7 @@ Returns user as an object, where result.Firstname etc can be used to get individ
 */
 async function findUser(query = {}, collectionName = 'users') {
   const client = new MongoClient(uri);
-
+  
   try {
     await client.connect();
     const db = client.db(dbName);
