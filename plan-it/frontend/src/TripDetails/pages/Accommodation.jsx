@@ -56,6 +56,33 @@ const Accommodation = () => {
     setSelectedAccommodation(Accommodation);
   }
 
+  const AccommodationDialog = ({ open, onClose, accommodation }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{accommodation.Name}</DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Typography variant="body1"><strong>Proposed by:</strong> {accommodation.Proposed_by}</Typography>
+          <Typography variant="body1"><strong>Trip:</strong> {accommodation.Trip}</Typography>
+          <Typography 
+            variant="body1"><strong>Link:</strong> {accommodation.link ?
+            <a href={accommodation.link} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>{accommodation.link}</a> : "No link available" }
+          </Typography>
+          <Typography variant="body1"><strong>Price:</strong> {accommodation.price}</Typography>
+          <Typography 
+            variant="body1"><strong>Description:</strong> {accommodation.description ? accommodation.description : "No description available"}
+          </Typography>
+        </DialogContent>
+        <DialogContent>
+          {/* To add more space at the bottom */}
+          <div style={{ height: '10px' }}></div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
   return (
     <div style={{ width: '100%' }}>
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
@@ -101,22 +128,8 @@ const Accommodation = () => {
         ))}
       </Container>
 
-      <Dialog open={openEditDialog} onClose={handleCloseDialog}>
-      <DialogTitle>Accommodation Details</DialogTitle>
-        <DialogContent>
-          {Object.entries(editedAccommodation).map(([key, value]) => (
-            <div key={key}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: 2 }}>{key}:</Typography>
-              <Typography variant="body1" sx={{ marginTop: 1 }}>{value}</Typography>
-            </div>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <AccommodationDialog open={openEditDialog} onClose={handleCloseDialog} accommodation={editedAccommodation}></AccommodationDialog>
+
     </div>
   );
 };

@@ -92,6 +92,60 @@ const DestinationTransportation = () => {
     setSelectedDestination(Destination);
   }
 
+  const DestinationDialog = ({ open, onClose, destination }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{destination.Name}</DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Typography variant="body1"><strong>Proposed by:</strong> {destination.Proposed_by}</Typography>
+          <Typography variant="body1"><strong>Trip:</strong> {destination.Trip}</Typography>
+          <Typography 
+            variant="body1"><strong>Link:</strong> {destination.link ?
+            <a href={destination.link} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>{destination.link}</a> : "No link available" }
+          </Typography>
+          <Typography variant="body1"><strong>Price:</strong> {destination.price}</Typography>
+          <Typography 
+            variant="body1"><strong>Description:</strong> {destination.description ? destination.description : "No description available"}
+          </Typography>
+        </DialogContent>
+        <DialogContent>
+          {/* To add more space at the bottom */}
+          <div style={{ height: '10px' }}></div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
+  const TransportationDialog = ({ open, onClose, transportation }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{transportation.Name}</DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Typography variant="body1"><strong>Proposed by:</strong> {transportation.Proposed_by}</Typography>
+          <Typography variant="body1"><strong>Trip:</strong> {transportation.Trip}</Typography>
+          <Typography 
+            variant="body1"><strong>Link:</strong> {transportation.link ?
+            <a href={transportation.link} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>{transportation.link}</a> : "No link available" }
+          </Typography>
+          <Typography variant="body1"><strong>Price:</strong> {transportation.price}</Typography>
+          <Typography 
+            variant="body1"><strong>Description:</strong> {transportation.description ? transportation.description : "No description available"}
+          </Typography>
+        </DialogContent>
+        <DialogContent>
+          {/* To add more space at the bottom */}
+          <div style={{ height: '10px' }}></div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
   return (
     <div style={{ width: '100%' }}>
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
@@ -137,22 +191,7 @@ const DestinationTransportation = () => {
         ))}
       </Container>
 
-      <Dialog open={openDestinationDialog} onClose={handleCloseDestinationDialog}>
-      <DialogTitle>Destination Details</DialogTitle>
-        <DialogContent>
-          {Object.entries(editedDestination).map(([key, value]) => (
-            <div key={key}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: 2 }}>{key}:</Typography>
-              <Typography variant="body1" sx={{ marginTop: 1 }}>{value}</Typography>
-            </div>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDestinationDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DestinationDialog open={openDestinationDialog} onClose={handleCloseDestinationDialog} destination={editedDestination}></DestinationDialog>
 
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
         <Toolbar>
@@ -197,22 +236,7 @@ const DestinationTransportation = () => {
         ))}
       </Container>
 
-      <Dialog open={openTransportationDialog} onClose={handleCloseTransportationDialog}>
-      <DialogTitle>Transportation Details</DialogTitle>
-        <DialogContent>
-          {Object.entries(editedTransportation).map(([key, value]) => (
-            <div key={key}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: 2 }}>{key}:</Typography>
-              <Typography variant="body1" sx={{ marginTop: 1 }}>{value}</Typography>
-            </div>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseTransportationDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <TransportationDialog open={openTransportationDialog} onClose={handleCloseTransportationDialog} transportation={editedTransportation}></TransportationDialog>
     </div>
   );
 };

@@ -56,6 +56,33 @@ const Restaurants = () => {
     setSelectedRestaurants(Restaurants);
   }
 
+  const RestaurantDialog = ({ open, onClose, restaurant }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{restaurant.Name}</DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Typography variant="body1"><strong>Proposed by:</strong> {restaurant.Proposed_by}</Typography>
+          <Typography variant="body1"><strong>Trip:</strong> {restaurant.Trip}</Typography>
+          <Typography 
+            variant="body1"><strong>Link:</strong> {restaurant.link ?
+            <a href={restaurant.link} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>{restaurant.link}</a> : "No link available" }
+          </Typography>
+          <Typography variant="body1"><strong>Price:</strong> {restaurant.price}</Typography>
+          <Typography 
+            variant="body1"><strong>Description:</strong> {restaurant.description ? restaurant.description : "No description available"}
+          </Typography>
+        </DialogContent>
+        <DialogContent>
+          {/* To add more space at the bottom */}
+          <div style={{ height: '10px' }}></div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
   return (
     <div style={{ width: '100%' }}>
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
@@ -101,22 +128,7 @@ const Restaurants = () => {
         ))}
       </Container>
 
-      <Dialog open={openEditDialog} onClose={handleCloseDialog}>
-      <DialogTitle>Restaurants Details</DialogTitle>
-        <DialogContent>
-          {Object.entries(editedRestaurants).map(([key, value]) => (
-            <div key={key}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: 2 }}>{key}:</Typography>
-              <Typography variant="body1" sx={{ marginTop: 1 }}>{value}</Typography>
-            </div>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <RestaurantDialog open={openEditDialog} onClose={handleCloseDialog} restaurant={editedRestaurants}></RestaurantDialog>
     </div>
   );
 };

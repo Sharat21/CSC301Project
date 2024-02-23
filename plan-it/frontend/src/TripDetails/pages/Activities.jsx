@@ -48,14 +48,6 @@ const Activities = () => {
     setOpenEditDialog(true);
   }
 
-  // const handleSaveChanges = () => {
-  //   // const updatedActivitiesData = activitiesData.map((activity) =>
-  //   //   activity.name === editedActivity.name ? { ...activity, ...editedActivity } : activity
-  //   // );
-  //   // activitiesData = updatedActivitiesData;
-  //   setOpenEditDialog(false);
-  // };
-
   const handleCloseDialog = () => {
     setOpenEditDialog(false);
   }
@@ -63,6 +55,33 @@ const Activities = () => {
   const handleCardHover = (activity) => {
     setSelectedActivity(activity);
   }
+
+  const ActivityDialog = ({ open, onClose, activity }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{activity.Name}</DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Typography variant="body1"><strong>Proposed by:</strong> {activity.Proposed_by}</Typography>
+          <Typography variant="body1"><strong>Trip:</strong> {activity.Trip}</Typography>
+          <Typography 
+            variant="body1"><strong>Link:</strong> {activity.link ?
+            <a href={activity.link} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>{activity.link}</a> : "No link available" }
+          </Typography>
+          <Typography variant="body1"><strong>Price:</strong> {activity.price}</Typography>
+          <Typography 
+            variant="body1"><strong>Description:</strong> {activity.description ? activity.description : "No description available"}
+          </Typography>
+        </DialogContent>
+        <DialogContent>
+          {/* To add more space at the bottom */}
+          <div style={{ height: '10px' }}></div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
 
   return (
     <div style={{ width: '100%' }}>
@@ -100,7 +119,6 @@ const Activities = () => {
               <Typography variant="body2" color="text.secondary">
                 Type: {activity.Type}
               </Typography>
-              {/* Add more details as needed */}
               <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
                 View Details
               </Button>
@@ -109,22 +127,8 @@ const Activities = () => {
         ))}
       </Container>
 
-      <Dialog open={openEditDialog} onClose={handleCloseDialog}>
-      <DialogTitle>Activity Details</DialogTitle>
-        <DialogContent>
-          {Object.entries(editedActivity).map(([key, value]) => (
-            <div key={key}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: 2 }}>{key}:</Typography>
-              <Typography variant="body1" sx={{ marginTop: 1 }}>{value}</Typography>
-            </div>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ActivityDialog open={openEditDialog} onClose={handleCloseDialog} activity={editedActivity} />
+
     </div>
   );
 };
