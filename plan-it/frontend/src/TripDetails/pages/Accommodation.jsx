@@ -21,6 +21,8 @@ const Accommodation = () => {
   const [editedAccommodation, setEditedAccommodation] = useState({});
   const [selectedAccommodation, setSelectedAccommodation] = useState(null);
   const [accommodationData, setAccommodationData] = useState([]);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [accommodationToDelete, setAccommodationToDelete] = useState(null);
   const baseURL = `http://localhost:5100/api/ideas`;
 
   useEffect(() => {
@@ -52,8 +54,47 @@ const Accommodation = () => {
     setOpenEditDialog(false);
   }
 
+  const handleCloseDeleteDialog = () => {
+    setOpenConfirmDialog(false);
+  }
+
   const handleCardHover = (Accommodation) => {
     setSelectedAccommodation(Accommodation);
+  }
+
+  const handleDeleteRequest = (accommodationID) => {
+    setAccommodationToDelete(accommodationID);
+    setOpenConfirmDialog(true); 
+  };
+
+  const handleDeleteAccommodation = async (accommodationID) => {
+    try {
+      const response = await axios.delete(`${baseURL}/delete-idea`);
+      console.log(response.data.message);
+
+      const updatedAccommodations = confirmedAccommodation.filter(accommodation => accommodation._id != accommodationID);
+      setConfirmedActivities(updatedAccommodations);
+      setAccommodationToDelete(null);
+      setOpenEditDialog(false);
+    } catch (error) {
+      console.error(accommodationID);
+      console.error("Error deleting accommodation: ", error.message);
+    }
+  };
+
+  const DeleteDialog = ({ open, onClose }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this accommodation?
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={() => setOpenConfirmDialog(false)}>Cancel</Button>
+            <Button onClick={() => handleDeleteAccommodation(accommodationToDelete)} color="error" autoFocus>Delete</Button>
+        </DialogActions>
+      </Dialog>
+    )
   }
 
   const AccommodationDialog = ({ open, onClose, accommodation }) => {
@@ -77,6 +118,7 @@ const Accommodation = () => {
           <div style={{ height: '10px' }}></div>
         </DialogContent>
         <DialogActions>
+          <Button onClick={() => handleDeleteRequest(accommodation._id)} color="error">Delete Accommodation</Button>
           <Button onClick={onClose}>Close</Button>
         </DialogActions>
       </Dialog>
@@ -129,6 +171,8 @@ const Accommodation = () => {
       </Container>
 
       <AccommodationDialog open={openEditDialog} onClose={handleCloseDialog} accommodation={editedAccommodation}></AccommodationDialog>
+
+      <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} accommodation={editedAccommodation} />
 
     </div>
   );

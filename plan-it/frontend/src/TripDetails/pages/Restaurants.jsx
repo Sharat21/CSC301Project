@@ -21,6 +21,8 @@ const Restaurants = () => {
   const [editedRestaurants, setEditedRestaurants] = useState({});
   const [selectedRestaurants, setSelectedRestaurants] = useState(null);
   const [RestaurantsData, setRestaurantsData] = useState([]);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [restaurantToDelete, setRestaurantToDelete] = useState(null);
   const baseURL = `http://localhost:5100/api/ideas`;
 
   useEffect(() => {
@@ -52,8 +54,48 @@ const Restaurants = () => {
     setOpenEditDialog(false);
   }
 
+  const handleCloseDeleteDialog = () => {
+    setOpenConfirmDialog(false);
+  }
+
   const handleCardHover = (Restaurants) => {
     setSelectedRestaurants(Restaurants);
+  }
+
+  const handleDeleteRequest = (restaurantID) => {
+    setRestaurantToDelete(restaurantID);
+    setOpenConfirmDialog(true); 
+  };
+
+  const handleDeleteRestaurant = async (restaurantID) => {
+    try {
+      const response = await axios.delete(`${baseURL}/delete-idea`);
+      console.log(response.data.message);
+
+      const updatedRestaurants = confirmedRestaurants.filter(restaurant => restaurant._id != restaurantID);
+      setConfirmedActivities(updatedRestaurants);
+      setRestaurantToDelete(null);
+      setOpenEditDialog(false);
+    } catch (error) {
+      console.error(restaurantID);
+      console.error("Error deleting restaurant: ", error.message);
+    }
+  };
+
+
+  const DeleteDialog = ({ open, onClose }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this restaurant?
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={() => setOpenConfirmDialog(false)}>Cancel</Button>
+            <Button onClick={() => handleDeleteRestaurant(restaurantToDelete)} color="error" autoFocus>Delete</Button>
+        </DialogActions>
+      </Dialog>
+    )
   }
 
   const RestaurantDialog = ({ open, onClose, restaurant }) => {
@@ -77,6 +119,7 @@ const Restaurants = () => {
           <div style={{ height: '10px' }}></div>
         </DialogContent>
         <DialogActions>
+        <Button onClick={() => handleDeleteRequest(restaurant._id)} color="error">Delete Restaurant</Button>
           <Button onClick={onClose}>Close</Button>
         </DialogActions>
       </Dialog>
@@ -129,6 +172,9 @@ const Restaurants = () => {
       </Container>
 
       <RestaurantDialog open={openEditDialog} onClose={handleCloseDialog} restaurant={editedRestaurants}></RestaurantDialog>
+
+      <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} restaurant={editedRestaurants} />
+
     </div>
   );
 };

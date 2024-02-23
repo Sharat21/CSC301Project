@@ -54,10 +54,6 @@ const Activities = () => {
     setOpenEditDialog(false);
   }
 
-  const handleOpenDeleteDialog = () => {
-    setOpenConfirmDialog(true);
-  }
-
   const handleCloseDeleteDialog = () => {
     setOpenConfirmDialog(false);
   }
@@ -68,12 +64,12 @@ const Activities = () => {
 
   const handleDeleteRequest = (activityID) => {
     setActivityToDelete(activityID);
-    setOpenConfirmDialog(true); // Show confirmation dialog
+    setOpenConfirmDialog(true); 
   };
 
   const handleDeleteActivity = async (activityID) => {
     try {
-      const response = await axios.delete(`${baseURL}/confirmed-ideas`);
+      const response = await axios.delete(`${baseURL}/delete-idea`);
       console.log(response.data.message);
 
       const updatedActivities = confirmedActivities.filter(activity => activity._id != activityID);

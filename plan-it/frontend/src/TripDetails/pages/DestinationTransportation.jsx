@@ -28,6 +28,9 @@ const DestinationTransportation = () => {
   const [selectedTransportation, setSelectedTransportation] = useState(null);
   const [transportationData, setTransportationData] = useState([]);
 
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [ideaToDelete, setIdeaToDelete] = useState(null);
+
   const baseURL = `http://localhost:5100/api/ideas`;
 
   useEffect(() => {
@@ -84,12 +87,57 @@ const DestinationTransportation = () => {
     setOpenTransportationDialog(false);
   }
 
+  const handleCloseDeleteDialog = () => {
+    setOpenConfirmDialog(false);
+  }
+
   const handleCardTransportationHover = (Destination) => {
     setSelectedDestination(Destination);
   }
 
   const handleCardDestinationHover = (Destination) => {
     setSelectedDestination(Destination);
+  }
+
+  const handleDeleteRequest = (ideaID) => {
+    setIdeaToDelete(ideaID);
+    setOpenConfirmDialog(true); 
+  };
+
+  const handleDeleteIdea = async (ideaID) => {
+    try {
+      const response = await axios.delete(`${baseURL}/delete-idea`);
+      console.log(response.data.message);
+
+      if(editedDestination) {
+        const updatedDestination = confirmedDestination.filter(destination => destination._id != ideaID);
+        setConfirmedDestination(updatedDestination);
+      }
+      else {
+        const updatedTransportation = confirmedTransportation.filter(transportation => transportation._id != ideaID);
+        setConfirmedDestination(updatedTransportation);
+      }
+      setIdeaToDelete(null);
+      setOpenEditDialog(false);
+    } catch (error) {
+      console.error(ideaID);
+      console.error("Error deleting idea: ", error.message);
+    }
+  };
+
+  const DeleteDialog = ({ open, onClose }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this?
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={() => setOpenConfirmDialog(false)}>Cancel</Button>
+            <Button onClick={() => handleDeleteIdea(ideaToDelete)} color="error" autoFocus>Delete</Button>
+        </DialogActions>
+      </Dialog>
+    )
   }
 
   const DestinationDialog = ({ open, onClose, destination }) => {
@@ -113,6 +161,7 @@ const DestinationTransportation = () => {
           <div style={{ height: '10px' }}></div>
         </DialogContent>
         <DialogActions>
+          <Button onClick={() => handleDeleteRequest(destination._id)} color="error">Delete Destination</Button>
           <Button onClick={onClose}>Close</Button>
         </DialogActions>
       </Dialog>
@@ -140,6 +189,7 @@ const DestinationTransportation = () => {
           <div style={{ height: '10px' }}></div>
         </DialogContent>
         <DialogActions>
+          <Button onClick={() => handleDeleteRequest(transportation._id)} color="error">Delete Transportation</Button>
           <Button onClick={onClose}>Close</Button>
         </DialogActions>
       </Dialog>
@@ -237,6 +287,8 @@ const DestinationTransportation = () => {
       </Container>
 
       <TransportationDialog open={openTransportationDialog} onClose={handleCloseTransportationDialog} transportation={editedTransportation}></TransportationDialog>
+
+      <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} idea={editedTransportation || editedDestination} />
     </div>
   );
 };

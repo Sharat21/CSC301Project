@@ -25,6 +25,16 @@ router.get('/confirmed-ideas', async (req, res) => {
     }
 });
 
+router.get('/something', async (req, res) => {
+    try {
+        const confirmedIdeas = await fetchConfirmedIdeas();
+        res.json(confirmedIdeas);
+    } catch(error) {
+        console.log("Fetching all confirmed ideas failed: ", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 router.get('/confirmed-ideas/:type', async (req, res) => {
     try {
         const { type } = req.params;
@@ -36,10 +46,10 @@ router.get('/confirmed-ideas/:type', async (req, res) => {
     }
 });
 
-router.delete('/confirmed-ideas', async (req, res) => {
+router.delete('/delete-idea', async (req, res) => {
     try {
         const { id } = req.body;
-        const query = { _id: new ObjectId(id) };
+        const query = { _id: id };
         const result = await deleteIdea(query);
         if (result.deletedCount === 0) {
             return res.status(404).json({ message: 'Idea not found' });
