@@ -31,7 +31,7 @@ const DestinationTransportation = () => {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [ideaToDelete, setIdeaToDelete] = useState(null);
 
-  const baseURL = `http://localhost:5100/api/ideas`;
+  const baseURL = `http://localhost:14000/api/ideas`;
 
   useEffect(() => {
     const fetchDestinationData = async () => {
@@ -106,21 +106,14 @@ const DestinationTransportation = () => {
 
   const handleDeleteIdea = async (ideaID) => {
     try {
-      const response = await axios.delete(`${baseURL}/delete-idea`);
+      const response = await axios.delete(`${baseURL}/delete-idea/${ideaID}`);
       console.log(response.data.message);
 
-      if(editedDestination) {
-        const updatedDestination = confirmedDestination.filter(destination => destination._id != ideaID);
-        setConfirmedDestination(updatedDestination);
-      }
-      else {
-        const updatedTransportation = confirmedTransportation.filter(transportation => transportation._id != ideaID);
-        setConfirmedDestination(updatedTransportation);
-      }
-      setIdeaToDelete(null);
-      setOpenEditDialog(false);
+      setOpenDestinationDialog(false);
+      setOpenTransportationDialog(false);
+      setOpenConfirmDialog(false);
+      window.location.reload();
     } catch (error) {
-      console.error(ideaID);
       console.error("Error deleting idea: ", error.message);
     }
   };
@@ -153,7 +146,7 @@ const DestinationTransportation = () => {
           </Typography>
           <Typography variant="body1"><strong>Price:</strong> {destination.price}</Typography>
           <Typography 
-            variant="body1"><strong>Description:</strong> {destination.description ? destination.description : "No description available"}
+            variant="body1"><strong>Description:</strong> {destination.Description ? destination.Description : "No description available"}
           </Typography>
         </DialogContent>
         <DialogContent>
@@ -181,7 +174,7 @@ const DestinationTransportation = () => {
           </Typography>
           <Typography variant="body1"><strong>Price:</strong> {transportation.price}</Typography>
           <Typography 
-            variant="body1"><strong>Description:</strong> {transportation.description ? transportation.description : "No description available"}
+            variant="body1"><strong>Description:</strong> {transportation.Description ? transportation.Description : "No description available"}
           </Typography>
         </DialogContent>
         <DialogContent>

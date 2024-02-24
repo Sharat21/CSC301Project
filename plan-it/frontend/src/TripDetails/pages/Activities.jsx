@@ -23,7 +23,7 @@ const Activities = () => {
   const [activitiesData, setActivitiesData] = useState([]);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [activityToDelete, setActivityToDelete] = useState(null);
-  const baseURL = `http://localhost:5100/api/ideas`;
+  const baseURL = `http://localhost:14000/api/ideas`;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,15 +69,14 @@ const Activities = () => {
 
   const handleDeleteActivity = async (activityID) => {
     try {
-      const response = await axios.delete(`${baseURL}/delete-idea`);
+      const response = await axios.delete(`${baseURL}/delete-idea/${activityID}`);
       console.log(response.data.message);
 
-      const updatedActivities = confirmedActivities.filter(activity => activity._id != activityID);
-      setConfirmedActivities(updatedActivities);
       setActivityToDelete(null);
       setOpenEditDialog(false);
+      setOpenConfirmDialog(false);
+      window.location.reload();
     } catch (error) {
-      console.error(activityID);
       console.error("Error deleting activity: ", error.message);
     }
   };
@@ -110,7 +109,7 @@ const Activities = () => {
           </Typography>
           <Typography variant="body1"><strong>Price:</strong> {activity.price}</Typography>
           <Typography 
-            variant="body1"><strong>Description:</strong> {activity.description ? activity.description : "No description available"}
+            variant="body1"><strong>Description:</strong> {activity.Description ? activity.Description : "No description available"}
           </Typography>
         </DialogContent>
         <DialogContent>

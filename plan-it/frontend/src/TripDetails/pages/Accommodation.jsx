@@ -23,7 +23,7 @@ const Accommodation = () => {
   const [accommodationData, setAccommodationData] = useState([]);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [accommodationToDelete, setAccommodationToDelete] = useState(null);
-  const baseURL = `http://localhost:5100/api/ideas`;
+  const baseURL = `http://localhost:14000/api/ideas`;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,15 +69,14 @@ const Accommodation = () => {
 
   const handleDeleteAccommodation = async (accommodationID) => {
     try {
-      const response = await axios.delete(`${baseURL}/delete-idea`);
+      const response = await axios.delete(`${baseURL}/delete-idea/${accommodationID}`);
       console.log(response.data.message);
 
-      const updatedAccommodations = confirmedAccommodation.filter(accommodation => accommodation._id != accommodationID);
-      setConfirmedActivities(updatedAccommodations);
       setAccommodationToDelete(null);
       setOpenEditDialog(false);
+      setOpenConfirmDialog(false);
+      window.location.reload();
     } catch (error) {
-      console.error(accommodationID);
       console.error("Error deleting accommodation: ", error.message);
     }
   };
@@ -110,7 +109,7 @@ const Accommodation = () => {
           </Typography>
           <Typography variant="body1"><strong>Price:</strong> {accommodation.price}</Typography>
           <Typography 
-            variant="body1"><strong>Description:</strong> {accommodation.description ? accommodation.description : "No description available"}
+            variant="body1"><strong>Description:</strong> {accommodation.Description ? accommodation.Description : "No description available"}
           </Typography>
         </DialogContent>
         <DialogContent>

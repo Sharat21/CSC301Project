@@ -23,7 +23,7 @@ const Restaurants = () => {
   const [RestaurantsData, setRestaurantsData] = useState([]);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [restaurantToDelete, setRestaurantToDelete] = useState(null);
-  const baseURL = `http://localhost:5100/api/ideas`;
+  const baseURL = `http://localhost:14000/api/ideas`;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,19 +69,17 @@ const Restaurants = () => {
 
   const handleDeleteRestaurant = async (restaurantID) => {
     try {
-      const response = await axios.delete(`${baseURL}/delete-idea`);
+      const response = await axios.delete(`${baseURL}/delete-idea/${restaurantID}`);
       console.log(response.data.message);
 
-      const updatedRestaurants = confirmedRestaurants.filter(restaurant => restaurant._id != restaurantID);
-      setConfirmedActivities(updatedRestaurants);
       setRestaurantToDelete(null);
       setOpenEditDialog(false);
+      setOpenConfirmDialog(false);
+      window.location.reload();
     } catch (error) {
-      console.error(restaurantID);
       console.error("Error deleting restaurant: ", error.message);
     }
   };
-
 
   const DeleteDialog = ({ open, onClose }) => {
     return (
@@ -111,7 +109,7 @@ const Restaurants = () => {
           </Typography>
           <Typography variant="body1"><strong>Price:</strong> {restaurant.price}</Typography>
           <Typography 
-            variant="body1"><strong>Description:</strong> {restaurant.description ? restaurant.description : "No description available"}
+            variant="body1"><strong>Description:</strong> {restaurant.Description ? restaurant.Description : "No description available"}
           </Typography>
         </DialogContent>
         <DialogContent>

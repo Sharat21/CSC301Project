@@ -1,6 +1,6 @@
 const { query } = require('express');
 require('dotenv').config();
-const { MongoClient, ObjectId } = require('mongodb');
+const { MongoClient } = require('mongodb');
 // Connection URI
 const uri = process.env.MONGO_URI;
 // Database Name
