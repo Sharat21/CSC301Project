@@ -11,14 +11,17 @@ import {
   Button,
 } from "@mui/material";
 import { Cancel, Add } from "@mui/icons-material";
+import { useNavigate  } from "react-router-dom";
 
 const groupsData = [
   {
+    id: 1,
     name: "Family",
     members: ["John", "Jane", "Alice"],
     date: "2023-05-15",
   },
   {
+    id: 2,
     name: "Friends",
     members: ["Tom", "Emily", "Mike"],
     date: "2023-06-20",
@@ -27,9 +30,14 @@ const groupsData = [
 ];
 
 const Groups = () => {
-  const handleClick = (groupName) => {
-    // Handle click event, e.g., navigate to group details page
-    console.log(`Clicked on group: ${groupName}`);
+  const navigate = useNavigate(); // Use useNavigate hook
+
+
+  const handleClick = (groupId) => {
+    // Handle click event, navigate to group details page
+    console.log(`Clicked on group with ID: ${groupId}`);
+    // Navigate to the group details page
+    navigate(`/trips/${groupId}`);
   };
 
   const handleJoinGroup = (groupName) => {
@@ -37,7 +45,8 @@ const Groups = () => {
     console.log(`Joined group: ${groupName}`);
   };
 
-  const handleLeaveGroup = (groupName) => {
+  const handleLeaveGroup = (event, groupName) => {
+    event.stopPropagation();
     // Handle leave group button click event
     console.log(`Left group: ${groupName}`);
   };
@@ -66,25 +75,27 @@ const Groups = () => {
         >
           {groupsData.map((group, index) => (
             <Grid item key={index} xs={12} sm={6} md={4} lg={3} sx={{ padding: 0 }}>
-              <Card sx={{ width: "100%", height: "100%", position: "relative" }}>
+              <Card 
+                sx={{ width: "100%", height: "100%", position: "relative" }}
+                
+                onClick={() => handleClick(group.id)}
+              >
                 <CardContent>
                   <Typography variant="h6">{group.name}</Typography>
                   <Typography variant="body1">
                     Members: {group.members.join(", ")}
                   </Typography>
-                  <Typography variant="body2">
-                    Date Created: {group.date}
-                  </Typography>
+                  <Typography variant="body2">Date Created: {group.date}</Typography>
                 </CardContent>
                 <IconButton
                   aria-label="leave group"
-                  onClick={() => handleLeaveGroup(group.name)}
+                  onClick={(event) => handleLeaveGroup(event, group.id)}
                   sx={{ position: "absolute", top: 8, right: 8 }}
                 >
                   <Cancel />
                 </IconButton>
               </Card>
-            </Grid>
+          </Grid>
           ))}
         </Grid>
       </Container>

@@ -4,11 +4,9 @@ import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import TripDetails from "./TripDetails/TripDetails";
 import Restaurants from "./TripDetails/pages/Restaurants"
+import Trips from "./Trips/Trips";
+import Groups from "./Groups/Groups";
 
-//import Trips from "./Trips/Trips";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from './components/LoginPage';
-import RegisterPage from './components/RegisterPage';
 //function App() {
   // return <p>Hello World</p>;
   //return <div ><Trips /></div>
@@ -23,6 +21,8 @@ const App = () => {
           <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/groups/:userId" element={<Groups />} />
+              <Route path="/trips/:groupId" element={<Trips />} />
           </Routes>
       </Router>
   );

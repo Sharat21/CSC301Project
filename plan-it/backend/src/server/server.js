@@ -12,11 +12,13 @@ app.use(express.json());
 
 // =============== UNCOMMENT WHEN YOU IMPLEMENT ================== //
 const usersRoutes = require('./routes/users');
-// const groupsRoutes = require("./routes/groupsRoutes");
+const groupsRoutes = require("./routes/groupsRoutes");
 const ideasRoutes = require("./routes/ideas");
 
 app.use('/api/users', usersRoutes);
 app.use('/api/ideas', ideasRoutes);
+app.use('/api/groups', groupsRoutes);
+
 
 const dbo = require("../database.js");
 app.listen(port, () => {
