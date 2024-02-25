@@ -3,13 +3,22 @@ import '.././index.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+
+const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const baseURL = `http://localhost:14000/api/users/login`;
+    const baseURL = `http://localhost:14000/api/users/register`;
     const navigate = useNavigate();
-
-
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    
+    const handleFirstNameChange = (e) => {
+        setFirstName(e.target.value);
+    };
+    
+    const handleLastNameChange = (e) => {
+        setLastName(e.target.value);
+    };
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
     };
@@ -18,35 +27,56 @@ const LoginPage = () => {
         setPassword(e.target.value);
     };
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         try {
-            const response = await axios.post(baseURL, { email, password });
-
+            const response = await axios.post(baseURL, { firstName, lastName, email, password });
             const user = response.data;
             console.log('User data:', user);
-
-            // Perform additional logic based on the response
-            // For example, redirect to a different page on successful login
-            alert("Successful Login");
-
+            alert("Successful Registration");
+            navigate('/login');
+          
         } catch (error) {
-            alert("Invalid Email or Password");
+            if (error.response && error.response.status === 400) {
+                alert(error.response.data.error);
+            } else {
+                console.error('Error registering:', error);
+                alert("Invalid Registration");
+            }
         }
     };
 
-    const handleCreateAccount = () => {
-        // Perform logic to navigate to create account page or show registration form
-        navigate('/register');
-        console.log('Creating a new account...');
+    const handleLogin = () => {
+        navigate('/login');
+        console.log('Navigating to login page...');
     };
 
     return (
-        <div className="login-page">
-            <h1 className="text-5xl font-bold" >Welcome to PlanIt!</h1>
-            <div className="login-container">
+        <div className="register-page">
+            <h1 className="text-5xl font-bold">Create an Account</h1>
+            <div className="register-container">
                 <div className="form-container">
                     <h2 className="form-title">Get Started</h2>
                     <form>
+                        <div>
+                            <label htmlFor="firstName">First Name:</label>
+                            <input
+                                id="firstName"
+                                type="input"
+                                value={firstName}
+                                onChange={handleFirstNameChange}
+                                className="form-input"
+                                placeholder="Enter your First Name"
+                            />
+                            <label htmlFor="lastName">Last Name:</label>
+                            <input
+                                id="lastName"
+                                type="input"
+                                value={lastName}
+                                onChange={handleLastNameChange}
+                                className="form-input"
+                                placeholder="Enter your Last Name"
+                            />
+                        </div>
                         <div>
                             <label htmlFor="email">Email:</label>
                             <input
@@ -72,17 +102,17 @@ const LoginPage = () => {
                         <div className="flex items-center justify-between">
                             <button
                                 type="button"
-                                onClick={handleLogin}
+                                onClick={handleRegister}
                                 className="form-button mr-2"
                             >
-                                Login
+                                Register
                             </button>
                             <button
                                 type="button"
-                                onClick={handleCreateAccount}
+                                onClick={handleLogin}
                                 className="form-button create-account"
                             >
-                                Create New Account
+                                Already have an account?
                             </button>
                         </div>
                     </form>
@@ -92,4 +122,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default RegisterPage;
