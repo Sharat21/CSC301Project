@@ -17,6 +17,7 @@ import RegisterPage from './components/RegisterPage';
 // import Bar from "./TripDetails/Bar";
 // import BudgetSheet from "./TripDetails/BudgetSheet";
 // import BudgetSheet from "./TripDetails/pages/BudgetSheet";
+
 const App = () => {
   return (
       <Router>
