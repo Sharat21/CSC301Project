@@ -22,7 +22,6 @@ Returns success status of adding user.
 */
 async function addUser(data, collectionName = 'users') {
   const client = new MongoClient(uri);
-
   try {
     await client.connect();
     const db = client.db(dbName);
@@ -42,7 +41,7 @@ Returns user as an object, where result.Firstname etc can be used to get individ
 */
 async function findUser(query = {}, collectionName = 'users') {
   const client = new MongoClient(uri);
-
+  
   try {
     await client.connect();
     const db = client.db(dbName);
@@ -111,7 +110,7 @@ async function deleteUser(query, collectionName = 'users') {
 /*
 Add a new group into the database. 
 data parameter must have the following structure:
-{ Name: "Squadup", Users: [], Trips: [] };
+{ Name: "Squadup", Users: [], Trips: [], createdOn: 2024-02-20 };
 Returns success status of adding group.
 */
 async function addGroup(data, collectionName = 'groups') {
@@ -202,6 +201,79 @@ async function deleteGroup(query, collectionName = 'groups') {
   }
 }
 
+/*
+Add a new idea into the database. 
+data parameter must have the following structure:
+{ Name: "Chik-Fil-A", Type: "Restaurant", Description: "A delicacy, as described by Jamdaar Junior.", Votes: 0, Confirmed: false, Proposed_by: [UID], Trip: [TID], Date_Proposed: 2024-02-30,
+  Voting_End: 2024-04-30, link: "https://www.chick-fil-a.ca/locations/on/rutherford-rd-hwy-400?utm_source=yext&utm_medium=link", price: 13.5 };
+Returns success status of adding idea.
+*/
+async function addIdea(data, collectionName = 'ideas') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.insertOne(data);
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+/*
+Update an idea in the database. 
+
+The query parameter can take in any attribute the Idea has, and if it exists,
+it will update that idea. For certainty with update, the id of
+the Idea can be taken and put in as a parameter like so:
+
+const query = { _id: [idea id] };
+
+data parameter must have the following structure:
+{ Name: "South-Common" }
+
+Returns success status of updating idea.
+*/
+async function updateIdea(id, newData, collectionName = 'ideas') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.updateOne(query, { $set: newData });
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+
+/*
+Delete an idea in the database. 
+The query parameter can take in any attribute the idea has, and if it exists,
+it will delete that idea. For certainty with delete, the id of
+the idea can be taken and put in as a parameter like so:
+
+const query = { _id: [idea id] };
+
+Returns delete status.
+*/
+async function deleteIdea(query, collectionName = 'ideas') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.deleteOne(query);
+    return result;
+  } finally {
+    await client.close();
+  }
+}
 
 /* Fetch all ideas from the database. 
 
@@ -209,7 +281,7 @@ Returns an array of ideas as objects
 */
 async function fetchAllIdeas(query = {}, collectionName = "ideas") {
   const client = new MongoClient(uri);
-  
+
   try {
     await client.connect();
     const db = client.db(dbName);
@@ -228,12 +300,12 @@ Returns an array of ideas as objects
 */
 async function fetchConfirmedIdeas(userQuery = {}, collectionName = "ideas") {
   const client = new MongoClient(uri);
-  
+
   try {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    const query = {Confirmed: true, ...userQuery}
+    const query = { Confirmed: true, ...userQuery }
     const result = await collection.find(query).toArray();
     return result;
   } finally {
@@ -248,13 +320,108 @@ Returns an array of ideas as objects
 */
 async function fetchConfirmedByType(type, collectionName = "ideas") {
   const client = new MongoClient(uri);
-    
+
   try {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    const query = {Confirmed: true, Type: type}
+    const query = { Confirmed: true, Type: type }
     const result = await collection.find(query).toArray();
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+/*
+Add a new trip into the database. 
+data parameter must have the following structure:
+{ Name: "Grad Trip", Duration: "5 days", StartDate: 2024-05-19, EndDate: 2024-05-24, 
+  Description: "Trip with the boys after graduation", Status: "In Planning"};
+
+Status should be one of the following: ["In Planning, Completed, Saved for Later"]
+Returns success status of adding trip.
+*/
+async function addTrip(data, collectionName = 'trips') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.insertOne(data);
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+/*
+Update a trip in the database. 
+
+The query parameter can take in any attribute the Trip has, and if it exists,
+it will update that trip. For certainty with update, the id of
+the Trip can be taken and put in as a parameter like so:
+
+const query = { _id: [trip id] };
+
+data parameter must have the following structure:
+{ Name: "Shenzen Trip" }
+
+Returns success status of updating trip.
+*/
+async function updateTrip(id, newData, collectionName = 'trips') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.updateOne(query, { $set: newData });
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+/*
+Find a trip in the database.
+query parameter must have the following structure:
+{ Name: "Grad Trip" }, where any of the trip's fields can be used to query a trip.
+Returns trip as an object, where result.Name etc can be used to get individual attributes.
+*/
+async function findTrip(query = {}, collectionName = 'trips') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const documents = await collection.findOne(query);
+    return documents;
+  } finally {
+    await client.close();
+  }
+}
+
+/*
+Delete a trip in the database. 
+The query parameter can take in any attribute the trip has, and if it exists,
+it will delete that trip. For certainty with delete, the id of
+the trip can be taken and put in as a parameter like so:
+
+const query = { _id: [trip id] };
+
+Returns delete status.
+*/
+async function deleteTrip(query, collectionName = 'trips') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.deleteOne(query);
     return result;
   } finally {
     await client.close();
@@ -270,8 +437,15 @@ module.exports = {
   findGroup,
   updateGroup,
   deleteGroup,
+  addIdea,
+  updateIdea,
+  deleteIdea,
   fetchAllIdeas,
   fetchConfirmedIdeas,
-  fetchConfirmedByType
+  fetchConfirmedByType,
+  addTrip,
+  updateTrip,
+  findTrip,
+  deleteTrip
 };
 
