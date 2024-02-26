@@ -111,7 +111,7 @@ async function deleteUser(query, collectionName = 'users') {
 /*
 Add a new group into the database. 
 data parameter must have the following structure:
-{ Name: "Squadup", Users: [], Trips: [] };
+{ Name: "Squadup", Users: [], Trips: [], createdOn: 2024-02-20 };
 Returns success status of adding group.
 */
 async function addGroup(data, collectionName = 'groups') {
