@@ -1,0 +1,48 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Align items to the center */
+    height: 100vh;
+}
+
+.search-container {
+    padding: 10px;
+    margin-bottom: 20px; /* Add space between search bar and map */
+    
+}
+
+.search-container input[type="text"] {
+    width: 300px; /* Adjust width as needed */
+    padding: 10px;
+    border: none;
+    border-radius: 20px; /* Smooth edges */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add box shadow */
+    outline: none;
+}
+
+.suggestions {
+    list-style-type: none;
+    padding: 10px;
+    margin: 0;
+    background-color: lightgray;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.9s ease-in-out; /* Add transition for smooth appearance */
+
+}
+
+.suggestions li {
+    cursor: pointer;
+    padding: 5px;
+    transition: opacity 0.9s ease-in-out; /* Add transition for smooth appearance */
+
+}
+
+.map-container {
+    width: 70vw;
+    height: 70vh;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    margin-left: 20px; /* Move the map to the right */
+    margin-top: 20px; /* Move the map down */
+}
