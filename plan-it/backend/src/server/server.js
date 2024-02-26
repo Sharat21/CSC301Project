@@ -12,12 +12,16 @@ app.use(express.json());
 
 // =============== UNCOMMENT WHEN YOU IMPLEMENT ================== //
 const usersRoutes = require('./routes/users');
-const groupsRoutes = require("./routes/groupsRoutes");
+const groupsRoutes = require("./routes/groups");
 const ideasRoutes = require("./routes/ideas");
+const tripsRoutes = require("./routes/trips");
+
 
 app.use('/api/users', usersRoutes);
 app.use('/api/ideas', ideasRoutes);
 app.use('/api/groups', groupsRoutes);
+app.use('/api/trips', tripsRoutes);
+
 
 
 const dbo = require("../database.js");

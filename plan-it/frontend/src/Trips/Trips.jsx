@@ -1,6 +1,8 @@
 // Trips.jsx
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from 'axios';
+
 import {
   AppBar,
   Toolbar,
@@ -23,88 +25,193 @@ import {
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useParams } from "react-router-dom";
+import { useNavigate  } from "react-router-dom";
 
-let tripsData = [
-  {
-    name: "Trip 1",
-    duration: "3 days",
-    startDate: "2024-02-10",
-    endDate: "2024-02-13",
-    description: "A wonderful trip to explore new places.",
-    status: "Planned",
-  },
-  {
-    name: "Trip 2",
-    duration: "5 days",
-    startDate: "2024-03-15",
-    endDate: "2024-03-20",
-    description: "An adventurous journey to the mountains.",
-    status: "In Progress",
-  },
-  {
-    name: "Trip 3",
-    duration: "7 days",
-    startDate: "2024-04-22",
-    endDate: "2024-04-28",
-    description: "A relaxing beach vacation.",
-    status: "Completed",
-  },
-  {
-    name: "Trip 4",
-    duration: "4 days",
-    startDate: "2024-06-10",
-    endDate: "2024-06-14",
-    description: "Exploring historical landmarks and museums.",
-    status: "Planned",
-  },
-  {
-    name: "Trip 5",
-    duration: "6 days",
-    startDate: "2024-08-01",
-    endDate: "2024-08-06",
-    description: "Hiking in the mountains and camping.",
-    status: "In Progress",
-  },
-  {
-    name: "Trip 6",
-    duration: "4 days",
-    startDate: "2024-09-10",
-    endDate: "2024-09-14",
-    description: "Cultural exploration in a new city.",
-    status: "Planned",
-  },
-];
 
+
+// let tripsData = [
+//   {
+//     Name: "Trip 1",
+//     Duration: "3 days",
+//     startDate: "2024-02-10",
+//     endDate: "2024-02-13",
+//     Description: "A wonderful trip to explore new places.",
+//     Status: "Planned",
+//   },
+//   {
+//     Name: "Trip 2",
+//     Duration: "5 days",
+//     startDate: "2024-03-15",
+//     endDate: "2024-03-20",
+//     Description: "An adventurous journey to the mountains.",
+//     Status: "In Progress",
+//   },
+//   {
+//     Name: "Trip 3",
+//     Duration: "7 days",
+//     startDate: "2024-04-22",
+//     endDate: "2024-04-28",
+//     Description: "A relaxing beach vacation.",
+//     Status: "Completed",
+//   },
+//   {
+//     Name: "Trip 4",
+//     Duration: "4 days",
+//     startDate: "2024-06-10",
+//     endDate: "2024-06-14",
+//     Description: "Exploring historical landmarks and museums.",
+//     Status: "Planned",
+//   },
+//   {
+//     Name: "Trip 5",
+//     Duration: "6 days",
+//     startDate: "2024-08-01",
+//     endDate: "2024-08-06",
+//     Description: "Hiking in the mountains and camping.",
+//     Status: "In Progress",
+//   },
+//   {
+//     Name: "Trip 6",
+//     Duration: "4 days",
+//     startDate: "2024-09-10",
+//     endDate: "2024-09-14",
+//     Description: "Cultural exploration in a new city.",
+//     Status: "Planned",
+//   },
+// ];
+const formatDate = (dateString) => {
+  const dateObject = new Date(dateString);
+  const year = dateObject.getFullYear();
+  const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObject.getDate()).padStart(2, '0');
+  console.log(`${year}-${month}-${day}`, dateString);
+  return `${year}-${month}-${day}`;
+};
+
+function formatStatus(status) {
+  // Replace uppercase letter with space followed by the lowercase letter
+  return status.replace(/([A-Z])/g, ' $1').trim();
+}
 const Trips = () => {
+  const baseURL = `http://localhost:14000/api/trips`;
+  var [tripsData, setTripsData] = useState([]);
+  const { groupId } = useParams(); // Extract userId from the URL
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedTrip, setEditedTrip] = useState({});
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const navigate = useNavigate(); // Use useNavigate hook
+
   const [newTrip, setNewTrip] = useState({
-    name: "",
-    duration: "",
+    id: "",
+    Name: "",
+    Duration: "",
     startDate: "",
     endDate: "",
-    description: "",
-    status: "",
+    Description: "",
+    Status: "",
   });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+      const response = await axios.get(`${baseURL}/get_trip_ids/${groupId}`);
+
+      // var fetchedGroups = response.data.map(group => ({
+      //   ...group,
+      //   date: formatDate(String(group.createdOn)) // Extract date portion
+      // }));
+      const tripsData = [];
+
+    // Iterate through each trip ID
+    for (const tripId of response.data[0].Trips) {
+      try {
+        // Call your query function to retrieve trip data for the current trip ID
+        const responseTrips = await axios.get(`${baseURL}/get-trip/${tripId}`);
+
+        // Push the retrieved trip data to the tripsData array
+        responseTrips.data.startDate = formatDate(String(responseTrips.data.StartDate));
+        responseTrips.data.endDate = formatDate(String(responseTrips.data.EndDate));
+        responseTrips.data.id = responseTrips.data._id;
+        console.log(responseTrips.data)
+        tripsData.push(responseTrips.data);
+      } catch (error) {
+        console.error(`Error retrieving trip data for trip ID ${tripId}:`, error);
+        // Handle errors or skip the trip ID as needed
+      }
+    }
+    console.log("tripData", tripsData);
+    setTripsData(tripsData);
+
+      // var fetchedTrips = response.data.map(trip => ({
+      //   ...trip,
+      //   startDate: formatDate(String(trip.StartDate)), // Extract date portion
+      //   endDate: formatDate(String(trip.EndDate)) // Extract date portion
+      // }));
+      
+      // console.log('User data:', fetchedTrips);
+      } catch (error) {
+        //setError(error.message);
+        console.log('Error', error.message);
+      }
+    }
+
+    fetchData();
+  }, []);
   const handleEditDetails = (trip) => {
-    setEditedTrip(trip);
+    console.log("EditTrip:  ", trip);
+    setEditedTrip({ ...trip }); // Initialize editedTrip with the data of the selected trip
+    // setEditedTrip(prevState => ({ ...prevState, id: trip.id }));
+
     setOpenEditDialog(true);
   };
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = async () => {
     // Update the corresponding trip in tripsData
-    const updatedTripsData = tripsData.map((trip) =>
-      trip.name === editedTrip.name ? { ...trip, ...editedTrip } : trip
-    );
+    const { id, Name, Duration, startDate, endDate, Description, Status } = editedTrip;
+    console.log("update data", id);
 
-    // Update the state with the new data
-    tripsData = updatedTripsData;
+    var tripId = id;
+    try {
+      const response = await axios.post(`${baseURL}/update-trip`, { Name, Duration, startDate, endDate, Description, Status, tripId });
+      const user = response.data;
+      console.log("update data", user);
+      const updatedTripsData = tripsData.map((trip) =>
+      trip.id === editedTrip.id ? { ...editedTrip } : trip
+    );
+  
+      // Update the state with the new data
+      console.log("updatedData", updatedTripsData);
+      setTripsData(updatedTripsData);
+      
+    
+  } catch (error) {
+      if (error.response && error.response.status === 400) {
+          alert(error.response.data.error);
+      } else {
+          console.error('Error registering:', error);
+      }
+  }
+    
+
+    
 
     // Close the dialog
     setOpenEditDialog(false);
   };
+
+  const handleClickOnCard = (e, trip) => {
+    // Check if any button inside the card was clicked
+    if (e.target.tagName === "BUTTON" || e.target.tagName === "ICONBUTTON") {
+        // If a button was clicked, prevent further propagation of the click event
+        e.stopPropagation();
+    } else {
+        // Handle the click event on the card
+        navigate(`/ideas/${trip.id}`);
+        
+    }
+};
 
   const handleCloseDialog = () => {
     setOpenEditDialog(false);
@@ -122,33 +229,58 @@ const Trips = () => {
     setOpenCreateDialog(false);
   };
 
-  const handleCreateDialogSave = () => {
+  const handleCreateDialogSave = async () => {
     // Add the new trip to tripsData
-    tripsData.push(newTrip);
+    var tripId;
+    const { Name, Duration, startDate, endDate, Description, Status } = newTrip;
+    // const { groupId } = useParams(); // Extract userId from the URL
+    console.log("groupid", groupId);
+    try {
+      const response = await axios.post(`${baseURL}/add-trip`, { Name, Duration, startDate, endDate, Description, Status, groupId });
+      const user = response.data;
+      console.log('User data:', user);
+      tripId = user.tripId;
+      // Add the new trip to tripsData with the generated id
+      const newTripWithId = { ...newTrip, id: tripId };
+      tripsData.push(newTripWithId);
+    
+  } catch (error) {
+      if (error.response && error.response.status === 400) {
+          alert(error.response.data.error);
+      } else {
+          console.error('Error registering:', error);
+      }
+  }
+
+    
 
     // Clear the new trip state
     setNewTrip({
-      name: "",
-      duration: "",
+      id: "",
+      Name: "",
+      Duration: "",
       startDate: "",
       endDate: "",
-      description: "",
-      status: "",
+      Description: "",
+      Status: "",
     });
 
     // Close the dialog
     setOpenCreateDialog(false);
   };
-  const handleDeleteTrip = (tripIndex) => {
-    // Remove the trip at the specified index from the tripsData array
-    const updatedTripsData = [...tripsData];
-    updatedTripsData.splice(tripIndex, 1);
-    tripsData = updatedTripsData;
-  
-    // Trigger a re-render by updating the state or forceUpdate
-    // For example, if you're using React state:
-    setTripsData(updatedTripsData);
-  };
+  const handleDeleteTrip = async (tripId) => {
+    try {
+        // Remove the trip with the specified ID
+        await axios.get(`${baseURL}/delete-trip/${tripId}/${groupId}`);
+
+        // Update tripsData by filtering out the deleted trip
+        const updatedTripsData = tripsData.filter(trip => trip.id !== tripId);
+        setTripsData(updatedTripsData);
+    } catch (error) {
+        console.error('Error deleting trip:', error);
+        // Handle error
+    }
+};
 
   return (
     <div style={{ width: '100%' }}>
@@ -172,16 +304,17 @@ const Trips = () => {
               "&:hover": {
                 backgroundColor: '#f0f0f0',
               },
-              border: selectedTrip && selectedTrip.name === trip.name ? '2px solid #1976D2' : '1px solid #ddd',
+              border: selectedTrip && selectedTrip.Name === trip.Name ? '2px solid #1976D2' : '1px solid #ddd',
             }}
             onMouseEnter={() => handleCardHover(trip)}
             onMouseLeave={() => handleCardHover(null)}
             //onClick={() => handleEditDetails(trip)}
+            onClick={(e) => handleClickOnCard(e, trip)}
           >
             <CardContent>
-              <Typography variant="h6">{trip.name}</Typography>
+              <Typography variant="h6">{trip.Name}</Typography>
               <Typography variant="body2" color="text.secondary">
-                Duration: {trip.duration}
+                Duration: {trip.Duration}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Start Date: {trip.startDate}
@@ -190,10 +323,10 @@ const Trips = () => {
                 End Date: {trip.endDate}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Description: {trip.description}
+                Description: {trip.Description}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Status: {trip.status}
+                Status: {formatStatus(trip.Status)}
               </Typography>
 
               {/* Edit Details Button */}
@@ -205,7 +338,7 @@ const Trips = () => {
               <IconButton
                 color="error"
                 aria-label="delete trip"
-                onClick={() => handleDeleteTrip(index)}
+                onClick={() => handleDeleteTrip(trip.id)}
                 sx={{ position: "absolute", top: 8, right: 8 }}
               >
                 <DeleteIcon />
@@ -248,15 +381,15 @@ const Trips = () => {
         <DialogContent>
           <TextField
             label="Name"
-            value={editedTrip.name || ''}
-            onChange={(e) => setEditedTrip({ ...editedTrip, name: e.target.value })}
+            value={editedTrip.Name || ''}
+            onChange={(e) => setEditedTrip({ ...editedTrip, Name: e.target.value })}
             fullWidth
             margin="normal"
           />
           <TextField
             label="Duration"
-            value={editedTrip.duration || ''}
-            onChange={(e) => setEditedTrip({ ...editedTrip, duration: e.target.value })}
+            value={editedTrip.Duration || ''}
+            onChange={(e) => setEditedTrip({ ...editedTrip, Duration: e.target.value })}
             fullWidth
             margin="normal"
           />
@@ -280,20 +413,20 @@ const Trips = () => {
             label="Description"
             multiline
             rows={4}
-            value={editedTrip.description || ''}
-            onChange={(e) => setEditedTrip({ ...editedTrip, description: e.target.value })}
+            value={editedTrip.Description || ''}
+            onChange={(e) => setEditedTrip({ ...editedTrip, Description: e.target.value })}
             fullWidth
             margin="normal"
           />
           <FormControl fullWidth margin="normal">
             <InputLabel>Status</InputLabel>
             <Select
-              value={editedTrip.status || ''}
-              onChange={(e) => setEditedTrip({ ...editedTrip, status: e.target.value })}
+              value={editedTrip.Status || ''}
+              onChange={(e) => setEditedTrip({ ...editedTrip, Status: e.target.value })}
             >
-              <MenuItem value="Planned">Planned</MenuItem>
-              <MenuItem value="In Progress">In Progress</MenuItem>
+              <MenuItem value="InPlanning">In Planning</MenuItem>
               <MenuItem value="Completed">Completed</MenuItem>
+              <MenuItem value="SavedForLater">Saved For Later</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>
@@ -312,16 +445,16 @@ const Trips = () => {
         <DialogContent>
           <TextField
             label="Name"
-            value={newTrip.name}
-            onChange={(e) => setNewTrip({ ...newTrip, name: e.target.value })}
+            value={newTrip.Name}
+            onChange={(e) => setNewTrip({ ...newTrip, Name: e.target.value })}
             fullWidth
             margin="normal"
           />
           <TextField
             label="Duration"
-            value={newTrip.duration}
+            value={newTrip.Duration}
             onChange={(e) =>
-              setNewTrip({ ...newTrip, duration: e.target.value })
+              setNewTrip({ ...newTrip, Duration: e.target.value })
             }
             fullWidth
             margin="normal"
@@ -348,9 +481,9 @@ const Trips = () => {
             label="Description"
             multiline
             rows={4}
-            value={newTrip.description}
+            value={newTrip.Description}
             onChange={(e) =>
-              setNewTrip({ ...newTrip, description: e.target.value })
+              setNewTrip({ ...newTrip, Description: e.target.value })
             }
             fullWidth
             margin="normal"
@@ -358,14 +491,14 @@ const Trips = () => {
           <FormControl fullWidth margin="normal">
             <InputLabel>Status</InputLabel>
             <Select
-              value={newTrip.status}
+              value={newTrip.Status}
               onChange={(e) =>
-                setNewTrip({ ...newTrip, status: e.target.value })
+                setNewTrip({ ...newTrip, Status: e.target.value })
               }
             >
-              <MenuItem value="Planned">Planned</MenuItem>
-              <MenuItem value="In Progress">In Progress</MenuItem>
+               <MenuItem value="InPlanning">In Planning</MenuItem>
               <MenuItem value="Completed">Completed</MenuItem>
+              <MenuItem value="SavedForLater">Saved For Later</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>
