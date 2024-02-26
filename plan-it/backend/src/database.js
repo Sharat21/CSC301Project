@@ -1,6 +1,6 @@
 const { query } = require('express');
 require('dotenv').config();
-const { MongoClient, ObjectID } = require('mongodb');
+const { MongoClient } = require('mongodb');
 // Connection URI
 const uri = process.env.MONGO_URI;
 // Database Name
@@ -327,29 +327,6 @@ async function fetchConfirmedByType(type, collectionName = "ideas") {
     const collection = db.collection(collectionName);
     const query = { Confirmed: true, Type: type }
     const result = await collection.find(query).toArray();
-    return result;
-  } finally {
-    await client.close();
-  }
-}
-
-/*
-Add a new trip into the database. 
-data parameter must have the following structure:
-{ Name: "Grad Trip", Duration: "5 days", StartDate: 2024-05-19, EndDate: 2024-05-24, 
-  Description: "Trip with the boys after graduation", Status: "In Planning"};
-
-Status should be one of the following: ["In Planning, Completed, Saved for Later"]
-Returns success status of adding trip.
-*/
-async function addTrip(data, collectionName = 'trips') {
-  const client = new MongoClient(uri);
-
-  try {
-    await client.connect();
-    const db = client.db(dbName);
-    const collection = db.collection(collectionName);
-    const result = await collection.insertOne(data);
     return result;
   } finally {
     await client.close();

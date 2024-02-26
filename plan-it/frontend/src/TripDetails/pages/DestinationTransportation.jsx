@@ -28,7 +28,10 @@ const DestinationTransportation = () => {
   const [selectedTransportation, setSelectedTransportation] = useState(null);
   const [transportationData, setTransportationData] = useState([]);
 
-  const baseURL = `http://localhost:5100/api/ideas`;
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [ideaToDelete, setIdeaToDelete] = useState(null);
+
+  const baseURL = `http://localhost:14000/api/ideas`;
 
   useEffect(() => {
     const fetchDestinationData = async () => {
@@ -84,6 +87,10 @@ const DestinationTransportation = () => {
     setOpenTransportationDialog(false);
   }
 
+  const handleCloseDeleteDialog = () => {
+    setOpenConfirmDialog(false);
+  }
+
   const handleCardTransportationHover = (Destination) => {
     setSelectedDestination(Destination);
   }
@@ -91,6 +98,96 @@ const DestinationTransportation = () => {
   const handleCardDestinationHover = (Destination) => {
     setSelectedDestination(Destination);
   }
+
+  const handleDeleteRequest = (ideaID) => {
+    setIdeaToDelete(ideaID);
+    setOpenConfirmDialog(true); 
+  };
+
+  const handleDeleteIdea = async (ideaID) => {
+    try {
+      const response = await axios.delete(`${baseURL}/delete-idea/${ideaID}`);
+      console.log(response.data.message);
+
+      setOpenDestinationDialog(false);
+      setOpenTransportationDialog(false);
+      setOpenConfirmDialog(false);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting idea: ", error.message);
+    }
+  };
+
+  const DeleteDialog = ({ open, onClose }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this?
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={() => setOpenConfirmDialog(false)}>Cancel</Button>
+            <Button onClick={() => handleDeleteIdea(ideaToDelete)} color="error" autoFocus>Delete</Button>
+        </DialogActions>
+      </Dialog>
+    )
+  }
+
+  const DestinationDialog = ({ open, onClose, destination }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{destination.Name}</DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Typography variant="body1"><strong>Proposed by:</strong> {destination.Proposed_by}</Typography>
+          <Typography variant="body1"><strong>Trip:</strong> {destination.Trip}</Typography>
+          <Typography 
+            variant="body1"><strong>Link:</strong> {destination.link ?
+            <a href={destination.link} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>{destination.link}</a> : "No link available" }
+          </Typography>
+          <Typography variant="body1"><strong>Price:</strong> {destination.price}</Typography>
+          <Typography 
+            variant="body1"><strong>Description:</strong> {destination.Description ? destination.Description : "No description available"}
+          </Typography>
+        </DialogContent>
+        <DialogContent>
+          {/* To add more space at the bottom */}
+          <div style={{ height: '10px' }}></div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleDeleteRequest(destination._id)} color="error">Delete Destination</Button>
+          <Button onClick={onClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
+  const TransportationDialog = ({ open, onClose, transportation }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{transportation.Name}</DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Typography variant="body1"><strong>Proposed by:</strong> {transportation.Proposed_by}</Typography>
+          <Typography variant="body1"><strong>Trip:</strong> {transportation.Trip}</Typography>
+          <Typography 
+            variant="body1"><strong>Link:</strong> {transportation.link ?
+            <a href={transportation.link} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>{transportation.link}</a> : "No link available" }
+          </Typography>
+          <Typography variant="body1"><strong>Price:</strong> {transportation.price}</Typography>
+          <Typography 
+            variant="body1"><strong>Description:</strong> {transportation.Description ? transportation.Description : "No description available"}
+          </Typography>
+        </DialogContent>
+        <DialogContent>
+          {/* To add more space at the bottom */}
+          <div style={{ height: '10px' }}></div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleDeleteRequest(transportation._id)} color="error">Delete Transportation</Button>
+          <Button onClick={onClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
 
   return (
     <div style={{ width: '100%' }}>
@@ -137,22 +234,7 @@ const DestinationTransportation = () => {
         ))}
       </Container>
 
-      <Dialog open={openDestinationDialog} onClose={handleCloseDestinationDialog}>
-      <DialogTitle>Destination Details</DialogTitle>
-        <DialogContent>
-          {Object.entries(editedDestination).map(([key, value]) => (
-            <div key={key}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: 2 }}>{key}:</Typography>
-              <Typography variant="body1" sx={{ marginTop: 1 }}>{value}</Typography>
-            </div>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDestinationDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DestinationDialog open={openDestinationDialog} onClose={handleCloseDestinationDialog} destination={editedDestination}></DestinationDialog>
 
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
         <Toolbar>
@@ -197,22 +279,9 @@ const DestinationTransportation = () => {
         ))}
       </Container>
 
-      <Dialog open={openTransportationDialog} onClose={handleCloseTransportationDialog}>
-      <DialogTitle>Transportation Details</DialogTitle>
-        <DialogContent>
-          {Object.entries(editedTransportation).map(([key, value]) => (
-            <div key={key}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: 2 }}>{key}:</Typography>
-              <Typography variant="body1" sx={{ marginTop: 1 }}>{value}</Typography>
-            </div>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseTransportationDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <TransportationDialog open={openTransportationDialog} onClose={handleCloseTransportationDialog} transportation={editedTransportation}></TransportationDialog>
+
+      <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} idea={editedTransportation || editedDestination} />
     </div>
   );
 };
