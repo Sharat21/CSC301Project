@@ -6,6 +6,10 @@ import TripDetails from "./TripDetails/TripDetails";
 import Restaurants from "./TripDetails/pages/Restaurants";
 import Ideas from "./Ideas/Ideas";
 
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
+
 const App = () => {
   return (
       <Router>
