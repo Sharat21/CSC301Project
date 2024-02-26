@@ -7,7 +7,7 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5100;
-app.use(cors());
+app.use(cors({ methods: ['GET', 'POST', 'PUT', 'DELETE' ]}));
 app.use(express.json());
 
 // =============== UNCOMMENT WHEN YOU IMPLEMENT ================== //

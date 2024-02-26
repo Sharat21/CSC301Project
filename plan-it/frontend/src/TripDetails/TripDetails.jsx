@@ -5,6 +5,7 @@ import Accommodation from "./pages/Accommodation";
 import Activities from "./pages/Activities";
 import DestinationTransportation from "./pages/DestinationTransportation";
 import Restaurants from "./pages/Restaurants";
+import BudgetSheet from "./BudgetSheet";
 import Bar from "./Bar";
 import './TripDetails.css';
 
