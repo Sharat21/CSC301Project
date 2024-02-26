@@ -5,14 +5,25 @@ import Accommodation from "./pages/Accommodation";
 import Activities from "./pages/Activities";
 import DestinationTransportation from "./pages/DestinationTransportation";
 import Restaurants from "./pages/Restaurants";
+import BudgetSheet from "./BudgetSheet";
 import Bar from "./Bar";
 import './TripDetails.css';
-
+import BudgetSheet from "./BudgetSheet";
+import MapComponent from "./pages/Maps";
 const TripDetails = () => {
+
+
   return (
+
     <div>
+      
+        {/* <Bar/> */}
+        <NavBar/>
+
+        
+        {/* <BudgetSheet/>
+        <MapComponent/> */}
       <TripDetailsHeader />
-      <NavBar />
       <Routes>
         <Route path="/" element={<Navigate to="/trip-details/destinationtransportation" />} />
         <Route path="/trip-details/destinationtransportation" element={<DestinationTransportation />} />
@@ -21,6 +32,10 @@ const TripDetails = () => {
         <Route path="/trip-details/restaurants" element={<Restaurants />} />
         <Route path="/trip-details/budgetsheet" element={<BudgetSheet />} />
       </Routes>
+      {/* <Accommodation/>
+      <DestinationTransportation/>
+      <Activities/>
+      <Restaurants/> */}
     </div>
   );
 };

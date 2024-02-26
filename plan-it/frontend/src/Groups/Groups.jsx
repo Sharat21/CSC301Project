@@ -94,6 +94,7 @@ const Groups = () => {
     console.log(`Clicked on group with ID: ${groupId}`);
     // Navigate to the group details page
     navigate(`/trips/${groupId}`);
+
   };
 
   const handleJoinGroup = (groupName) => {
@@ -103,6 +104,7 @@ const Groups = () => {
 
   const handleLeaveGroup = (event, groupName) => {
     event.stopPropagation();
+
     // Handle leave group button click event
     console.log(`Left group: ${groupName}`);
   };
@@ -146,12 +148,14 @@ const Groups = () => {
                 <IconButton
                   aria-label="leave group"
                   onClick={(event) => handleLeaveGroup(event, group.id)}
+
                   sx={{ position: "absolute", top: 8, right: 8 }}
                 >
                   <Cancel />
                 </IconButton>
               </Card>
           </Grid>
+
           ))}
         </Grid>
       </Container>

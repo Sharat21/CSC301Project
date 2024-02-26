@@ -21,7 +21,9 @@ const Accommodation = () => {
   const [editedAccommodation, setEditedAccommodation] = useState({});
   const [selectedAccommodation, setSelectedAccommodation] = useState(null);
   const [accommodationData, setAccommodationData] = useState([]);
-  const baseURL = `http://localhost:5100/api/ideas`;
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [accommodationToDelete, setAccommodationToDelete] = useState(null);
+  const baseURL = `http://localhost:14000/api/ideas`;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,9 +54,75 @@ const Accommodation = () => {
     setOpenEditDialog(false);
   }
 
+  const handleCloseDeleteDialog = () => {
+    setOpenConfirmDialog(false);
+  }
+
   const handleCardHover = (Accommodation) => {
     setSelectedAccommodation(Accommodation);
   }
+
+  const handleDeleteRequest = (accommodationID) => {
+    setAccommodationToDelete(accommodationID);
+    setOpenConfirmDialog(true); 
+  };
+
+  const handleDeleteAccommodation = async (accommodationID) => {
+    try {
+      const response = await axios.delete(`${baseURL}/delete-idea/${accommodationID}`);
+      console.log(response.data.message);
+
+      setAccommodationToDelete(null);
+      setOpenEditDialog(false);
+      setOpenConfirmDialog(false);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting accommodation: ", error.message);
+    }
+  };
+
+  const DeleteDialog = ({ open, onClose }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this accommodation?
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={() => setOpenConfirmDialog(false)}>Cancel</Button>
+            <Button onClick={() => handleDeleteAccommodation(accommodationToDelete)} color="error" autoFocus>Delete</Button>
+        </DialogActions>
+      </Dialog>
+    )
+  }
+
+  const AccommodationDialog = ({ open, onClose, accommodation }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{accommodation.Name}</DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Typography variant="body1"><strong>Proposed by:</strong> {accommodation.Proposed_by}</Typography>
+          <Typography variant="body1"><strong>Trip:</strong> {accommodation.Trip}</Typography>
+          <Typography 
+            variant="body1"><strong>Link:</strong> {accommodation.link ?
+            <a href={accommodation.link} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>{accommodation.link}</a> : "No link available" }
+          </Typography>
+          <Typography variant="body1"><strong>Price:</strong> {accommodation.price}</Typography>
+          <Typography 
+            variant="body1"><strong>Description:</strong> {accommodation.Description ? accommodation.Description : "No description available"}
+          </Typography>
+        </DialogContent>
+        <DialogContent>
+          {/* To add more space at the bottom */}
+          <div style={{ height: '10px' }}></div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleDeleteRequest(accommodation._id)} color="error">Delete Accommodation</Button>
+          <Button onClick={onClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
 
   return (
     <div style={{ width: '100%' }}>
@@ -101,22 +169,10 @@ const Accommodation = () => {
         ))}
       </Container>
 
-      <Dialog open={openEditDialog} onClose={handleCloseDialog}>
-      <DialogTitle>Accommodation Details</DialogTitle>
-        <DialogContent>
-          {Object.entries(editedAccommodation).map(([key, value]) => (
-            <div key={key}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: 2 }}>{key}:</Typography>
-              <Typography variant="body1" sx={{ marginTop: 1 }}>{value}</Typography>
-            </div>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <AccommodationDialog open={openEditDialog} onClose={handleCloseDialog} accommodation={editedAccommodation}></AccommodationDialog>
+
+      <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} accommodation={editedAccommodation} />
+
     </div>
   );
 };

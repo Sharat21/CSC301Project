@@ -21,7 +21,9 @@ const Restaurants = () => {
   const [editedRestaurants, setEditedRestaurants] = useState({});
   const [selectedRestaurants, setSelectedRestaurants] = useState(null);
   const [RestaurantsData, setRestaurantsData] = useState([]);
-  const baseURL = `http://localhost:5100/api/ideas`;
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [restaurantToDelete, setRestaurantToDelete] = useState(null);
+  const baseURL = `http://localhost:14000/api/ideas`;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,9 +54,75 @@ const Restaurants = () => {
     setOpenEditDialog(false);
   }
 
+  const handleCloseDeleteDialog = () => {
+    setOpenConfirmDialog(false);
+  }
+
   const handleCardHover = (Restaurants) => {
     setSelectedRestaurants(Restaurants);
   }
+
+  const handleDeleteRequest = (restaurantID) => {
+    setRestaurantToDelete(restaurantID);
+    setOpenConfirmDialog(true); 
+  };
+
+  const handleDeleteRestaurant = async (restaurantID) => {
+    try {
+      const response = await axios.delete(`${baseURL}/delete-idea/${restaurantID}`);
+      console.log(response.data.message);
+
+      setRestaurantToDelete(null);
+      setOpenEditDialog(false);
+      setOpenConfirmDialog(false);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting restaurant: ", error.message);
+    }
+  };
+
+  const DeleteDialog = ({ open, onClose }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this restaurant?
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={() => setOpenConfirmDialog(false)}>Cancel</Button>
+            <Button onClick={() => handleDeleteRestaurant(restaurantToDelete)} color="error" autoFocus>Delete</Button>
+        </DialogActions>
+      </Dialog>
+    )
+  }
+
+  const RestaurantDialog = ({ open, onClose, restaurant }) => {
+    return (
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{restaurant.Name}</DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Typography variant="body1"><strong>Proposed by:</strong> {restaurant.Proposed_by}</Typography>
+          <Typography variant="body1"><strong>Trip:</strong> {restaurant.Trip}</Typography>
+          <Typography 
+            variant="body1"><strong>Link:</strong> {restaurant.link ?
+            <a href={restaurant.link} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>{restaurant.link}</a> : "No link available" }
+          </Typography>
+          <Typography variant="body1"><strong>Price:</strong> {restaurant.price}</Typography>
+          <Typography 
+            variant="body1"><strong>Description:</strong> {restaurant.Description ? restaurant.Description : "No description available"}
+          </Typography>
+        </DialogContent>
+        <DialogContent>
+          {/* To add more space at the bottom */}
+          <div style={{ height: '10px' }}></div>
+        </DialogContent>
+        <DialogActions>
+        <Button onClick={() => handleDeleteRequest(restaurant._id)} color="error">Delete Restaurant</Button>
+          <Button onClick={onClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
 
   return (
     <div style={{ width: '100%' }}>
@@ -101,22 +169,10 @@ const Restaurants = () => {
         ))}
       </Container>
 
-      <Dialog open={openEditDialog} onClose={handleCloseDialog}>
-      <DialogTitle>Restaurants Details</DialogTitle>
-        <DialogContent>
-          {Object.entries(editedRestaurants).map(([key, value]) => (
-            <div key={key}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginTop: 2 }}>{key}:</Typography>
-              <Typography variant="body1" sx={{ marginTop: 1 }}>{value}</Typography>
-            </div>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <RestaurantDialog open={openEditDialog} onClose={handleCloseDialog} restaurant={editedRestaurants}></RestaurantDialog>
+
+      <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} restaurant={editedRestaurants} />
+
     </div>
   );
 };
