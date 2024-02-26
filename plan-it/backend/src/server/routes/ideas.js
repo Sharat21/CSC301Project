@@ -1,7 +1,7 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
-const { fetchAllIdeas, fetchConfirmedIdeas, fetchConfirmedByType, deleteIdea } = require('../../database');
+const { fetchAllIdeas, fetchConfirmedIdeas, fetchUnconfirmedIdeas, fetchConfirmedByType, addIdea, deleteIdea } = require('../../database');
 
 // Define routes for Ideas endpoint
 
@@ -11,6 +11,32 @@ router.get('/all-ideas', async (req, res) => {
         res.json(ideas);
     } catch(error) {
         console.log("Fetching all ideas failed: ", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.post('/create-idea', async (req, res) => {
+    try { 
+        const idea = req.body;
+        const result = await addIdea(idea);
+        if(result.acknowledged){
+            res.status(201).json({ message: "Idea added successfully" });
+        }
+        else {
+            res.status(400).json({ message: "Failed to add idea" });
+        }
+    } catch (error) {
+        console.log("Adding idea failed: ", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+router.get('/unconfirmed-ideas', async (req, res) => {
+    try {
+        const unconfirmedIdeas = await fetchUnconfirmedIdeas();
+        res.json(unconfirmedIdeas);
+    } catch(error) {
+        console.log("Fetching all unconfirmed ideas failed: ", error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });

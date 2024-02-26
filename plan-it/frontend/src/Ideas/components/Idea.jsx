@@ -1,15 +1,24 @@
 import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, Typography, Link } from '@mui/material';
 
-const Idea = ({ content, date }) => {
+const Idea = ({ name, type, description, link, price }) => {
   return (
     <Card>
       <CardContent>
-        <Typography variant="body1" color="text.secondary">
-          {content}
+        <Typography variant="h5" component="div">
+          {name ? name : "No name given"}
         </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {date}
+        <Typography color="text.secondary">
+          Type: {type ? type : "No type given"}
+        </Typography>
+        <Typography variant="body2">
+          Description: {description ? description : "No description available"}
+        </Typography>
+        <Typography variant="body2">
+            Link: {link ? link: "No link given"}
+        </Typography>
+        <Typography variant="body2">
+            Price: {price ? price : "No price given"}
         </Typography>
       </CardContent>
     </Card>
