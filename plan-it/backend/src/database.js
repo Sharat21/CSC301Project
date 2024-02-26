@@ -134,6 +134,7 @@ query parameter must have the following structure:
 { Name: "SquadUp" }, where any of the group's fields can be used to query a group.
 Returns group as an object, where result.Name etc can be used to get individual attributes..
 */
+//const query = { Users: { $in: [userId] } };
 async function findGroup(query = {}, collectionName = 'groups') {
   const client = new MongoClient(uri);
 
@@ -156,10 +157,12 @@ it will update that group. For certainty with update, the id of
 the Group can be taken and put in as a parameter like so:
 
 const result1 = await database.findGroup({ Name: "SquadUp"});
-const query = { _id: result1._id};
+const id = { _id: result1._id};
 
-data parameter must have the following structure:
-{ Name: "South-Common" }
+newData parameter can have the following structure based on type of updaye needed:
+1) To update a singular attribute - { $set: { Name: "new group name" } }
+2) To add an element into an array attribute - { $push: { Trips: [new_trip_id] } }
+3) To remove an element from an array attribute - { $pull: { Trips: [existing_trip_id] } }
 
 Returns success status of updating group.
 */
@@ -170,7 +173,8 @@ async function updateGroup(id, newData, collectionName = 'groups') {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    const result = await collection.updateOne(query, { $set: newData });
+    const query = { _id: id };
+    const result = await collection.updateOne(query, newData);
     return result;
   } finally {
     await client.close();
@@ -287,6 +291,7 @@ data parameter must have the following structure:
   Voting_End: 2024-04-30, link: "https://www.chick-fil-a.ca/locations/on/rutherford-rd-hwy-400?utm_source=yext&utm_medium=link", price: 13.5 };
 Returns success status of adding idea.
 */
+
 async function addIdea(data, collectionName = 'ideas') {
   const client = new MongoClient(uri);
 
