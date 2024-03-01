@@ -1,5 +1,4 @@
 import React from 'react';
-// import './TripDetailsHeader.css';
 import { AppBar, Toolbar, Typography } from '@mui/material';
 
 const TripDetailsHeader = () => {
