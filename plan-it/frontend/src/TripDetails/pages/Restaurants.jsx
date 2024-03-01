@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogActions
 } from '@mui/material';
+import NavBar from './components/NavBar';
 
 const Restaurants = () => {
   const [confirmedRestaurants, setConfirmedRestaurants] = useState([]);
@@ -126,6 +127,7 @@ const Restaurants = () => {
 
   return (
     <div style={{ width: '100%' }}>
+      <NavBar/>
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>

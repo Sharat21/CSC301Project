@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogActions
 } from '@mui/material';
+import NavBar from './components/NavBar';
 
 const Activities = () => {
   const [confirmedActivities, setConfirmedActivities] = useState([]);
@@ -126,6 +127,7 @@ const Activities = () => {
 
   return (
     <div style={{ width: '100%' }}>
+      <NavBar/>
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>
@@ -171,7 +173,6 @@ const Activities = () => {
       <ActivityDialog open={openEditDialog} onClose={handleCloseDialog} activity={editedActivity} />
 
       <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} activity={editedActivity} />
-
     </div>
   );
 };

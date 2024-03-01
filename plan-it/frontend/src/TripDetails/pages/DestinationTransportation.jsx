@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogActions
 } from '@mui/material';
+import NavBar from './components/NavBar';
 
 const DestinationTransportation = () => {
   const [error, setError] = useState(null);
@@ -191,6 +192,7 @@ const DestinationTransportation = () => {
 
   return (
     <div style={{ width: '100%' }}>
+      <NavBar/>
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>

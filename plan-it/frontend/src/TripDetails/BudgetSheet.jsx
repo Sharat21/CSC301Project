@@ -13,6 +13,7 @@ import {
   LinearProgress,
 } from '@mui/material';
 import './BudgetSheet.css';
+import NavBar from './pages/components/NavBar';
 
 // All dependencies and budget sheet functions
 
@@ -117,6 +118,7 @@ const BudgetSheet = () => {
 
   return (
     <div style={{ padding: '20px' }}>
+      <NavBar/>
       <Typography variant="h4" align="center" gutterBottom>
         Budget
       </Typography>

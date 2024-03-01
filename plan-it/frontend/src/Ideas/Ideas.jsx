@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
 import { Button, Container, CssBaseline, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import IdeaList from './components/IdeaList';
@@ -89,6 +91,9 @@ const Ideas = () => {
       </Typography>
       <Button variant='contained' onClick={handleOpenDialog}>
         Add Idea
+      </Button>
+      <Button component={Link} to="/trip-details" variant="contained">
+        Confirmed
       </Button>
       <AddIdeaDialog
         open={openDialog}

@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogActions
 } from '@mui/material';
+import NavBar from './components/NavBar';
 
 const Accommodation = () => {
   const [confirmedAccommodation, setConfirmedAccommodation] = useState([]);
@@ -124,8 +125,11 @@ const Accommodation = () => {
     );
   };
 
+  console.log('Accommodation component rendered');
+
   return (
     <div style={{ width: '100%' }}>
+      <NavBar/>
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>

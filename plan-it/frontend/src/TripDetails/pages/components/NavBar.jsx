@@ -10,7 +10,7 @@ const NavBar = () => {
           <li><Link to="/trip-details/activities"><span>Activities</span></Link></li>
           <li><Link to="/trip-details/restaurants"><span>Restaurants</span></Link></li>
           <li><Link to="/trip-details/budgetsheet"><span>Budget Sheet</span></Link></li>
-          <li className="bottom-link"><Link to="/trip-board"><span>Go Back to Trip Board</span></Link></li>
+          <li className="bottom-link"><Link to="/ideas/1"><span>Go Back to Trip Board</span></Link></li>
         </ul>
       </nav>
     );

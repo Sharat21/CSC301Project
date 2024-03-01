@@ -1,5 +1,5 @@
 header {
-    background-color: black;
+    background-color: #1876D3;
     color: white;
     z-index: 1;
     border-bottom: 1px solid white;
@@ -9,10 +9,10 @@ header {
 }
 
 .navbarcolor{
-    background-color: #181919;
+    background-color:#1876D3;
 }
 .sidebar {
-    background-color: black;
+    background-color: #1876D3;
     color: white;
     width: 200px;
     height: 100vh;
@@ -34,7 +34,7 @@ header {
 }
 
 .sidebar li:hover a {
-    color: #5780d1;
+    color: #ffffff;
 }
 
 .bottom-link {
