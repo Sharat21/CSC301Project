@@ -14,6 +14,7 @@ import {
   DialogActions
 } from '@mui/material';
 import NavBar from './components/NavBar';
+import TripDetailsHeader from './components/TripDetailsHeader';
 
 const DestinationTransportation = () => {
   const [error, setError] = useState(null);
@@ -192,6 +193,7 @@ const DestinationTransportation = () => {
 
   return (
     <div style={{ width: '100%' }}>
+      <TripDetailsHeader/>
       <NavBar/>
       <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
         <Toolbar>
