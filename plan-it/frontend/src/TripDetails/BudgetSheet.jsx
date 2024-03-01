@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  AppBar,
   Button,
   Card,
   CardContent,
@@ -10,6 +11,7 @@ import {
   MenuItem,
   TextField,
   Typography,
+  Toolbar,
   LinearProgress,
 } from '@mui/material';
 import './BudgetSheet.css';
@@ -118,12 +120,16 @@ const BudgetSheet = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div>
       <TripDetailsHeader/>
       <NavBar/>
-      <Typography variant="h4" align="center" gutterBottom>
-        Budget
-      </Typography>
+      <AppBar position="static" sx={{ width: '100%' }}>
+        <Toolbar>
+          <Typography variant="h6" sx={{ fontSize: '24px' }}>
+            Budget Sheet
+          </Typography>
+        </Toolbar>
+      </AppBar>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
         <Button variant="contained" onClick={() => setOpenAddDialog(true)}>Add Budget</Button>
         <Button variant="contained" onClick={handleRemoveBudget} style={{ marginLeft: '10px', backgroundColor: '#ff1a1a' }}>Remove Budget</Button>
