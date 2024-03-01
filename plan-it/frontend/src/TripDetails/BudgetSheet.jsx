@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import './BudgetSheet.css';
 import NavBar from './pages/components/NavBar';
+import TripDetailsHeader from './pages/components/TripDetailsHeader';
 
 // All dependencies and budget sheet functions
 
@@ -118,6 +119,7 @@ const BudgetSheet = () => {
 
   return (
     <div style={{ padding: '20px' }}>
+      <TripDetailsHeader/>
       <NavBar/>
       <Typography variant="h4" align="center" gutterBottom>
         Budget
