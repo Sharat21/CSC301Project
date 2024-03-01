@@ -6,6 +6,7 @@ import TripDetails from "./TripDetails/TripDetails";
 import Restaurants from "./TripDetails/pages/Restaurants"
 import Trips from "./Trips/Trips";
 import Groups from "./Groups/Groups";
+import Ideas from './Ideas/Ideas';
 
 //function App() {
   // return <p>Hello World</p>;
@@ -23,6 +24,8 @@ const App = () => {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/groups/:userId" element={<Groups />} />
               <Route path="/trips/:groupId" element={<Trips />} />
+              <Route path="/ideas/:ideaId" element={<Ideas />} /> 
+              <Route path="/trip-details/:tripId" element={<TripDetails />} />
           </Routes>
       </Router>
   );
