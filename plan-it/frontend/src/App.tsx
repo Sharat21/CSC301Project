@@ -27,6 +27,7 @@ const App = () => {
       <Router>
           <Routes>
               <Route path="/login" element={<LoginPage />} />
+              <Route path="*" element={<LoginPage />} />              
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/groups/:userId" element={<Groups />} />
               <Route path="/trips/:groupId" element={<Trips />} />
