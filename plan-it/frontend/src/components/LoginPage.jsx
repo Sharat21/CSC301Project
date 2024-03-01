@@ -23,10 +23,9 @@ const LoginPage = () => {
             const response = await axios.post(baseURL, { email, password });
     
             const user = response.data;
-            console.log('User data:', user);
-    
-            navigate(`/groups/${user._id}`);
+            
             alert("Successful Login");
+            navigate(`/groups/${user._id}`);
     
         } catch (error) {
             alert("Invalid Email or Password");
