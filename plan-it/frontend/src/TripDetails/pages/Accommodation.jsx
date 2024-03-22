@@ -132,7 +132,7 @@ const Accommodation = () => {
     <div style={{ width: '100%' }}>
       <TripDetailsHeader/>
       <NavBar/>
-      <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
+      <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>
             Accommodation
@@ -143,7 +143,7 @@ const Accommodation = () => {
       <Container
         disableGutters
         maxWidth={false}
-        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '200px' }}
+        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
       >
         {accommodationData.map((Accommodation, index) => (
           <Card

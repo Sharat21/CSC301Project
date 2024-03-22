@@ -195,7 +195,7 @@ const DestinationTransportation = () => {
     <div style={{ width: '100%' }}>
       <TripDetailsHeader/>
       <NavBar/>
-      <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
+      <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>
             Destination
@@ -206,7 +206,7 @@ const DestinationTransportation = () => {
       <Container
         disableGutters
         maxWidth={false}
-        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '200px' }}
+        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
       >
         {DestinationData.map((Destination, index) => (
           <Card
@@ -240,7 +240,7 @@ const DestinationTransportation = () => {
 
       <DestinationDialog open={openDestinationDialog} onClose={handleCloseDestinationDialog} destination={editedDestination}></DestinationDialog>
 
-      <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
+      <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>
             Transportation
@@ -251,7 +251,7 @@ const DestinationTransportation = () => {
       <Container
         disableGutters
         maxWidth={false}
-        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '200px' }}
+        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
       >
         {transportationData.map((Transportation, index) => (
           <Card

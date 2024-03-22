@@ -14,14 +14,6 @@ import Groups from "./Groups/Groups";
 import Ideas from './Ideas/Ideas';
 import BudgetSheet from './TripDetails/BudgetSheet';
 
-//function App() {
-  // return <p>Hello World</p>;
-  //return <div ><Trips /></div>
-  //return <div> <Ideas /> </div>
-// import LoginPage from "./components/LoginPage";
-// import Bar from "./TripDetails/Bar";
-// import BudgetSheet from "./TripDetails/BudgetSheet";
-// import BudgetSheet from "./TripDetails/pages/BudgetSheet";
 const App = () => {
   return (
       <Router>
@@ -32,7 +24,7 @@ const App = () => {
               <Route path="/groups/:userId" element={<Groups />} />
               <Route path="/trips/:groupId" element={<Trips />} />
               <Route path="/ideas/:ideaId" element={<Ideas />} /> 
-              <Route path="/trip-details/*" element={<TripDetails />} />
+              <Route path="/trip-details/" element={<DestinationTransportation />} />
               <Route path="/trip-details/destinationtransportation" element={<DestinationTransportation />} />
               <Route path="/trip-details/accommodation" element={<Accommodation />} />
               <Route path="/trip-details/activities" element={<Activities />} />
