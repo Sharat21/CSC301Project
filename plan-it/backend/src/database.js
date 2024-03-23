@@ -1,6 +1,6 @@
 const { query } = require('express');
 require('dotenv').config();
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 // Connection URI
 const uri = process.env.MONGO_URI;
 // Database Name
@@ -264,6 +264,26 @@ async function fetchUnconfirmedIdeas(userQuery = {}, collectionName = "ideas") {
   }
 }
 
+/* Fetch all unconfirmed trip ideas from the database based on tripID. 
+
+Returns an array of ideas as objects 
+*/
+async function fetchUnconfirmedByTrip(tripID, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+  
+    try {
+      await client.connect();
+      const db = client.db(dbName);
+      const collection = db.collection(collectionName);
+      const query = {Confirmed: false}
+      const result = await collection.find(query).toArray();
+      return result;
+    } finally {
+      await client.close();
+    }
+  
+}
+
 /* Fetch all confirmed trip ideas from the database based on the idea type.
 Type parameter specifies the type of ideas to be retrieved. 
 
@@ -277,6 +297,48 @@ async function fetchConfirmedByType(type, collectionName = "ideas") {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
     const query = {Confirmed: true, Type: type}
+    const result = await collection.find(query).toArray();
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+/* Fetch all confirmed trip ideas from the database based on the tripID.
+TripID parameter specifies which trip the ideas belong to. 
+
+Returns an array of ideas as objects 
+*/
+async function fetchConfirmedByTrip(tripID, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+    
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {Confirmed: true, Trip: tripID}
+    const result = await collection.find(query).toArray();
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+
+/* Fetch all confirmed trip ideas from the database based on the idea type and tripID.
+Type parameter specifies the type of ideas to be retrieved. 
+TripID parameter specifies which trip the ideas should belong to.
+
+Returns an array of ideas as objects 
+*/
+async function fetchConfirmedByTypeAndTrip(tripID, type, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+    
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {Confirmed: true, Type: type, Trip: tripID};
     const result = await collection.find(query).toArray();
     return result;
   } finally {
@@ -437,10 +499,13 @@ module.exports = {
   fetchAllIdeas,
   fetchConfirmedIdeas,
   fetchUnconfirmedIdeas,
+  fetchUnconfirmedByTrip,
   fetchConfirmedByType,
+  fetchConfirmedByTrip,
+  fetchConfirmedByTypeAndTrip,
   addIdea,
   deleteIdea,
-    addTrip,
+  addTrip,
   updateTrip,
   findTrip,
   deleteTrip

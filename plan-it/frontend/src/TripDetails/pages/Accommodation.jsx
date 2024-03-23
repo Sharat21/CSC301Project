@@ -15,8 +15,10 @@ import {
 } from '@mui/material';
 import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
+import { useParams } from 'react-router-dom';
 
 const Accommodation = () => {
+  const { tripId } = useParams();
   const [confirmedAccommodation, setConfirmedAccommodation] = useState([]);
   const [error, setError] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -30,7 +32,7 @@ const Accommodation = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/confirmed-ideas/Accommodation`);
+        const response = await axios.get(`${baseURL}/confirmed-ideas-trip/Accommodation/${tripId}`);
         setConfirmedAccommodation(response.data);
         setAccommodationData(response.data);
         console.log('Confirmed Accommodation: ', response.data);
