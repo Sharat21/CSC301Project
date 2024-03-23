@@ -1,7 +1,7 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
-const { fetchAllIdeas, fetchConfirmedIdeas, fetchConfirmedByTrip, fetchUnconfirmedIdeas, fetchConfirmedByType, addIdea, deleteIdea, fetchConfirmedByTypeAndTrip } = require('../../database');
+const { fetchAllIdeas, fetchConfirmedIdeas, fetchConfirmedByTrip, fetchUnconfirmedIdeas, fetchConfirmedByType, addIdea, deleteIdea, fetchConfirmedByTypeAndTrip, fetchUnconfirmedByTrip } = require('../../database');
 
 // Define routes for Ideas endpoint
 
@@ -37,6 +37,17 @@ router.get('/unconfirmed-ideas', async (req, res) => {
         res.json(unconfirmedIdeas);
     } catch(error) {
         console.log("Fetching all unconfirmed ideas failed: ", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.get('/unconfirmed-ideas-trip/:tripId', async (req, res) => {
+    try {
+        const { tripId } = req.params;
+        const unconfirmedIdeasByTrip = await fetchUnconfirmedByTrip(tripId);
+        res.json(unconfirmedIdeasByTrip);
+    } catch(error) {
+        console.log("Fetching all unconfirmed ideas by trip failed: ", error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });

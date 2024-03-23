@@ -26,7 +26,7 @@ const Ideas = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/unconfirmed-ideas`);
+        const response = await axios.get(`${baseURL}/unconfirmed-ideas-trip/${tripId}`);
         setIdeas(response.data); 
       } catch (error) {
         setError(error.message);
@@ -35,7 +35,7 @@ const Ideas = () => {
     };
 
     fetchData();
-  }, []);
+  }, [tripId]);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -65,7 +65,7 @@ const Ideas = () => {
       Confirmed: false,
       Proposed_by: "",
       Date_Proposed: format(currentDate, 'yyyy-MM-dd'),
-      Trip: "",
+      Trip: tripId,
       Voting_End: format(currentDate, 'yyyy-MM-dd')
     };
 

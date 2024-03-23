@@ -1,6 +1,6 @@
 const { query } = require('express');
 require('dotenv').config();
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 // Connection URI
 const uri = process.env.MONGO_URI;
 // Database Name
@@ -264,6 +264,26 @@ async function fetchUnconfirmedIdeas(userQuery = {}, collectionName = "ideas") {
   }
 }
 
+/* Fetch all unconfirmed trip ideas from the database based on tripID. 
+
+Returns an array of ideas as objects 
+*/
+async function fetchUnconfirmedByTrip(tripID, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+  
+    try {
+      await client.connect();
+      const db = client.db(dbName);
+      const collection = db.collection(collectionName);
+      const query = {Confirmed: false}
+      const result = await collection.find(query).toArray();
+      return result;
+    } finally {
+      await client.close();
+    }
+  
+}
+
 /* Fetch all confirmed trip ideas from the database based on the idea type.
 Type parameter specifies the type of ideas to be retrieved. 
 
@@ -479,6 +499,7 @@ module.exports = {
   fetchAllIdeas,
   fetchConfirmedIdeas,
   fetchUnconfirmedIdeas,
+  fetchUnconfirmedByTrip,
   fetchConfirmedByType,
   fetchConfirmedByTrip,
   fetchConfirmedByTypeAndTrip,
