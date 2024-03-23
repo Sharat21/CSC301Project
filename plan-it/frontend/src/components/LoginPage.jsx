@@ -21,14 +21,12 @@ const LoginPage = () => {
     const handleLogin = async () => {
         try {
             const response = await axios.post(baseURL, { email, password });
-
+    
             const user = response.data;
-            console.log('User data:', user);
-
-            // Perform additional logic based on the response
-            // For example, redirect to a different page on successful login
+            
             alert("Successful Login");
-
+            navigate(`/groups/${user._id}`);
+    
         } catch (error) {
             alert("Invalid Email or Password");
         }

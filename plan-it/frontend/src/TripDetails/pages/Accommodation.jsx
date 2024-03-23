@@ -13,6 +13,8 @@ import {
   DialogContent,
   DialogActions
 } from '@mui/material';
+import NavBar from './components/NavBar';
+import TripDetailsHeader from './components/TripDetailsHeader';
 
 const Accommodation = () => {
   const [confirmedAccommodation, setConfirmedAccommodation] = useState([]);
@@ -124,9 +126,13 @@ const Accommodation = () => {
     );
   };
 
+  console.log('Accommodation component rendered');
+
   return (
     <div style={{ width: '100%' }}>
-      <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
+      <TripDetailsHeader/>
+      <NavBar/>
+      <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>
             Accommodation
@@ -137,7 +143,7 @@ const Accommodation = () => {
       <Container
         disableGutters
         maxWidth={false}
-        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '200px' }}
+        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
       >
         {accommodationData.map((Accommodation, index) => (
           <Card

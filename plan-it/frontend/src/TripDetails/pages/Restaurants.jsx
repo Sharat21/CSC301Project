@@ -13,6 +13,8 @@ import {
   DialogContent,
   DialogActions
 } from '@mui/material';
+import NavBar from './components/NavBar';
+import TripDetailsHeader from './components/TripDetailsHeader';
 
 const Restaurants = () => {
   const [confirmedRestaurants, setConfirmedRestaurants] = useState([]);
@@ -126,7 +128,9 @@ const Restaurants = () => {
 
   return (
     <div style={{ width: '100%' }}>
-      <AppBar position="static" sx={{ width: '100%', marginLeft: '200px' }}>
+      <TripDetailsHeader/>
+      <NavBar/>
+      <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>
             Restaurants
@@ -137,7 +141,7 @@ const Restaurants = () => {
       <Container
         disableGutters
         maxWidth={false}
-        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '200px' }}
+        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
       >
         {RestaurantsData.map((Restaurants, index) => (
           <Card

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  AppBar,
   Button,
   Card,
   CardContent,
@@ -10,9 +11,12 @@ import {
   MenuItem,
   TextField,
   Typography,
+  Toolbar,
   LinearProgress,
 } from '@mui/material';
 import './BudgetSheet.css';
+import NavBar from './pages/components/NavBar';
+import TripDetailsHeader from './pages/components/TripDetailsHeader';
 
 // All dependencies and budget sheet functions
 
@@ -116,10 +120,16 @@ const BudgetSheet = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Budget
-      </Typography>
+    <div>
+      <TripDetailsHeader/>
+      <NavBar/>
+      <AppBar position="static" sx={{ width: '100%' }}>
+        <Toolbar>
+          <Typography variant="h6" sx={{ fontSize: '24px' }}>
+            Budget Sheet
+          </Typography>
+        </Toolbar>
+      </AppBar>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
         <Button variant="contained" onClick={() => setOpenAddDialog(true)}>Add Budget</Button>
         <Button variant="contained" onClick={handleRemoveBudget} style={{ marginLeft: '10px', backgroundColor: '#ff1a1a' }}>Remove Budget</Button>

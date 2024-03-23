@@ -9,6 +9,7 @@ router.post('/login', async (req, res) => {
     const user = await findUser({ Email: email, password: password });
 
     if (user) {
+      console.log('User found:', user);
       res.json(user);
     } else {
       res.status(401).json({ error: 'Invalid credentials' });

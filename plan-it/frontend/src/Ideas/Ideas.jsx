@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Container, CssBaseline, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+
+import { Button, Container, CssBaseline, Typography, AppBar, Toolbar} from '@mui/material';
 import { format } from 'date-fns';
 import IdeaList from './components/IdeaList';
 import IdeaForm from './components/IdeaForm';
 import AddIdeaDialog from './components/AddIdeaDialog';
 import axios from 'axios';
+
 
 const Ideas = () => {
   const [ideas, setIdeas] = useState([]);
@@ -82,23 +85,35 @@ const Ideas = () => {
   };
 
   return (
-    <Container component="main" maxWidth="md">
-      <CssBaseline />
-      <Typography variant="h4" align="center" gutterBottom>
-        Ideas
-      </Typography>
-      <Button variant='contained' onClick={handleOpenDialog}>
-        Add Idea
-      </Button>
-      <AddIdeaDialog
-        open={openDialog}
-        handleClose={handleCloseDialog}
-        newIdea={newIdea}
-        setNewIdea={setNewIdea}
-        handleSubmit={handleSubmit}
-      />
-      <IdeaList ideas={ideas} />
-    </Container>
+
+    <div style={{ width: "100%", position: "relative", minHeight: "100vh" }}>
+      <AppBar position="static" sx={{ width: "100%" }}>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          
+          <Typography variant="h6" sx={{ flex: 1, fontSize: "24px" }}>
+            Ideas
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      <Container component="main" maxWidth="md">
+        <CssBaseline />
+        <Button variant='contained' onClick={handleOpenDialog}>
+          Add Idea
+        </Button>
+        <Button component={Link} to="/trip-details" variant="contained">
+          Confirmed
+        </Button>
+        <AddIdeaDialog
+          open={openDialog}
+          handleClose={handleCloseDialog}
+          newIdea={newIdea}
+          setNewIdea={setNewIdea}
+          handleSubmit={handleSubmit}
+        />
+        <IdeaList ideas={ideas} />
+      </Container>
+    </div>
   );
 };
 
