@@ -16,12 +16,14 @@ import {
   List,
   ListItem
 } from '@mui/material';
+import emailjs from 'emailjs-com';
 import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
 import { useParams } from 'react-router-dom';
 
 const Confirmation = () => {
     const [openDialog, setOpenDialog] = useState(false);
+    const [tripName, setTripName] = useState('');
     const [categorizedIdeas, setCategorizedIdeas] = useState({
         'Activity': [],
         'Accommodation': [],
@@ -29,12 +31,27 @@ const Confirmation = () => {
         'Transportation': []
     });
     const { tripId } = useParams();
-    const baseURL = `http://localhost:14000/api/ideas`;
+    const baseURLIdeas = `http://localhost:14000/api/ideas`;
+    const baseURLTrips = `http://localhost:14000/api/trips`;
+    const sender = 'PlanIt301App@gmail.com';
+    const recipient = 'ryanr.4849@gmail.com';
+    const serviceID = 'service_0jm96eq';
+    const templateID = 'template_r63buj5';
+    const public_key = 'HjoZ2e7hdmfdThEB1';
 
     useEffect(() => {
+        const fetchTrip = async () => {
+            try {
+                const trip_response = await axios.get(`${baseURLTrips}/get-trip/${tripId}`);
+                setTripName(`<h2> ${trip_response.data.Name} Final Itinerary </h2>`);
+            } catch (error) {
+                console.error("Fetching trip name failed: ", error);
+            }
+        }
+
         const fetchConfirmedIdeas = async () => {
           try {
-            const response = await axios.get(`${baseURL}/all-confirmed-ideas-trip/${tripId}`);
+            const response = await axios.get(`${baseURLIdeas}/all-confirmed-ideas-trip/${tripId}`);
             const ideas = response.data;
 
             const categories = {
@@ -48,7 +65,7 @@ const Confirmation = () => {
             ideas.forEach(idea => {
                 const category = idea.Type;
                 if (categories[category]) {
-                    categories[category].push(idea.Name);
+                    categories[category].push({name: idea.Name, description: idea.Description, price: idea.price});
                 }
             });
 
@@ -59,11 +76,13 @@ const Confirmation = () => {
         };
       
         fetchConfirmedIdeas();
+        fetchTrip();
     }, [tripId]);
 
     const handleOpenDialog = () => setOpenDialog(true);
     const handleConfirm = async () => {
         setOpenDialog(false);
+        await sendEmail();
     };
     const handleCancel = () => setOpenDialog(false);
 
@@ -79,6 +98,40 @@ const Confirmation = () => {
             </DialogActions>
         </Dialog>
     );
+
+    const generateEmail = () => {
+        let htmlContent = '<div style="font-family: Arial, sans-serif;">';
+
+        Object.keys(categorizedIdeas).forEach((category) => {
+            htmlContent += `<div style="margin-bottom: 20px;">`;
+            htmlContent += `<h2 style="font-weight: bold;">${category}</h2>`;
+
+            const ideasList = categorizedIdeas[category].map(idea => 
+                `<p style="margin-left: 20px; font-weight: bold;">${idea.name}</p>
+                 <p style="margin-left: 30px;">Description: ${idea.description}</p>
+                 <p style="margin-left: 30px;">Price: ${idea.price}</p>`
+            ).join('');
+
+            htmlContent += ideasList || `<p style="margin-left: 20px;">No ideas confirmed for this category.</p>`;
+            htmlContent += `</div>`;
+            });
+
+        htmlContent += '</div>';
+        return htmlContent;
+    };
+
+    const sendEmail = async () => {
+        const emailContent = generateEmail();
+
+        const templateParams = {message: emailContent, recipient: recipient, trip_name: tripName};
+
+        try {
+            const response = await emailjs.send(serviceID, templateID, templateParams, public_key);
+            console.log('Email sent successfully!', response.status, response.text);
+        } catch (err) {
+            console.error('Failed to send email.', err);
+        }
+    };
 
   return (
     <div style={{ width: '100%' }}>
@@ -114,9 +167,9 @@ const Confirmation = () => {
                   {category}
                 </Typography>
                 {categorizedIdeas[category].length > 0 ? (
-                  categorizedIdeas[category].map((ideaName, index) => (
+                  categorizedIdeas[category].map((idea, index) => (
                     <Typography key={index} variant="body1" style={{ marginLeft: '20px' }}>
-                      • {ideaName}
+                      • {idea.name}
                     </Typography>
                   ))
                 ) : (
