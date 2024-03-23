@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { Button, Container, CssBaseline, Typography, AppBar, Toolbar} from '@mui/material';
 import { format } from 'date-fns';
@@ -10,6 +10,7 @@ import axios from 'axios';
 
 
 const Ideas = () => {
+  const { tripId } = useParams();
   const [ideas, setIdeas] = useState([]);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -47,7 +48,6 @@ const Ideas = () => {
   const addIdea = async (idea) => {
     try {
       const response = await axios.post(`${baseURL}/create-idea`, idea);
-      console.log(response.data.message);
 
       window.location.reload();
     } catch (error) {
@@ -70,22 +70,9 @@ const Ideas = () => {
     };
 
     addIdea(submittedIdea);
-
-    // console.log(submittedIdea);
-    // setIdeas( prevIdeas => [...prevIdeas, submittedIdea]);
-    
-    // handleCloseDialog();
-    // setNewIdea({
-    //   Name: '',
-    //   Type: '',
-    //   Description: '',
-    //   link: '',
-    //   price: ''
-    // });
   };
 
   return (
-
     <div style={{ width: "100%", position: "relative", minHeight: "100vh" }}>
       <AppBar position="static" sx={{ width: "100%" }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
@@ -101,7 +88,7 @@ const Ideas = () => {
         <Button variant='contained' onClick={handleOpenDialog}>
           Add Idea
         </Button>
-        <Button component={Link} to="/trip-details" variant="contained">
+        <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}`} variant="contained">
           Confirmed
         </Button>
         <AddIdeaDialog

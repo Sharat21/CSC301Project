@@ -1,7 +1,7 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
-const { fetchAllIdeas, fetchConfirmedIdeas, fetchUnconfirmedIdeas, fetchConfirmedByType, addIdea, deleteIdea } = require('../../database');
+const { fetchAllIdeas, fetchConfirmedIdeas, fetchConfirmedByTrip, fetchUnconfirmedIdeas, fetchConfirmedByType, addIdea, deleteIdea, fetchConfirmedByTypeAndTrip } = require('../../database');
 
 // Define routes for Ideas endpoint
 
@@ -51,6 +51,17 @@ router.get('/confirmed-ideas', async (req, res) => {
     }
 });
 
+router.get('/confirmed-ideas-trip/:tripId', async (req, res) => {
+    try {
+        const { tripId } = req.params;
+        const confirmedIdeasByTrip = await fetchConfirmedByTrip(new Object(tripId));
+        res.json(confirmedIdeasByTrip);
+    } catch(error) {
+        console.log("Fetching all confirmed ideas failed: ", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 router.get('/confirmed-ideas/:type', async (req, res) => {
     try {
         const { type } = req.params;
@@ -58,6 +69,17 @@ router.get('/confirmed-ideas/:type', async (req, res) => {
         res.json(ideasByType);
     } catch(error) {
         console.log("Fetching ideas by type failed: ", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.get('/confirmed-ideas-trip/:type/:tripId', async (req, res) => {
+    try {
+        const { type, tripId } = req.params;
+        const ideasByTypeAndTrip = await fetchConfirmedByTypeAndTrip(new ObjectId(tripId), type);
+        res.json(ideasByTypeAndTrip);
+    } catch(error) {
+        console.log("Fetching ideas by type and trip failed: ", error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });

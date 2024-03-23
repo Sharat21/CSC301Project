@@ -284,6 +284,48 @@ async function fetchConfirmedByType(type, collectionName = "ideas") {
   }
 }
 
+/* Fetch all confirmed trip ideas from the database based on the tripID.
+TripID parameter specifies which trip the ideas belong to. 
+
+Returns an array of ideas as objects 
+*/
+async function fetchConfirmedByTrip(tripID, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+    
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {Confirmed: true, Trip: tripID}
+    const result = await collection.find(query).toArray();
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+
+/* Fetch all confirmed trip ideas from the database based on the idea type and tripID.
+Type parameter specifies the type of ideas to be retrieved. 
+TripID parameter specifies which trip the ideas should belong to.
+
+Returns an array of ideas as objects 
+*/
+async function fetchConfirmedByTypeAndTrip(tripID, type, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+    
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {Confirmed: true, Type: type, Trip: tripID};
+    const result = await collection.find(query).toArray();
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
 /*
 Add a new idea into the database. 
 data parameter must have the following structure:
@@ -438,9 +480,11 @@ module.exports = {
   fetchConfirmedIdeas,
   fetchUnconfirmedIdeas,
   fetchConfirmedByType,
+  fetchConfirmedByTrip,
+  fetchConfirmedByTypeAndTrip,
   addIdea,
   deleteIdea,
-    addTrip,
+  addTrip,
   updateTrip,
   findTrip,
   deleteTrip

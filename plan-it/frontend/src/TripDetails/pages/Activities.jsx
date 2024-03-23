@@ -15,8 +15,10 @@ import {
 } from '@mui/material';
 import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
+import { useParams } from 'react-router-dom';
 
 const Activities = () => {
+  const { tripId } = useParams();
   const [confirmedActivities, setConfirmedActivities] = useState([]);
   const [error, setError] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -30,7 +32,7 @@ const Activities = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/confirmed-ideas/Activity`);
+        const response = await axios.get(`${baseURL}/confirmed-ideas-trip/Activity/${tripId}`);
         setConfirmedActivities(response.data);
         setActivitiesData(response.data);
         console.log('Confirmed Activities: ', response.data);
