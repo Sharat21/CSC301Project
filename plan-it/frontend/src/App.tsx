@@ -14,6 +14,8 @@ import Groups from "./Groups/Groups";
 import Ideas from './Ideas/Ideas';
 import BudgetSheet from './TripDetails/BudgetSheet';
 
+//
+
 const App = () => {
   return (
       <Router>
