@@ -31,7 +31,7 @@ router.post('/create-idea', async (req, res) => {
     }
 });
 
-router.get('/unconfirmed-ideas', async (req, res) => {
+router.get('/all-unconfirmed-ideas', async (req, res) => {
     try {
         const unconfirmedIdeas = await fetchUnconfirmedIdeas();
         res.json(unconfirmedIdeas);
@@ -62,10 +62,10 @@ router.get('/confirmed-ideas', async (req, res) => {
     }
 });
 
-router.get('/confirmed-ideas-trip/:tripId', async (req, res) => {
+router.get('/all-confirmed-ideas-trip/:tripId', async (req, res) => {
     try {
         const { tripId } = req.params;
-        const confirmedIdeasByTrip = await fetchConfirmedByTrip(new Object(tripId));
+        const confirmedIdeasByTrip = await fetchConfirmedByTrip(new ObjectId(tripId));
         res.json(confirmedIdeasByTrip);
     } catch(error) {
         console.log("Fetching all confirmed ideas failed: ", error);

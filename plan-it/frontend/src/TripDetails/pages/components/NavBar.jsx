@@ -13,6 +13,7 @@ const NavBar = () => {
       { path: `/trip-details/restaurants/${tripId}`, label: "Restaurants" },
       { path: `/trip-details/budgetsheet/${tripId}`, label: "Budget Sheet" },
       { path: `/trip-details/map/${tripId}`, label: "Map" },
+      { path: `/trip-details/confirmation/${tripId}`, label: "Confirmation" },
       { path: `/ideas/0`, label: "Go Back to Trip Board" }
     ];
 

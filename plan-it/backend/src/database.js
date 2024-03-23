@@ -275,7 +275,7 @@ async function fetchUnconfirmedByTrip(tripID, collectionName = "ideas") {
       await client.connect();
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
-      const query = {Confirmed: false}
+      const query = {Confirmed: false, Trip: tripID}
       const result = await collection.find(query).toArray();
       return result;
     } finally {

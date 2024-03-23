@@ -13,6 +13,7 @@ import Groups from "./Groups/Groups";
 import Ideas from './Ideas/Ideas';
 import BudgetSheet from './TripDetails/BudgetSheet';
 import MapComponent from './TripDetails/pages/Maps';
+import Confirmation from './TripDetails/pages/Confirmation';
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
               <Route path="/trip-details/restaurants/:tripId" element={<Restaurants />} />
               <Route path="/trip-details/budgetsheet/:tripId" element={<BudgetSheet />} />
               <Route path="/trip-details/map/:tripId" element={<MapComponent />} />
+              <Route path="/trip-details/confirmation/:tripId" element={<Confirmation />} />
           </Routes>
       </Router>
   );
