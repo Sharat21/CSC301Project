@@ -18,7 +18,7 @@ import TripDetailsHeader from './components/TripDetailsHeader';
 import { useParams } from 'react-router-dom';
 
 const Accommodation = () => {
-  const { tripId } = useParams();
+  const { tripId, userId } = useParams();
   const [confirmedAccommodation, setConfirmedAccommodation] = useState([]);
   const [error, setError] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);

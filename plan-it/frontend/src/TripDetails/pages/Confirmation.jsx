@@ -24,15 +24,19 @@ import { useParams } from 'react-router-dom';
 const Confirmation = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [tripName, setTripName] = useState('');
+    const [finalized, setFinalized] = useState([]);
+    const [finalizedNames, setFinalizedNames] = useState([]);
+    const [username, setUsername] = useState('');
     const [categorizedIdeas, setCategorizedIdeas] = useState({
         'Activity': [],
         'Accommodation': [],
         'Restaurant': [],
         'Transportation': []
     });
-    const { tripId } = useParams();
+    const { tripId, userId } = useParams();
     const baseURLIdeas = `http://localhost:14000/api/ideas`;
     const baseURLTrips = `http://localhost:14000/api/trips`;
+    const baseURLUsers = `http://localhost:14000/api/users`;
     const sender = 'PlanIt301App@gmail.com';
     const recipient = 'ryanr.4849@gmail.com';
     const serviceID = 'service_0jm96eq';
@@ -44,9 +48,24 @@ const Confirmation = () => {
             try {
                 const trip_response = await axios.get(`${baseURLTrips}/get-trip/${tripId}`);
                 setTripName(`<h2> ${trip_response.data.Name} Final Itinerary </h2>`);
+                setFinalized(trip_response.data.UsersFinalized ? trip_response.data.UsersFinalized : []);
+                return trip_response.data.UsersFinalized;
             } catch (error) {
                 console.error("Fetching trip name failed: ", error);
             }
+            return [];
+        }
+
+        const fetchUserNames = async(userIds) => {
+          try{
+            const userPromises = userIds.map(user_id => axios.get(`${baseURLUsers}/get-user/${user_id}`));
+            const userResponses = await Promise.all(userPromises);
+            const names = userResponses.map(res => `${res.data.Firstname} ${res.data.Lastname}`);
+            setFinalizedNames(names);
+          } catch (err) {
+            console.error("Fetching user names failed", error);
+          }
+          
         }
 
         const fetchConfirmedIdeas = async () => {
@@ -74,15 +93,22 @@ const Confirmation = () => {
             console.error("Fetching confirmed ideas failed: ", error);
           }
         };
+
+        const fetchData = async () => {
+          const finalizedUserIds = await fetchTrip();
+          if (finalizedUserIds && finalizedUserIds.length > 0){
+            await fetchUserNames(finalizedUserIds);
+          }
+          await fetchConfirmedIdeas();
+        }
       
-        fetchConfirmedIdeas();
-        fetchTrip();
+        fetchData();
     }, [tripId]);
 
     const handleOpenDialog = () => setOpenDialog(true);
     const handleConfirm = async () => {
-        setOpenDialog(false);
-        await sendEmail();
+        // setOpenDialog(false);
+        // await sendEmail();
     };
     const handleCancel = () => setOpenDialog(false);
 
@@ -149,10 +175,26 @@ const Confirmation = () => {
             <CardContent>
                 <Typography gutterBottom>
                     Are you content with all the ideas planned for the trip and would you like to finalize it?
+                    <br></br>
+                    <br></br>
+                    When all group members have finalized, you will receive an email with the final trip initerary. 
                 </Typography>
                 <Button variant="outlined" color="primary" style={{ marginTop: '20px'}} onClick={handleOpenDialog}>
                     Finalize Ideas
                 </Button>
+                <List>
+                  {finalizedNames.length > 0 ? (
+                    finalizedNames.map((fullName, index) => (
+                      <ListItem key={index}>
+                        <ListItemText primary={fullname} />
+                      </ListItem>
+                    ))
+                  ) : (
+                    <Typography variant="body2" style={{ marginTop: '20px' }}>
+                      No members have finalized yet.
+                    </Typography>
+                  )}
+                </List>
             </CardContent>
         </Card>
       </Container>

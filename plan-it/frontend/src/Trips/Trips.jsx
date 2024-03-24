@@ -112,7 +112,7 @@ const Trips = () => {
     startDate: "",
     endDate: "",
     Description: "",
-    Status: "",
+    Status: ""
   });
   useEffect(() => {
     const fetchData = async () => {

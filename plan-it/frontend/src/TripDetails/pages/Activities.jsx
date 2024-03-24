@@ -18,7 +18,7 @@ import TripDetailsHeader from './components/TripDetailsHeader';
 import { useParams } from 'react-router-dom';
 
 const Activities = () => {
-  const { tripId } = useParams();
+  const { tripId, userId } = useParams();
   const [confirmedActivities, setConfirmedActivities] = useState([]);
   const [error, setError] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);

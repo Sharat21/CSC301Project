@@ -487,6 +487,26 @@ async function deleteTrip(query, collectionName = 'trips') {
   }
 }
 
+/*
+Get all the users that have confirmed their finalization for a particular trip. 
+
+Returns delete status.
+*/
+async function fetchFinalized(tripID, collectionName = 'trips') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {_id: tripID};
+    const result = await collection.findOne(query);
+    return result ? result.UsersFinalized : [];
+  } finally {
+    await client.close();
+  }
+}
+
 module.exports = {
   addUser,
   findUser,
@@ -508,5 +528,6 @@ module.exports = {
   addTrip,
   updateTrip,
   findTrip,
-  deleteTrip
+  deleteTrip,
+  fetchFinalized
 };

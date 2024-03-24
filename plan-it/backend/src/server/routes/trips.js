@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { findGroup, findTrip, addTrip, updateTrip, deleteTrip, updateGroup} = require('../../database');
+const { findGroup, findTrip, addTrip, updateTrip, deleteTrip, updateGroup, fetchFinalized} = require('../../database');
 const { ObjectId } = require('mongodb');
 
 
@@ -41,8 +41,6 @@ router.post('/add-trip', async (req, res) => {
     try {
       const { Name, Duration, startDate, endDate, Description, Status, groupId } = req.body;
 
-  
-  
       // Create a new user
       const newTrip = {
         Name: Name,
@@ -50,7 +48,8 @@ router.post('/add-trip', async (req, res) => {
         StartDate: startDate,
         EndDate: endDate,
         Description: Description,
-        Status: Status
+        Status: Status,
+        UsersFinalized: []
       };
   
       const result = await addTrip(newTrip);
@@ -61,13 +60,13 @@ router.post('/add-trip', async (req, res) => {
       const result2 = await updateGroup(objectGroupID, query);
       res.json({
         success: true,
-        message: 'User added successfully',
+        message: 'Trip added successfully',
         trip: result,
         group: result2,
         tripId: newTrip._id
       });
     } catch (error) {
-      console.error('Error registering user:', error);
+      console.error('Error registering Trip:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
@@ -75,24 +74,26 @@ router.post('/add-trip', async (req, res) => {
   router.post('/update-trip', async (req, res) => {
     try {
       const { Name, Duration, startDate, endDate, Description, Status, tripId } = req.body;
+      const objectTripID = new ObjectId(String(tripId));
+      const finalized = await fetchFinalized(objectTripID);
 
-      // Create a new user
+      // Create a new trip
       const newTrip = {
         Name: Name,
         Duration: Duration,
         StartDate: startDate,
         EndDate: endDate,
         Description: Description,
-        Status: Status
+        Status: Status,
+        UsersFinalized: finalized
       };
 
-      const objectTripID = new ObjectId(String(tripId));
-      query = { _id: objectTripID };
+      const query = { _id: objectTripID };
       const result = await updateTrip(query, newTrip);
 
       res.json({
         success: true,
-        message: 'User updated successfully',
+        message: 'Trip updated successfully',
         user: result
       });
     } catch (error) {
