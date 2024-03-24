@@ -25,14 +25,14 @@ const App = () => {
               <Route path="settings/:userId" element={<Settings />} />
               <Route path="/groups/:userId" element={<Groups />} />
               <Route path="/trips/:groupId/:userId" element={<Trips />} />
-              <Route path="/ideas/:tripId/:userId" element={<Ideas />} /> 
-              <Route path="/trip-details/destinationtransportation/:tripId/:userId" element={<DestinationTransportation />} />
-              <Route path="/trip-details/accommodation/:tripId/:userId" element={<Accommodation />} />
-              <Route path="/trip-details/activities/:tripId/:userId" element={<Activities />} />
-              <Route path="/trip-details/restaurants/:tripId/:userId" element={<Restaurants />} />
-              <Route path="/trip-details/budgetsheet/:tripId/:userId" element={<BudgetSheet />} />
-              <Route path="/trip-details/map/:tripId/:userId" element={<MapComponent />} />
-              <Route path="/trip-details/confirmation/:tripId/:userId" element={<Confirmation />} />
+              <Route path="/ideas/:groupId/:tripId/:userId" element={<Ideas />} /> 
+              <Route path="/trip-details/destinationtransportation/:groupId/:tripId/:userId" element={<DestinationTransportation />} />
+              <Route path="/trip-details/accommodation/:groupId/:tripId/:userId" element={<Accommodation />} />
+              <Route path="/trip-details/activities/:groupId/:tripId/:userId" element={<Activities />} />
+              <Route path="/trip-details/restaurants/:groupId/:tripId/:userId" element={<Restaurants />} />
+              <Route path="/trip-details/budgetsheet/:groupId/:tripId/:userId" element={<BudgetSheet />} />
+              <Route path="/trip-details/map/:groupId/:tripId/:userId" element={<MapComponent />} />
+              <Route path="/trip-details/confirmation/:groupId/:tripId/:userId" element={<Confirmation />} />
           </Routes>
       </Router>
   );

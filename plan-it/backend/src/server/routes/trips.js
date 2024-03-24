@@ -75,7 +75,7 @@ router.post('/add-trip', async (req, res) => {
     try {
       const { Name, Duration, startDate, endDate, Description, Status, tripId } = req.body;
       const objectTripID = new ObjectId(String(tripId));
-      const finalized = await fetchFinalized(objectTripID);
+      const finalized = await fetchFinalized(tripId);
 
       // Create a new trip
       const newTrip = {
@@ -120,6 +120,26 @@ router.post('/add-trip', async (req, res) => {
     } catch (error) {
       console.error('Error registering user:', error);
       res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  router.post('/update-finalized/:tripId/:userId', async (req, res) => {
+    try {
+      const { tripId, userId } = req.params;
+      const objectTripID = new ObjectId(tripId);
+      const existingTrip = await findTrip({ _id: objectTripID });
+      if (!existingTrip.UsersFinalized.includes(userId)) {
+        existingTrip.UsersFinalized.push(userId);
+      }
+      const result = await updateTrip({ _id: objectTripID }, {UsersFinalized: existingTrip.UsersFinalized});
+      res.json({
+        success: true,
+        message: 'User finalized successfully',
+        user: result
+      });
+    } catch(error) {
+        console.log("Fetching ideas by type failed: ", error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
   });
   

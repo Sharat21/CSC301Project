@@ -11,7 +11,7 @@ import axios from 'axios';
 
 
 const Ideas = () => {
-  const { tripId, userId } = useParams();
+  const { groupId, tripId, userId } = useParams();
   const [ideas, setIdeas] = useState([]);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -90,7 +90,7 @@ const Ideas = () => {
         <Button variant='contained' onClick={handleOpenDialog}>
           Add Idea
         </Button>
-        <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}/${userId}`} variant="contained">
+        <Button component={Link} to={`/trip-details/destinationtransportation/${groupId}/${tripId}/${userId}`} variant="contained">
           Confirmed
         </Button>
         <AddIdeaDialog

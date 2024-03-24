@@ -4,18 +4,19 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 
 const NavBar = () => {
     const page = useLocation();
-    const tripId = page["pathname"].split("/")[3];
-    const userId = page["pathname"].split("/")[4];
+    const groupId = page["pathname"].split("/")[3];
+    const tripId = page["pathname"].split("/")[4];
+    const userId = page["pathname"].split("/")[5];
 
     const links = [
-      { path: `/trip-details/destinationtransportation/${tripId}/${userId}`, label: "Destination & Transportation" },
-      { path: `/trip-details/accommodation/${tripId}/${userId}`, label: "Accommodation" },
-      { path: `/trip-details/activities/${tripId}/${userId}`, label: "Activities" },
-      { path: `/trip-details/restaurants/${tripId}/${userId}`, label: "Restaurants" },
-      { path: `/trip-details/budgetsheet/${tripId}/${userId}`, label: "Budget Sheet" },
-      { path: `/trip-details/map/${tripId}/${userId}`, label: "Map" },
-      { path: `/trip-details/confirmation/${tripId}/${userId}`, label: "Confirmation" },
-      { path: `/ideas/${tripId}/${userId}`, label: "Go Back to Trip Board" }
+      { path: `/trip-details/destinationtransportation/${groupId}/${tripId}/${userId}`, label: "Destination & Transportation" },
+      { path: `/trip-details/accommodation/${groupId}/${tripId}/${userId}`, label: "Accommodation" },
+      { path: `/trip-details/activities/${groupId}/${tripId}/${userId}`, label: "Activities" },
+      { path: `/trip-details/restaurants/${groupId}/${tripId}/${userId}`, label: "Restaurants" },
+      { path: `/trip-details/budgetsheet/${groupId}/${tripId}/${userId}`, label: "Budget Sheet" },
+      { path: `/trip-details/map/${groupId}/${tripId}/${userId}`, label: "Map" },
+      { path: `/trip-details/confirmation/${groupId}/${tripId}/${userId}`, label: "Confirmation" },
+      { path: `/ideas/${groupId}/${tripId}/${userId}`, label: "Go Back to Trip Board" }
     ];
 
     return (
