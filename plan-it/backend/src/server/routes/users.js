@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { findUser, addUser, updateUser, deleteUser } = require('../../database');
+const { ObjectId } = require('mongodb');
+
 
 // Login route
 router.post('/login', async (req, res) => {
-    try {
+  try {
     const { email, password } = req.body;
     const user = await findUser({ Email: email, password: password });
 
@@ -25,13 +27,11 @@ router.post('/register', async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
 
-    // Check for empty fields
     if (!firstName || !lastName || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    // Check if the user with the same email already exists
-    const existingUser = await findUser({ Email: email, password: password });
+    const existingUser = await findUser({ Email: email });
 
     if (existingUser) {
       return res.status(400).json({ error: 'User with this email already exists' });
@@ -48,7 +48,7 @@ router.post('/register', async (req, res) => {
     };
 
     const result = await addUser(newUser);
-    
+
     res.json({
       success: true,
       message: 'User added successfully',
@@ -60,6 +60,34 @@ router.post('/register', async (req, res) => {
   }
 });
 
+router.post('/update', async (req, res) => {
+  try {
+    const { userId, oldEmail, newEmail, oldPassword, newPassword } = req.body;
+    const objectUserID = new ObjectId(userId);
+    query = { _id: objectUserID };
+    if (newEmail === '' && newPassword === '') {
+      return res.status(400).json({ error: 'Fields are required' });
+    }
+    const foundUser = await findUser({ _id: objectUserID})
+    if (!foundUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    console.log(oldEmail, foundUser.Email, oldPassword, foundUser.password)
+    if (newEmail === '' && oldPassword === foundUser.password) {
+      const updatedUser = await updateUser({ _id: objectUserID }, { password: newPassword });
+      res.status(200).json({ success: true, message: 'User updated successfully', user: updatedUser });
+    } else if (newPassword === '' && foundUser.Email === oldEmail) {
+      const updatedUser = await updateUser({ _id: objectUserID }, { Email: newEmail });
+      res.status(200).json({ success: true, message: 'User updated successfully', user: updatedUser });
+    } else {
+      console.log('Invalid credentials');
+      return res.status(400).json({ error: 'Invalid credentials' });
+    }
+  } catch (error) {
+    console.log('Error updating user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 // Other routes (GET, POST, etc.) for user management
 
 module.exports = router;

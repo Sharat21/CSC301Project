@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import Header from './../components/Header';
 
 import {
   AppBar,
@@ -96,13 +97,14 @@ function formatStatus(status) {
 const Trips = () => {
   const baseURL = `http://localhost:14000/api/trips`;
   var [tripsData, setTripsData] = useState([]);
-  const { groupId } = useParams(); // Extract userId from the URL
+  const { groupId, userId } = useParams(); // Extract userId from the URL
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedTrip, setEditedTrip] = useState({});
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const navigate = useNavigate(); // Use useNavigate hook
-
+  
+  
   const [newTrip, setNewTrip] = useState({
     id: "",
     Name: "",
@@ -208,7 +210,8 @@ const Trips = () => {
         e.stopPropagation();
     } else {
         // Handle the click event on the card
-        navigate(`/ideas/${trip.id}`);
+        console.log(userId, groupId);
+        navigate(`/ideas/${trip.id}/${userId}`);
         
     }
 };
@@ -284,6 +287,7 @@ const Trips = () => {
 
   return (
     <div style={{ width: '100%' }}>
+      <Header userId={userId}/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: "24px" }}>
