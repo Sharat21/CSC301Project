@@ -25,7 +25,8 @@ const App = () => {
               <Route path="settings/:userId" element={<Settings />} />
               <Route path="/groups/:userId" element={<Groups />} />
               <Route path="/trips/:groupId/:userId" element={<Trips />} />
-              <Route path="/ideas/:tripId/:userId" element={<Ideas />} /> 
+              <Route path="/ideas/:tripId/:groupId/:userId" element={<Ideas />} /> 
+              <Route path="/trip-details/:tripId/:userId" element={<DestinationTransportation />} />
               <Route path="/trip-details/destinationtransportation/:tripId/:userId" element={<DestinationTransportation />} />
               <Route path="/trip-details/accommodation/:tripId/:userId" element={<Accommodation />} />
               <Route path="/trip-details/activities/:tripId/:userId" element={<Activities />} />

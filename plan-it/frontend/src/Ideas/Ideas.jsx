@@ -10,7 +10,7 @@ import axios from 'axios';
 
 
 const Ideas = () => {
-  const { tripId, userId } = useParams();
+  const { tripId, groupId, userId } = useParams();
   const [ideas, setIdeas] = useState([]);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -19,7 +19,8 @@ const Ideas = () => {
     Type: '',
     Description: '',
     link: '',
-    price: ''
+    price: '',
+    max_budget: ''
   });
   const baseURL = `http://localhost:14000/api/ideas`;
 
@@ -57,16 +58,19 @@ const Ideas = () => {
 
   const handleSubmit = () => {
     const currentDate = new Date();
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
 
     const submittedIdea = {
       ...newIdea,
       price: newIdea.price ? newIdea.price: '0',
+      max_budget: newIdea.max_budget ? newIdea.max_budget : '0',
       Votes: 0,
       Confirmed: false,
-      Proposed_by: "",
+      Proposed_by: userId,
       Date_Proposed: format(currentDate, 'yyyy-MM-dd'),
       Trip: tripId,
-      Voting_End: format(currentDate, 'yyyy-MM-dd')
+      Voting_End: format(endDate, 'yyyy-MM-dd')
     };
 
     addIdea(submittedIdea);
@@ -80,17 +84,20 @@ const Ideas = () => {
           
           <Typography variant="h6" sx={{ flex: 1, fontSize: "24px" }}>
             Ideas
-          </Typography>
+          </Typography >
+          <Button component={Link} to={`/trips/${groupId}`} variant="contained" sx={{ marginRight: "8px" }}>
+            Back to trips
+          </Button>
+          <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}/${groupId}`} variant="contained">
+            To confirmed ideas
+          </Button>
         </Toolbar>
       </AppBar>
 
       <Container component="main" maxWidth="md">
         <CssBaseline />
-        <Button variant='contained' onClick={handleOpenDialog}>
+        <Button variant='contained' onClick={handleOpenDialog} sx={{ width: '100%', marginTop: "8px"}}>
           Add Idea
-        </Button>
-        <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}/${userId}`} variant="contained">
-          Confirmed
         </Button>
         <AddIdeaDialog
           open={openDialog}

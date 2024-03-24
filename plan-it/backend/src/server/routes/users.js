@@ -3,7 +3,6 @@ const router = express.Router();
 const { findUser, addUser, updateUser, deleteUser } = require('../../database');
 const { ObjectId } = require('mongodb');
 
-
 // Login route
 router.post('/login', async (req, res) => {
   try {
@@ -59,6 +58,22 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+router.get('/get-user/:userId', async (req, res) => {
+  try {
+    const {userId} = req.params;
+    console.log("reached here ", userId);
+    const objectUserID = new ObjectId(userId);
+    const query = { _id: objectUserID };
+    console.log("reached here ", query);
+
+    const user = await findUser(query);
+    res.json(user);
+  } catch(error) {
+      console.log("Fetching user failed: ", error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
 
 router.post('/update', async (req, res) => {
   try {
