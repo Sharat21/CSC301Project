@@ -11,8 +11,14 @@ import {
   Grid,
   IconButton,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Tooltip,
 } from "@mui/material";
-import { Cancel, Add } from "@mui/icons-material";
+import { Cancel, Add, FileCopy } from "@mui/icons-material";
 import { useNavigate  } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
@@ -44,7 +50,14 @@ const formatDate = (dateString) => {
 const Groups = () => {
   const baseURL = `http://localhost:14000/api/groups`;
   const [groupsData, setGroupsData] = useState([]);
-  
+  const [copiedGroupId, setCopiedGroupId] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [joinGroupDialogOpen, setJoinGroupDialogOpen] = useState(false);
+  const [groupIdToJoin, setGroupIdToJoin] = useState("");
+
+
+
   const { userId } = useParams(); // Extract userId from the URL
   useEffect(() => {
     const fetchData = async () => {
@@ -97,9 +110,53 @@ const Groups = () => {
 
   };
 
-  const handleJoinGroup = (groupName) => {
-    // Handle join group button click event
-    console.log(`Joined group: ${groupName}`);
+  const handleJoinGroup = () => {
+    setJoinGroupDialogOpen(true);
+  };
+
+  const handleJoinGroupConfirm = async () => {
+    // Logic to join the group using the provided group ID
+    console.log("Joining group with ID:", groupIdToJoin);
+    try {
+      const response = await axios.post(`${baseURL}/join-group`, {
+        groupId: groupIdToJoin,
+        userId: userId,
+      });
+      console.log('New group created:', response.data);
+      // You can fetch updated group data here if needed
+      setOpenDialog(false);
+      setNewGroupName("");
+    } catch (error) {
+      console.error('Error creating new group:', error.message);
+      // Handle error
+    }
+    setJoinGroupDialogOpen(false);
+    setGroupIdToJoin(""); // Clear the input field
+  };
+
+  const handleAddGroup = () => {
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setNewGroupName("");
+  };
+
+    const handleCreateGroup = async () => {
+    try {
+      const response = await axios.post(`${baseURL}/create-group`, {
+        name: newGroupName,
+        userId: userId,
+      });
+      console.log('New group created:', response.data);
+      // You can fetch updated group data here if needed
+      setOpenDialog(false);
+      setNewGroupName("");
+    } catch (error) {
+      console.error('Error creating new group:', error.message);
+      // Handle error
+    }
   };
 
   const handleLeaveGroup = (event, groupName) => {
@@ -107,6 +164,14 @@ const Groups = () => {
 
     // Handle leave group button click event
     console.log(`Left group: ${groupName}`);
+  };
+
+  const handleCopyGroupId = (groupId) => {
+    setCopiedGroupId(groupId);
+    setTimeout(() => {
+      setCopiedGroupId(null);
+    }, 3000);
+    navigator.clipboard.writeText(groupId);
   };
 
   return (
@@ -119,6 +184,9 @@ const Groups = () => {
           </Typography>
           <Button color="inherit" onClick={handleJoinGroup}>
             Join Group
+          </Button>
+          <Button color="inherit" onClick={handleAddGroup}>
+            Create Group
           </Button>
         </Toolbar>
       </AppBar>
@@ -144,6 +212,10 @@ const Groups = () => {
                     Members: {group.members.join(", ")}
                   </Typography>
                   <Typography variant="body2">Date Created: {group.date}</Typography>
+                  <Typography variant="body3">Group ID: {group._id}</Typography>
+                  <Button variant="outlined" onClick={(e) => { e.stopPropagation(); handleCopyGroupId(group._id); }}>
+                  {copiedGroupId === group._id ? 'Copied' : 'Copy ID'}
+                  </Button>
                 </CardContent>
                 <IconButton
                   aria-label="leave group"
@@ -159,6 +231,45 @@ const Groups = () => {
           ))}
         </Grid>
       </Container>
+
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Add New Group</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="group-name"
+            label="Group Name"
+            type="text"
+            fullWidth
+            value={newGroupName}
+            onChange={(e) => setNewGroupName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button onClick={handleCreateGroup}>Create</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={joinGroupDialogOpen} onClose={() => setJoinGroupDialogOpen(false)}>
+        <DialogTitle>Join Group</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Group ID"
+            variant="outlined"
+            fullWidth
+            value={groupIdToJoin}
+            onChange={(e) => setGroupIdToJoin(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setJoinGroupDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleJoinGroupConfirm} variant="contained" color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
