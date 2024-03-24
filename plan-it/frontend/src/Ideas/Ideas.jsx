@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-
 import { Button, Container, CssBaseline, Typography, AppBar, Toolbar} from '@mui/material';
 import { format } from 'date-fns';
 import IdeaList from './components/IdeaList';
@@ -16,7 +14,6 @@ const Ideas = () => {
   const [ideas, setIdeas] = useState([]);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const { tripId, userId } = useParams();
   const [newIdea, setNewIdea] = useState({
     Name: '',
     Type: '',
