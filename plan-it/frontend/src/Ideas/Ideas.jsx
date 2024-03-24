@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-
 import { Button, Container, CssBaseline, Typography, AppBar, Toolbar} from '@mui/material';
 import { format } from 'date-fns';
 import IdeaList from './components/IdeaList';
 import IdeaForm from './components/IdeaForm';
+import Header from '../components/Header';
 import AddIdeaDialog from './components/AddIdeaDialog';
 import axios from 'axios';
 
@@ -78,6 +78,7 @@ const Ideas = () => {
 
   return (
     <div style={{ width: "100%", position: "relative", minHeight: "100vh" }}>
+      <Header userId={userId} />
       <AppBar position="static" sx={{ width: "100%" }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           
@@ -98,7 +99,6 @@ const Ideas = () => {
         <Button variant='contained' onClick={handleOpenDialog} sx={{ width: '100%', marginTop: "8px"}}>
           Add Idea
         </Button>
-        
         <AddIdeaDialog
           open={openDialog}
           handleClose={handleCloseDialog}

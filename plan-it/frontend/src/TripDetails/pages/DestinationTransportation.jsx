@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import {
   AppBar,
@@ -15,7 +16,6 @@ import {
 } from '@mui/material';
 import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
-import { useParams } from 'react-router-dom';
 
 const DestinationTransportation = () => {
   const { tripId } = useParams();
@@ -25,6 +25,7 @@ const DestinationTransportation = () => {
   const [editedDestination, setEditedDestination] = useState({});
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [DestinationData, setDestinationData] = useState([]);
+  const { userId } = useParams();
 
   const [confirmedTransportation, setConfirmedTransportation] = useState(null);
   const [openTransportationDialog, setOpenTransportationDialog] = useState(false);
@@ -195,7 +196,7 @@ const DestinationTransportation = () => {
 
   return (
     <div style={{ width: '100%' }}>
-      <TripDetailsHeader/>
+      <TripDetailsHeader userId={userId}/>
       <NavBar/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>

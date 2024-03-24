@@ -30,7 +30,7 @@ const Confirmation = () => {
         'Restaurant': [],
         'Transportation': []
     });
-    const { tripId } = useParams();
+    const { routeName, tripId, userId } = useParams();
     const baseURLIdeas = `http://localhost:14000/api/ideas`;
     const baseURLTrips = `http://localhost:14000/api/trips`;
     const sender = 'PlanIt301App@gmail.com';
@@ -135,7 +135,7 @@ const Confirmation = () => {
 
   return (
     <div style={{ width: '100%' }}>
-      <TripDetailsHeader/>
+      <TripDetailsHeader userId={userId}/>
       <NavBar/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>

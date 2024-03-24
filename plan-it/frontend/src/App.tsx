@@ -6,7 +6,7 @@ import RegisterPage from './components/RegisterPage';
 import DestinationTransportation from './TripDetails/pages/DestinationTransportation';
 import Accommodation from './TripDetails/pages/Accommodation';
 import Activities from './TripDetails/pages/Activities';
-
+import Settings from './components/Settings';
 import Restaurants from "./TripDetails/pages/Restaurants"
 import Trips from "./Trips/Trips";
 import Groups from "./Groups/Groups";
@@ -22,17 +22,18 @@ const App = () => {
               <Route path="/login" element={<LoginPage />} />
               <Route path="*" element={<LoginPage />} />              
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="settings/:userId" element={<Settings />} />
               <Route path="/groups/:userId" element={<Groups />} />
-              <Route path="/trips/:groupId" element={<Trips />} />
-              <Route path="/ideas/:tripId/:groupId" element={<Ideas />} /> 
-              <Route path="/trip-details/:tripId/:groupId" element={<DestinationTransportation />} />
-              <Route path="/trip-details/destinationtransportation/:tripId/:groupId" element={<DestinationTransportation />} />
-              <Route path="/trip-details/accommodation/:tripId/:groupId" element={<Accommodation />} />
-              <Route path="/trip-details/activities/:tripId/:groupId" element={<Activities />} />
-              <Route path="/trip-details/restaurants/:tripId/:groupId" element={<Restaurants />} />
-              <Route path="/trip-details/budgetsheet/:tripId/:groupId" element={<BudgetSheet />} />
-              <Route path="/trip-details/map/:tripId/:groupId" element={<MapComponent />} />
-              <Route path="/trip-details/confirmation/:tripId/:groupId" element={<Confirmation />} />
+              <Route path="/trips/:groupId/:userId" element={<Trips />} />
+              <Route path="/ideas/:tripId/:groupId/:userId" element={<Ideas />} /> 
+              <Route path="/trip-details/:tripId/:userId" element={<DestinationTransportation />} />
+              <Route path="/trip-details/destinationtransportation/:tripId/:userId" element={<DestinationTransportation />} />
+              <Route path="/trip-details/accommodation/:tripId/:userId" element={<Accommodation />} />
+              <Route path="/trip-details/activities/:tripId/:userId" element={<Activities />} />
+              <Route path="/trip-details/restaurants/:tripId/:userId" element={<Restaurants />} />
+              <Route path="/trip-details/budgetsheet/:tripId/:userId" element={<BudgetSheet />} />
+              <Route path="/trip-details/map/:tripId/:userId" element={<MapComponent />} />
+              <Route path="/trip-details/confirmation/:tripId/:userId" element={<Confirmation />} />
           </Routes>
       </Router>
   );
