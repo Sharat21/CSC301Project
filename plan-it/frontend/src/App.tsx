@@ -6,7 +6,7 @@ import RegisterPage from './components/RegisterPage';
 import DestinationTransportation from './TripDetails/pages/DestinationTransportation';
 import Accommodation from './TripDetails/pages/Accommodation';
 import Activities from './TripDetails/pages/Activities';
-
+import Settings from './components/Settings';
 import Restaurants from "./TripDetails/pages/Restaurants"
 import Trips from "./Trips/Trips";
 import Groups from "./Groups/Groups";
@@ -22,6 +22,7 @@ const App = () => {
               <Route path="/login" element={<LoginPage />} />
               <Route path="*" element={<LoginPage />} />              
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="settings/:userId" element={<Settings />} />
               <Route path="/groups/:userId" element={<Groups />} />
               <Route path="/trips/:groupId/:userId" element={<Trips />} />
               <Route path="/ideas/:tripId/:userId" element={<Ideas />} /> 

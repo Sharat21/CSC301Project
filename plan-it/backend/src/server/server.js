@@ -7,7 +7,7 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5100;
-app.use(cors({ methods: ['GET', 'POST', 'PUT', 'DELETE' ]}));
+app.use(cors({ methods: ['GET', 'POST', 'PUT', 'DELETE'] }));
 app.use(express.json());
 
 // =============== UNCOMMENT WHEN YOU IMPLEMENT ================== //
@@ -26,7 +26,7 @@ app.use('/api/trips', tripsRoutes);
 
 const dbo = require("../database.js");
 app.listen(port, () => {
-  
+
   console.log(`Server is running on port: ${port}`);
   connectToDatabase();
 });
@@ -40,7 +40,7 @@ async function connectToDatabase() {
   const uri = process.env.MONGO_URI;
   const dbName = 'plan-it';
   const client = new MongoClient(uri)
-  
+
   try {
     await client.connect();
     console.log("Connected to the database");

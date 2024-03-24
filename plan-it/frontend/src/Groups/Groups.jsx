@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import Header from './../components/Header';
 
 import {
   AppBar,
@@ -13,7 +14,7 @@ import {
   Button,
 } from "@mui/material";
 import { Cancel, Add } from "@mui/icons-material";
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 
@@ -44,37 +45,38 @@ const formatDate = (dateString) => {
 const Groups = () => {
   const baseURL = `http://localhost:14000/api/groups`;
   const [groupsData, setGroupsData] = useState([]);
-  
+
   const { userId } = useParams(); // Extract userId from the URL
   useEffect(() => {
     const fetchData = async () => {
       try {
         console.log('User data:', userId);
 
-      const response = await axios.get(`${baseURL}/all-groups/${userId}`);
+        const response = await axios.get(`${baseURL}/all-groups/${userId}`);
 
-      // var fetchedGroups = response.data.map(group => ({
-      //   ...group,
-      //   date: formatDate(String(group.createdOn)) // Extract date portion
-      // }));
+        // var fetchedGroups = response.data.map(group => ({
+        //   ...group,
+        //   date: formatDate(String(group.createdOn)) // Extract date portion
+        // }));
 
-      var fetchedGroups = await Promise.all(response.data.map(async (group) => {
-        const members = await Promise.all(group.Users.map(async (userId) => {
-          // Call the database function to retrieve user data based on the user ID
-          try {
-            const userDataResponse = await axios.get(`${baseURL}/findUser/${userId}`);
-            return userDataResponse.data.Firstname + " " + userDataResponse.data.Lastname; // Assuming user data contains a 'name' field
-          } catch (error) {
-            console.error(`Error fetching user data for user ID ${userId}:`, error.message);
-            return null; // Return null if user data cannot be fetched
-          }
+        var fetchedGroups = await Promise.all(response.data.map(async (group) => {
+          const members = await Promise.all(group.Users.map(async (userId) => {
+            // Call the database function to retrieve user data based on the user ID
+            try {
+              const userDataResponse = await axios.get(`${baseURL}/findUser/${userId}`);
+              return userDataResponse.data.Firstname + " " + userDataResponse.data.Lastname; // Assuming user data contains a 'name' field
+            } catch (error) {
+              console.error(`Error fetching user data for user ID ${userId}:`, error.message);
+              return null;
+            }
+          }));
+          return {
+            ...group, members,
+            date: formatDate(String(group.createdOn)) // Extract date portion
+          }; // Return the group object with updated members array
         }));
-        return { ...group, members,
-          date: formatDate(String(group.createdOn)) // Extract date portion
-        }; // Return the group object with updated members array
-      }));
-      setGroupsData(fetchedGroups);
-      console.log('User data:', fetchedGroups);
+        setGroupsData(fetchedGroups);
+        console.log('User data:', fetchedGroups);
       } catch (error) {
         //setError(error.message);
         console.log('Error', error.message);
@@ -83,10 +85,10 @@ const Groups = () => {
 
     fetchData();
   }, []);
-  
-  
 
-  const navigate = useNavigate(); // Use useNavigate hook
+
+
+  const navigate = useNavigate();
 
 
   const handleClick = (groupId) => {
@@ -94,7 +96,6 @@ const Groups = () => {
     console.log(`Clicked on group with ID: ${groupId}`);
     // Navigate to the group details page
     navigate(`/trips/${groupId}/${userId}`);
-
   };
 
   const handleJoinGroup = (groupName) => {
@@ -110,10 +111,12 @@ const Groups = () => {
   };
 
   return (
+
     <div style={{ width: "100%", position: "relative", minHeight: "100vh" }}>
+      <Header userId={userId}/>
       <AppBar position="static" sx={{ width: "100%" }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          
+
           <Typography variant="h6" sx={{ flex: 1, fontSize: "24px" }}>
             Groups
           </Typography>
@@ -133,9 +136,9 @@ const Groups = () => {
         >
           {groupsData.map((group, index) => (
             <Grid item key={index} xs={12} sm={6} md={4} lg={3} sx={{ padding: 0 }}>
-              <Card 
+              <Card
                 sx={{ width: "100%", height: "100%", position: "relative" }}
-                
+
                 onClick={() => handleClick(group._id)}
               >
                 <CardContent>
@@ -154,7 +157,7 @@ const Groups = () => {
                   <Cancel />
                 </IconButton>
               </Card>
-          </Grid>
+            </Grid>
 
           ))}
         </Grid>

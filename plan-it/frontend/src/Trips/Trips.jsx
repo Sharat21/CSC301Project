@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import Header from './../components/Header';
 
 import {
   AppBar,
@@ -102,7 +103,8 @@ const Trips = () => {
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const navigate = useNavigate(); // Use useNavigate hook
-
+  
+  
   const [newTrip, setNewTrip] = useState({
     id: "",
     Name: "",
@@ -284,6 +286,7 @@ const Trips = () => {
 
   return (
     <div style={{ width: '100%' }}>
+      <Header userId={userId}/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: "24px" }}>
