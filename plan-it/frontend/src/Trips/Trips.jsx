@@ -96,7 +96,7 @@ function formatStatus(status) {
 const Trips = () => {
   const baseURL = `http://localhost:14000/api/trips`;
   var [tripsData, setTripsData] = useState([]);
-  const { groupId } = useParams(); // Extract userId from the URL
+  const { groupId, userId } = useParams(); // Extract userId from the URL
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedTrip, setEditedTrip] = useState({});
   const [selectedTrip, setSelectedTrip] = useState(null);
@@ -208,7 +208,7 @@ const Trips = () => {
         e.stopPropagation();
     } else {
         // Handle the click event on the card
-        navigate(`/ideas/${trip.id}`);
+        navigate(`/ideas/${trip.id}/${userId}`);
         
     }
 };

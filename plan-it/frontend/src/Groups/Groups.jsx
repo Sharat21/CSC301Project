@@ -93,7 +93,7 @@ const Groups = () => {
     // Handle click event, navigate to group details page
     console.log(`Clicked on group with ID: ${groupId}`);
     // Navigate to the group details page
-    navigate(`/trips/${groupId}`);
+    navigate(`/trips/${groupId}/${userId}`);
 
   };
 

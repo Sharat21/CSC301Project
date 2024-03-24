@@ -23,16 +23,15 @@ const App = () => {
               <Route path="*" element={<LoginPage />} />              
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/groups/:userId" element={<Groups />} />
-              <Route path="/trips/:groupId" element={<Trips />} />
-              <Route path="/ideas/:tripId" element={<Ideas />} /> 
-              <Route path="/trip-details/" element={<DestinationTransportation />} />
-              <Route path="/trip-details/destinationtransportation/:tripId" element={<DestinationTransportation />} />
-              <Route path="/trip-details/accommodation/:tripId" element={<Accommodation />} />
-              <Route path="/trip-details/activities/:tripId" element={<Activities />} />
-              <Route path="/trip-details/restaurants/:tripId" element={<Restaurants />} />
-              <Route path="/trip-details/budgetsheet/:tripId" element={<BudgetSheet />} />
-              <Route path="/trip-details/map/:tripId" element={<MapComponent />} />
-              <Route path="/trip-details/confirmation/:tripId" element={<Confirmation />} />
+              <Route path="/trips/:groupId/:userId" element={<Trips />} />
+              <Route path="/ideas/:tripId/:userId" element={<Ideas />} /> 
+              <Route path="/trip-details/destinationtransportation/:tripId/:userId" element={<DestinationTransportation />} />
+              <Route path="/trip-details/accommodation/:tripId/:userId" element={<Accommodation />} />
+              <Route path="/trip-details/activities/:tripId/:userId" element={<Activities />} />
+              <Route path="/trip-details/restaurants/:tripId/:userId" element={<Restaurants />} />
+              <Route path="/trip-details/budgetsheet/:tripId/:userId" element={<BudgetSheet />} />
+              <Route path="/trip-details/map/:tripId/:userId" element={<MapComponent />} />
+              <Route path="/trip-details/confirmation/:tripId/:userId" element={<Confirmation />} />
           </Routes>
       </Router>
   );
