@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, Typography, Link } from '@mui/material';
 
-const Idea = ({ name, type, description, link, price }) => {
+const Idea = ({ name, type, description, link, price, max_budget }) => {
   return (
     <Card>
       <CardContent>
@@ -19,6 +19,9 @@ const Idea = ({ name, type, description, link, price }) => {
         </Typography>
         <Typography variant="body2">
             Price: {price ? price : "No price given"}
+        </Typography>
+        <Typography variant="body2">
+            Max Budget: {max_budget ? max_budget : "No budget given"}
         </Typography>
       </CardContent>
     </Card>

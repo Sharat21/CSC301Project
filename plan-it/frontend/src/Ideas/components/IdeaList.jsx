@@ -14,6 +14,7 @@ const IdeaList = ({ ideas }) => {
               description={idea.Description}
               link={idea.link}
               price={idea.price}
+              max_budget={idea.max_budget}
             />
           </Grid>
         ))}
