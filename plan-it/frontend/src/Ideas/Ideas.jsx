@@ -85,10 +85,10 @@ const Ideas = () => {
           <Typography variant="h6" sx={{ flex: 1, fontSize: "24px" }}>
             Ideas
           </Typography >
-          <Button component={Link} to={`/trips/${groupId}`} variant="contained" sx={{ marginRight: "8px" }}>
+          <Button component={Link} to={`/trips/${groupId}/${userId}`} variant="contained" sx={{ marginRight: "8px" }}>
             Back to trips
           </Button>
-          <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}/${groupId}`} variant="contained">
+          <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}/${userId}/${groupId}`} variant="contained">
             To confirmed ideas
           </Button>
         </Toolbar>

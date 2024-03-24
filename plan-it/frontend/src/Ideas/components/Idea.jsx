@@ -64,7 +64,8 @@ const Idea = ({ name, type, description, link, price, max_budget, proposed_by, d
 
   const cardStyle = {
     transition: 'background-color 0.3s',
-    backgroundColor: hovered ? (colourCodes[type]?.darker || 'inherit') : (colourCodes[type]?.default || 'inherit')
+    backgroundColor: hovered ? (colourCodes[type]?.darker || 'inherit') : (colourCodes[type]?.default || 'inherit'),
+    height: '100%'
   };
 
   console.log(cardStyle);
@@ -115,7 +116,7 @@ const Idea = ({ name, type, description, link, price, max_budget, proposed_by, d
   }
 
   return (
-    <div>
+    <div style={{height: '100%'}}>
       <Card 
         onClick={handleCardClick}
         onMouseEnter={handleMouseEnter}
