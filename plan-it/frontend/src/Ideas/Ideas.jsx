@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { useParams } from "react-router-dom";
 
 import { Button, Container, CssBaseline, Typography, AppBar, Toolbar} from '@mui/material';
 import { format } from 'date-fns';
@@ -12,6 +12,7 @@ import axios from 'axios';
 
 
 const Ideas = () => {
+  const { tripId, userId } = useParams();
   const [ideas, setIdeas] = useState([]);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -28,7 +29,7 @@ const Ideas = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/unconfirmed-ideas`);
+        const response = await axios.get(`${baseURL}/unconfirmed-ideas-trip/${tripId}`);
         setIdeas(response.data); 
       } catch (error) {
         setError(error.message);
@@ -37,7 +38,7 @@ const Ideas = () => {
     };
 
     fetchData();
-  }, []);
+  }, [tripId]);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -50,7 +51,6 @@ const Ideas = () => {
   const addIdea = async (idea) => {
     try {
       const response = await axios.post(`${baseURL}/create-idea`, idea);
-      console.log(response.data.message);
 
       window.location.reload();
     } catch (error) {
@@ -68,27 +68,14 @@ const Ideas = () => {
       Confirmed: false,
       Proposed_by: "",
       Date_Proposed: format(currentDate, 'yyyy-MM-dd'),
-      Trip: "",
+      Trip: tripId,
       Voting_End: format(currentDate, 'yyyy-MM-dd')
     };
 
     addIdea(submittedIdea);
-
-    // console.log(submittedIdea);
-    // setIdeas( prevIdeas => [...prevIdeas, submittedIdea]);
-    
-    // handleCloseDialog();
-    // setNewIdea({
-    //   Name: '',
-    //   Type: '',
-    //   Description: '',
-    //   link: '',
-    //   price: ''
-    // });
   };
 
   return (
-
     <div style={{ width: "100%", position: "relative", minHeight: "100vh" }}>
       <Header userId={userId} />
       <AppBar position="static" sx={{ width: "100%" }}>
@@ -105,7 +92,7 @@ const Ideas = () => {
         <Button variant='contained' onClick={handleOpenDialog}>
           Add Idea
         </Button>
-        <Button component={Link} to={`/trip-details/${userId}`} variant="contained">
+        <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}/${userId}`} variant="contained">
           Confirmed
         </Button>
         <AddIdeaDialog

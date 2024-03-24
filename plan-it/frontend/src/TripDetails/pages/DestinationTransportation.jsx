@@ -16,8 +16,10 @@ import {
 } from '@mui/material';
 import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
+import { useParams } from 'react-router-dom';
 
 const DestinationTransportation = () => {
+  const { tripId } = useParams();
   const [error, setError] = useState(null);
   const [confirmedDestination, setConfirmedDestination] = useState(null);
   const [openDestinationDialog, setOpenDestinationDialog] = useState(false);
@@ -40,7 +42,7 @@ const DestinationTransportation = () => {
   useEffect(() => {
     const fetchDestinationData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/confirmed-ideas/Destination`);
+        const response = await axios.get(`${baseURL}/confirmed-ideas-trip/Destination/${tripId}`);
         setConfirmedDestination(response.data);
         setDestinationData(response.data);
         console.log('Confirmed Destination: ', response.data);
@@ -56,7 +58,7 @@ const DestinationTransportation = () => {
   useEffect(() => {
     const fetchTransportationData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/confirmed-ideas/Transportation`);
+        const response = await axios.get(`${baseURL}/confirmed-ideas-trip/Transportation/${tripId}`);
         setConfirmedTransportation(response.data);
         setTransportationData(response.data);
         console.log('Confirmed Transportation: ', response.data);

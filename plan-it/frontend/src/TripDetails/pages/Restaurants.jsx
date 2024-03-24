@@ -15,8 +15,10 @@ import {
 } from '@mui/material';
 import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
+import { useParams } from 'react-router-dom';
 
 const Restaurants = () => {
+  const { tripId } = useParams();
   const [confirmedRestaurants, setConfirmedRestaurants] = useState([]);
   const [error, setError] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -30,7 +32,7 @@ const Restaurants = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/confirmed-ideas/Restaurant`);
+        const response = await axios.get(`${baseURL}/confirmed-ideas-trip/Restaurant/${tripId}`);
         setConfirmedRestaurants(response.data);
         setRestaurantsData(response.data);
         console.log('Confirmed Restaurants: ', response.data);

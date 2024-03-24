@@ -210,7 +210,6 @@ const Trips = () => {
         e.stopPropagation();
     } else {
         // Handle the click event on the card
-        console.log(userId, groupId);
         navigate(`/ideas/${trip.id}/${userId}`);
         
     }
