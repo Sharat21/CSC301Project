@@ -62,7 +62,7 @@ const Settings = () => {
             setNewPassword("");
             setConfirmNewPassword("");
         } catch (error) {
-            alert("Failed to update password");
+            alert("Failed to update password: " + error.response.data.error);
             console.error("Error updating password:", error);
         }
     };
