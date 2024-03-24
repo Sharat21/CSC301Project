@@ -16,7 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import axios from 'axios';
 
-const Idea = ({ name, type, description, link, price, max_budget, proposed_by, deadline }) => {
+const Idea = ({ name, type, description, link, price, max_budget, proposed_by, deadline, votes }) => {
   const baseURL = `http://localhost:14000/api/users`;
   const [openDialog, setOpenDialog] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -70,7 +70,7 @@ const Idea = ({ name, type, description, link, price, max_budget, proposed_by, d
 
   console.log(cardStyle);
 
-  const IdeaDialog = ({ open, onClose, name, type, description, link, price, max_budget, user }) => {
+  const IdeaDialog = ({ open, onClose, name, type, description, link, price, max_budget, user, votes }) => {
     return (
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { backgroundColor: colourCodes[type]?.darker || 'rgba(255, 255, 255, 1)' } }}>
         <DialogTitle sx={{ fontWeight: 'bold', fontSize: '30px' }}>{name}</DialogTitle>
@@ -96,10 +96,10 @@ const Idea = ({ name, type, description, link, price, max_budget, proposed_by, d
 
           {/* voting features */}
           <Stack direction="row" spacing={2} alignItems="center" mt={2}>
+            <Typography variant="body2"> / 2</Typography>
             <IconButton>
               <RemoveIcon />
             </IconButton>
-            <Typography variant="body2">0</Typography>
             <IconButton>
               <AddIcon />
             </IconButton>

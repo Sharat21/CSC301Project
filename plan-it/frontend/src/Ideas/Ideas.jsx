@@ -65,7 +65,7 @@ const Ideas = () => {
       ...newIdea,
       price: newIdea.price ? newIdea.price: '0',
       max_budget: newIdea.max_budget ? newIdea.max_budget : '0',
-      Votes: 0,
+      Votes: [userId],
       Confirmed: false,
       Proposed_by: userId,
       Date_Proposed: format(currentDate, 'yyyy-MM-dd'),

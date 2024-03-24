@@ -17,6 +17,7 @@ const IdeaList = ({ ideas }) => {
                 max_budget={idea.max_budget}
                 proposed_by={idea.Proposed_by}
                 deadline={idea.Voting_End}
+                votes={idea.Votes}
               />
           </Grid>
         ))}
