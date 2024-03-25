@@ -85,22 +85,21 @@ const Idea = ({ ideaId, name, type, description, link, price, max_budget, propos
 
   const onVote = () => {
     if (voteList.includes(userId)) {
-      votes.splice(votes.indexOf(userId), 1);
-      const updatedVotes = voteList.filter(id => id !== userId);
+      const updatedVotes = votes.filter(id => id !== userId);
       const updatedIdea = {
-        Votes: votes,
+        Votes: updatedVotes,
         Confirmed: confirmed
       }
       updateIdea(updatedIdea);
       setVoteList(updatedVotes);
     } else {
-      votes.push(userId);
+      const updatedVotes = [...votes, userId]
       const updatedIdea = {
-        Votes: votes,
+        Votes: updatedVotes,
         Confirmed: confirmed
       }
       updateIdea(updatedIdea);
-      setVoteList([...voteList, userId]);
+      setVoteList(updatedVotes);
     }
   }
 
