@@ -93,7 +93,9 @@ const Idea = ({ ideaId, name, type, description, link, price, max_budget, propos
       updateIdea(updatedIdea);
       setVoteList(updatedVotes);
     } else {
-      const updatedVotes = [...votes, userId]
+      let updatedVotes;
+      if (!votes.includes(userId)) {updatedVotes = [...votes, userId]} 
+      else {updatedVotes = [...votes]}
       const updatedIdea = {
         Votes: updatedVotes,
         Confirmed: confirmed
@@ -110,7 +112,7 @@ const Idea = ({ ideaId, name, type, description, link, price, max_budget, propos
 
   const cardStyle = {
     transition: 'background-color 0.3s',
-    backgroundColor: hovered ? (colourCodes[type]?.darker || 'inherit') : (colourCodes[type]?.default || 'inherit'),
+    backgroundColor: hovered ? (colourCodes[type]?.darker || 'rgba(204, 204, 204, 1)') : (colourCodes[type]?.default || 'rgba(255, 255, 255, 1)'),
     height: '100%'
   };
 
