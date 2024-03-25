@@ -18,14 +18,13 @@ import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
 
 const DestinationTransportation = () => {
-  const { tripId } = useParams();
+  const { tripId, userId } = useParams();
   const [error, setError] = useState(null);
   const [confirmedDestination, setConfirmedDestination] = useState(null);
   const [openDestinationDialog, setOpenDestinationDialog] = useState(false);
   const [editedDestination, setEditedDestination] = useState({});
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [DestinationData, setDestinationData] = useState([]);
-  const { userId } = useParams();
 
   const [confirmedTransportation, setConfirmedTransportation] = useState(null);
   const [openTransportationDialog, setOpenTransportationDialog] = useState(false);

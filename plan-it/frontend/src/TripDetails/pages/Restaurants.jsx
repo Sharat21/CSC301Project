@@ -18,7 +18,7 @@ import TripDetailsHeader from './components/TripDetailsHeader';
 import { useParams } from 'react-router-dom';
 
 const Restaurants = () => {
-  const { routeName, tripId, userId } = useParams();
+  const { tripId, userId } = useParams();
   const [confirmedRestaurants, setConfirmedRestaurants] = useState([]);
   const [error, setError] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
