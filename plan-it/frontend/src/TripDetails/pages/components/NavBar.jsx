@@ -3,20 +3,17 @@ import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { Link, useLocation, useParams } from 'react-router-dom';
 
 const NavBar = () => {
-    // const page = useLocation();
-    // const tripId = page["pathname"].split("/")[3];
-    // const userId = page["pathname"].split("/")[4];
-    const { tripId, userId, groupId } = useParams();
+    const { groupId, tripId, userId } = userParams()
 
     const links = [
-      { path: `/trip-details/destinationtransportation/${tripId}/${userId}/${groupId}`, label: "Destination & Transportation" },
-      { path: `/trip-details/accommodation/${tripId}/${userId}/${groupId}`, label: "Accommodation" },
-      { path: `/trip-details/activities/${tripId}/${userId}/${groupId}`, label: "Activities" },
-      { path: `/trip-details/restaurants/${tripId}/${userId}/${groupId}`, label: "Restaurants" },
-      { path: `/trip-details/budgetsheet/${tripId}/${userId}/${groupId}`, label: "Budget Sheet" },
-      { path: `/trip-details/map/${tripId}/${userId}/${groupId}`, label: "Map" },
-      { path: `/trip-details/confirmation/${tripId}/${userId}/${groupId}`, label: "Confirmation" },
-      { path: `/ideas/${tripId}/${groupId}/${userId}`, label: "Go Back to Trip Board" }
+      { path: `/trip-details/destinationtransportation/${groupId}/${tripId}/${userId}`, label: "Destination & Transportation" },
+      { path: `/trip-details/accommodation/${groupId}/${tripId}/${userId}`, label: "Accommodation" },
+      { path: `/trip-details/activities/${groupId}/${tripId}/${userId}`, label: "Activities" },
+      { path: `/trip-details/restaurants/${groupId}/${tripId}/${userId}`, label: "Restaurants" },
+      { path: `/trip-details/budgetsheet/${groupId}/${tripId}/${userId}`, label: "Budget Sheet" },
+      { path: `/trip-details/map/${groupId}/${tripId}/${userId}`, label: "Map" },
+      { path: `/trip-details/confirmation/${groupId}/${tripId}/${userId}`, label: "Confirmation" },
+      { path: `/ideas/${groupId}/${tripId}/${userId}`, label: "Go Back to Trip Board" }
     ];
 
     return (

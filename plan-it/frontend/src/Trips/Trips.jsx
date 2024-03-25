@@ -112,7 +112,7 @@ const Trips = () => {
     startDate: "",
     endDate: "",
     Description: "",
-    Status: "",
+    Status: ""
   });
   useEffect(() => {
     const fetchData = async () => {
@@ -157,7 +157,7 @@ const Trips = () => {
         //setError(error.message);
         console.log('Error', error.message);
       }
-    }
+    };
 
     fetchData();
   }, []);
@@ -195,10 +195,6 @@ const Trips = () => {
           console.error('Error registering:', error);
       }
   }
-    
-
-    
-
     // Close the dialog
     setOpenEditDialog(false);
   };
@@ -210,9 +206,7 @@ const Trips = () => {
         e.stopPropagation();
     } else {
         // Handle the click event on the card
-        navigate(`/ideas/${trip.id}/${groupId}/${userId}`);
-
-        
+        navigate(`/ideas/${groupId}/${trip.id}/${userId}`);
     }
 };
 

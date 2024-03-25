@@ -103,6 +103,20 @@ router.post('/update', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+router.get('/get-user/:userId', async (req, res) => {
+  try {
+      const {userId} = req.params;
+      const objectTripID = new ObjectId(String(userId));
+      const query = { _id: objectTripID };
+
+      const trips = await findUser(query);
+      res.json(trips);
+  } catch(error) {
+      console.log("Fetching user failed: ", error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 // Other routes (GET, POST, etc.) for user management
 
 module.exports = router;

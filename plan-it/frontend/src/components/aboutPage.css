@@ -1,0 +1,163 @@
+/* aboutPage.css */
+
+/* Center all text */
+.about-container {
+    text-align: center;
+  }
+  
+  /* Styling for main heading */
+  .about-heading {
+    font-size: 36px;
+    color: #2196f3; /* Blue color */
+    margin-bottom: 20px;
+  }
+  
+  /* Styling for content paragraphs */
+  .about-content {
+    margin-bottom: 60px;
+    font-size: 18px;
+    padding-left: 3rem;
+    padding-right: 3rem;
+
+    line-height: 1.6;
+    text-align: justify; /* Align text to justify */
+  }
+  
+  /* Styling for section headings */
+  .section-heading {
+    font-size: 24px;
+    color: #2196f3; /* Blue color */
+    margin-bottom: 20px;
+    text-transform: uppercase; /* Convert to uppercase */
+    letter-spacing: 2px; /* Add letter spacing */
+  }
+  
+  /* Styling for unordered list */
+  .feature-list {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+  }
+  
+  /* Styling for list items */
+  .feature-list li {
+    margin-bottom: 30px;
+    font-size: 16px;
+    color: #555; /* Dark gray color */
+    text-align: center; /* Align list items to the left */
+    font-size: large;
+    text-decoration: double;
+  }
+
+  .feature-list li:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+  }
+  
+  .objective-section {
+    margin-bottom: 40px;
+  }
+  
+  /* Styling for objective content */
+  .objective-content {
+    font-size: 18px;
+    line-height: 1.6;
+    text-align: justify;
+    padding-left: 20%;
+    padding-right:20%;
+    color: #555; /* Dark gray color */
+    text-align: center; /* Align list items to the left */
+    font-size: large;
+    text-decoration: double;
+    margin-bottom: 40px;
+
+  }
+  /* Add more CSS styling as needed */
+  /* howPage.css */
+
+/* Center all text */
+.how-container {
+    text-align: center;
+  }
+  
+  /* Styling for main heading */
+  .how-heading {
+    font-size: 36px;
+    color: #2196f3; /* Blue color */
+    margin-bottom: 40px;
+  }
+  
+  /* Styling for step headings */
+  .step-heading {
+    font-size: 24px;
+    color: #2196f3; /* Blue color */
+    margin-bottom: 10px;
+  }
+  
+  /* Styling for step descriptions */
+  .step-description {
+    font-size: 18px;
+    line-height: 1.6;
+    text-align: justify;
+    padding-left: 20%;
+    padding-right:20%;
+    color: #555; /* Dark gray color */
+    text-align: center; /* Align list items to the left */
+    font-size: large;
+    text-decoration: double;
+    margin-bottom: 40px;
+  }
+  
+  /* Add more CSS styling as needed */
+  /* features.css */
+
+  .feature {
+    padding: 50px 0;
+}
+
+.feature-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.feature-heading {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 70px;
+
+}
+
+.feature-box {
+    background-color: #121212;
+    border-radius: 150px;
+    text-align: center;
+    padding: 40px 100px;
+    margin-top: -40px;
+}
+
+.feature-slider {
+    margin-top: 20px;
+}
+
+.feature-item {
+    padding: 0px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    text-transform: capitalize;
+}
+
+.feature-title {
+    font-size: 24px;
+    color: #2196f3;
+    margin-bottom: 15px;
+    text-transform: capitalize;
+    text-decoration: wavy;
+}
+
+.feature-description {
+    font-size: 18px;
+    color: #666;
+    line-height: 1.6;
+}
