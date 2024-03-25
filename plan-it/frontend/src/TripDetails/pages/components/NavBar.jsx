@@ -3,7 +3,7 @@ import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { Link, useLocation, useParams } from 'react-router-dom';
 
 const NavBar = () => {
-    const { groupId, tripId, userId } = userParams()
+    const { groupId, tripId, userId } = useParams()
 
     const links = [
       { path: `/trip-details/destinationtransportation/${groupId}/${tripId}/${userId}`, label: "Destination & Transportation" },
