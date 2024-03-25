@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { findGroup, findUser, addGroup, updateGroup} = require('../../database');
+const { findGroup, findUser, addGroup, updateGroup, deleteGroup} = require('../../database');
 const { ObjectId } = require('mongodb');
 
 
@@ -65,6 +65,33 @@ router.post('/join-group', async (req, res) => {
         const result2 = await updateGroup(objectGroupID, query);
        
         res.json(result2);
+    } catch(error) {
+        console.log("Fetching all ideas failed: ", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+router.post('/leave-group', async (req, res) => {
+    try {
+        const { userId, groupId } = req.body;
+        const objectUserID = new ObjectId(String(userId));
+
+        const query = { $pull: { Users: objectUserID } };
+
+        const objectGroupID = new ObjectId(String(groupId));
+        var result2 = await updateGroup(objectGroupID, query);
+        const query2 = { _id: objectGroupID };
+        console.log("reached here ", query2);
+
+        const groups = await findGroup(query2);
+        console.log(groups);
+        if(groups[0].Users.length == 0){
+            const query3 = { _id: objectGroupID};
+            result2 = await deleteGroup(query3);
+        }
+        res.json(result2);
+
+         
     } catch(error) {
         console.log("Fetching all ideas failed: ", error);
         res.status(500).json({ error: 'Internal Server Error' });

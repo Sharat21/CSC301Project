@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  DialogContentText,
   TextField,
   Tooltip,
 } from "@mui/material";
@@ -55,44 +56,47 @@ const Groups = () => {
   const [newGroupName, setNewGroupName] = useState("");
   const [joinGroupDialogOpen, setJoinGroupDialogOpen] = useState(false);
   const [groupIdToJoin, setGroupIdToJoin] = useState("");
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+  const [groupNameToLeave, setGroupNameToLeave] = useState("");
 
+  const fetchData = async () => {
+    try {
+      console.log('User data:', userId);
+
+    const response = await axios.get(`${baseURL}/all-groups/${userId}`);
+
+    // var fetchedGroups = response.data.map(group => ({
+    //   ...group,
+    //   date: formatDate(String(group.createdOn)) // Extract date portion
+    // }));
+
+    var fetchedGroups = await Promise.all(response.data.map(async (group) => {
+      const members = await Promise.all(group.Users.map(async (userId) => {
+        // Call the database function to retrieve user data based on the user ID
+        try {
+          const userDataResponse = await axios.get(`${baseURL}/findUser/${userId}`);
+          return userDataResponse.data.Firstname + " " + userDataResponse.data.Lastname; // Assuming user data contains a 'name' field
+        } catch (error) {
+          console.error(`Error fetching user data for user ID ${userId}:`, error.message);
+          return null; // Return null if user data cannot be fetched
+        }
+      }));
+      return { ...group, members,
+        date: formatDate(String(group.createdOn)) // Extract date portion
+      }; // Return the group object with updated members array
+    }));
+    setGroupsData(fetchedGroups);
+    console.log('User data:', fetchedGroups);
+    } catch (error) {
+      //setError(error.message);
+      console.log('Error', error.message);
+    }
+  }
 
 
   const { userId } = useParams(); // Extract userId from the URL
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log('User data:', userId);
-
-      const response = await axios.get(`${baseURL}/all-groups/${userId}`);
-
-      // var fetchedGroups = response.data.map(group => ({
-      //   ...group,
-      //   date: formatDate(String(group.createdOn)) // Extract date portion
-      // }));
-
-      var fetchedGroups = await Promise.all(response.data.map(async (group) => {
-        const members = await Promise.all(group.Users.map(async (userId) => {
-          // Call the database function to retrieve user data based on the user ID
-          try {
-            const userDataResponse = await axios.get(`${baseURL}/findUser/${userId}`);
-            return userDataResponse.data.Firstname + " " + userDataResponse.data.Lastname; // Assuming user data contains a 'name' field
-          } catch (error) {
-            console.error(`Error fetching user data for user ID ${userId}:`, error.message);
-            return null; // Return null if user data cannot be fetched
-          }
-        }));
-        return { ...group, members,
-          date: formatDate(String(group.createdOn)) // Extract date portion
-        }; // Return the group object with updated members array
-      }));
-      setGroupsData(fetchedGroups);
-      console.log('User data:', fetchedGroups);
-      } catch (error) {
-        //setError(error.message);
-        console.log('Error', error.message);
-      }
-    }
+    
 
     fetchData();
   }, []);
@@ -126,6 +130,7 @@ const Groups = () => {
       // You can fetch updated group data here if needed
       setOpenDialog(false);
       setNewGroupName("");
+      await fetchData();
     } catch (error) {
       console.error('Error creating new group:', error.message);
       // Handle error
@@ -153,19 +158,36 @@ const Groups = () => {
       // You can fetch updated group data here if needed
       setOpenDialog(false);
       setNewGroupName("");
+      await fetchData();
+
     } catch (error) {
       console.error('Error creating new group:', error.message);
       // Handle error
     }
   };
 
-  const handleLeaveGroup = (event, groupName) => {
+  const handleLeaveGroup = async(event, groupId) => {
     event.stopPropagation();
-
-    // Handle leave group button click event
-    console.log(`Left group: ${groupName}`);
+    setOpenConfirmationDialog(true); // Open the confirmation dialog
+    setGroupNameToLeave(groupId);
   };
 
+  const handleConfirmLeave = async () => {
+    try {
+      const response = await axios.post(`${baseURL}/leave-group`, {
+        groupId: groupNameToLeave,
+        userId: userId,
+      });
+      // You can fetch updated group data here if needed
+      setOpenConfirmationDialog(false);
+      setGroupNameToLeave("");
+      await fetchData();
+    } catch (error) {
+      console.error('Error creating new group:', error.message);
+      // Handle error
+    }
+  };
+  
   const handleCopyGroupId = (groupId) => {
     setCopiedGroupId(groupId);
     setTimeout(() => {
@@ -219,7 +241,7 @@ const Groups = () => {
                 </CardContent>
                 <IconButton
                   aria-label="leave group"
-                  onClick={(event) => handleLeaveGroup(event, group.id)}
+                  onClick={(event) => handleLeaveGroup(event, group._id)}
 
                   sx={{ position: "absolute", top: 8, right: 8 }}
                 >
@@ -270,6 +292,24 @@ const Groups = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={openConfirmationDialog} onClose={() => setOpenConfirmationDialog(false)}
+       >
+      <DialogTitle>Leave Group Confirmation</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Are you sure you want to leave the group?
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setOpenConfirmationDialog(false) } color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleConfirmLeave} color="primary">
+          Leave Group
+        </Button>
+      </DialogActions>
+    </Dialog>
     </div>
   );
 };
