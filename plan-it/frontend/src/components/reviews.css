@@ -1,0 +1,49 @@
+/* reviews.css */
+
+.review {
+    padding: 50px 0;
+}
+
+.review-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.review-heading {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+.review-box {
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.review-slider {
+    margin-top: 30px;
+}
+
+.review-item {
+    text-align: left;
+}
+
+.rating {
+    margin-bottom: 15px;
+}
+
+.star {
+    color: gold;
+    font-size: 24px;
+}
+
+.review-text {
+    font-size: 18px;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Add more CSS styling as needed */
