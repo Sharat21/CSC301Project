@@ -159,8 +159,9 @@ const Trips = () => {
 
     fetchData();
   }, []);
-  const handleEditDetails = (trip) => {
-    console.log("EditTrip:  ", trip);
+  const handleEditDetails = (event, trip) => {
+    event.stopPropagation();
+
     setEditedTrip({ ...trip }); // Initialize editedTrip with the data of the selected trip
     // setEditedTrip(prevState => ({ ...prevState, id: trip.id }));
 
@@ -268,7 +269,8 @@ const Trips = () => {
     // Close the dialog
     setOpenCreateDialog(false);
   };
-  const handleDeleteTrip = async (tripId) => {
+  const handleDeleteTrip = async (event, tripId) => {
+    event.stopPropagation();
     try {
         // Remove the trip with the specified ID
         await axios.get(`${baseURL}/delete-trip/${tripId}/${groupId}`);
@@ -330,7 +332,7 @@ const Trips = () => {
               </Typography>
 
               {/* Edit Details Button */}
-              <Button variant="outlined" color="primary" onClick={() => handleEditDetails(trip)} sx={{ marginTop: 2 }}>
+              <Button variant="outlined" color="primary" onClick={(event) => handleEditDetails(event, trip)} sx={{ marginTop: 2, zIndex: 1000 }}>
                 Edit Details
                 
               </Button>
@@ -338,7 +340,7 @@ const Trips = () => {
               <IconButton
                 color="error"
                 aria-label="delete trip"
-                onClick={() => handleDeleteTrip(trip.id)}
+                onClick={(event) => handleDeleteTrip(event, trip.id)}
                 sx={{ position: "absolute", top: 8, right: 8 }}
               >
                 <DeleteIcon />
