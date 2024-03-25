@@ -12,6 +12,7 @@ import axios from 'axios';
 const Ideas = () => {
   const { groupId, tripId, userId } = useParams();
   const [ideas, setIdeas] = useState([]);
+  const [group, setGroup] = useState({});
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [newIdea, setNewIdea] = useState({
@@ -22,12 +23,12 @@ const Ideas = () => {
     price: '',
     max_budget: ''
   });
-  const baseURL = `http://localhost:14000/api/ideas`;
+  const baseURL = `http://localhost:14000/api`;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/unconfirmed-ideas-trip/${tripId}`);
+        const response = await axios.get(`${baseURL}/ideas/unconfirmed-ideas-trip/${tripId}`);
         setIdeas(response.data); 
       } catch (error) {
         setError(error.message);
@@ -48,11 +49,20 @@ const Ideas = () => {
 
   const addIdea = async (idea) => {
     try {
-      const response = await axios.post(`${baseURL}/create-idea`, idea);
+      const response = await axios.post(`${baseURL}/ideas/create-idea`, idea);
 
       window.location.reload();
     } catch (error) {
       console.error("Error adding idea: ", error.message);
+    }
+  }
+
+  const deleteIdea = async (ideaId) => {
+    try {
+      const response = await axios.delete(`${baseURL}/ideas/delete-idea/${ideaId}`);
+      setIdeas(ideas.filter(idea => idea._id !== ideaId));
+    } catch (error) {
+      console.error("Error deleting idea: ", error.message);
     }
   }
 
@@ -65,7 +75,7 @@ const Ideas = () => {
       ...newIdea,
       price: newIdea.price ? newIdea.price: '0',
       max_budget: newIdea.max_budget ? newIdea.max_budget : '0',
-      Votes: 0,
+      Votes: [userId],
       Confirmed: false,
       Proposed_by: userId,
       Date_Proposed: format(currentDate, 'yyyy-MM-dd'),
@@ -85,10 +95,10 @@ const Ideas = () => {
           <Typography variant="h6" sx={{ flex: 1, fontSize: "24px" }}>
             Ideas
           </Typography >
-          <Button component={Link} to={`/trips/${groupId}`} variant="contained" sx={{ marginRight: "8px" }}>
+          <Button component={Link} to={`/trips/${groupId}/${userId}`} variant="contained" sx={{ marginRight: "8px" }}>
             Back to trips
           </Button>
-          <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}/${groupId}`} variant="contained">
+          <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}/${userId}/${groupId}`} variant="contained">
             To confirmed ideas
           </Button>
         </Toolbar>
@@ -109,7 +119,7 @@ const Ideas = () => {
           setNewIdea={setNewIdea}
           handleSubmit={handleSubmit}
         />
-        <IdeaList ideas={ideas} />
+        <IdeaList ideas={ideas} userId={userId} groupId={groupId} deleteIdea={deleteIdea} />
       </Container>
     </div>
   );

@@ -3,10 +3,7 @@ import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { Link, useLocation, useParams } from 'react-router-dom';
 
 const NavBar = () => {
-    const page = useLocation();
-    const groupId = page["pathname"].split("/")[3];
-    const tripId = page["pathname"].split("/")[4];
-    const userId = page["pathname"].split("/")[5];
+    const { groupId, tripId, userId } = userParams()
 
     const links = [
       { path: `/trip-details/destinationtransportation/${groupId}/${tripId}/${userId}`, label: "Destination & Transportation" },
