@@ -27,6 +27,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
 import { useNavigate  } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
 
 
 
@@ -101,8 +102,11 @@ const Trips = () => {
   const [editedTrip, setEditedTrip] = useState({});
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  const navigate = useNavigate(); // Use useNavigate hook
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous page in history
+  };
   const [newTrip, setNewTrip] = useState({
     id: "",
     Name: "",
@@ -288,6 +292,15 @@ const Trips = () => {
     <div style={{ width: '100%' }}>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="go back"
+          onClick={handleGoBack}
+          sx={{ mr: 2 }} // Add margin to the right
+        >
+          <ArrowBack />
+        </IconButton>
           <Typography variant="h6" sx={{ fontSize: "24px" }}>
             My Trips
           </Typography>
