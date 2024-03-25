@@ -22,6 +22,7 @@ import {
 import { Cancel, Add, FileCopy } from "@mui/icons-material";
 import { useNavigate  } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
 
 
 // const groupsData = [
@@ -58,7 +59,11 @@ const Groups = () => {
   const [groupIdToJoin, setGroupIdToJoin] = useState("");
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
   const [groupNameToLeave, setGroupNameToLeave] = useState("");
+  const navigate = useNavigate(); // Use useNavigate hook
 
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous page in history
+  };
   const fetchData = async () => {
     try {
       console.log('User data:', userId);
@@ -103,7 +108,6 @@ const Groups = () => {
   
   
 
-  const navigate = useNavigate(); // Use useNavigate hook
 
 
   const handleClick = (groupId) => {
@@ -200,7 +204,15 @@ const Groups = () => {
     <div style={{ width: "100%", position: "relative", minHeight: "100vh" }}>
       <AppBar position="static" sx={{ width: "100%" }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="go back"
+          onClick={handleGoBack}
+          sx={{ mr: 2 }} // Add margin to the right
+        >
+          <ArrowBack />
+        </IconButton>
           <Typography variant="h6" sx={{ flex: 1, fontSize: "24px" }}>
             Groups
           </Typography>

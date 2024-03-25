@@ -27,6 +27,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
 import { useNavigate  } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
 
 
 
@@ -101,8 +102,11 @@ const Trips = () => {
   const [editedTrip, setEditedTrip] = useState({});
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  const navigate = useNavigate(); // Use useNavigate hook
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous page in history
+  };
   const [newTrip, setNewTrip] = useState({
     id: "",
     Name: "",
@@ -159,8 +163,9 @@ const Trips = () => {
 
     fetchData();
   }, []);
-  const handleEditDetails = (trip) => {
-    console.log("EditTrip:  ", trip);
+  const handleEditDetails = (event, trip) => {
+    event.stopPropagation();
+
     setEditedTrip({ ...trip }); // Initialize editedTrip with the data of the selected trip
     // setEditedTrip(prevState => ({ ...prevState, id: trip.id }));
 
@@ -268,7 +273,8 @@ const Trips = () => {
     // Close the dialog
     setOpenCreateDialog(false);
   };
-  const handleDeleteTrip = async (tripId) => {
+  const handleDeleteTrip = async (event, tripId) => {
+    event.stopPropagation();
     try {
         // Remove the trip with the specified ID
         await axios.get(`${baseURL}/delete-trip/${tripId}/${groupId}`);
@@ -286,6 +292,15 @@ const Trips = () => {
     <div style={{ width: '100%' }}>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="go back"
+          onClick={handleGoBack}
+          sx={{ mr: 2 }} // Add margin to the right
+        >
+          <ArrowBack />
+        </IconButton>
           <Typography variant="h6" sx={{ fontSize: "24px" }}>
             My Trips
           </Typography>
@@ -330,7 +345,7 @@ const Trips = () => {
               </Typography>
 
               {/* Edit Details Button */}
-              <Button variant="outlined" color="primary" onClick={() => handleEditDetails(trip)} sx={{ marginTop: 2 }}>
+              <Button variant="outlined" color="primary" onClick={(event) => handleEditDetails(event, trip)} sx={{ marginTop: 2, zIndex: 1000 }}>
                 Edit Details
                 
               </Button>
@@ -338,7 +353,7 @@ const Trips = () => {
               <IconButton
                 color="error"
                 aria-label="delete trip"
-                onClick={() => handleDeleteTrip(trip.id)}
+                onClick={(event) => handleDeleteTrip(event, trip.id)}
                 sx={{ position: "absolute", top: 8, right: 8 }}
               >
                 <DeleteIcon />
