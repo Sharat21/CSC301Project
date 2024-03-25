@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import './maps.css'; // Import the maps.css file
 import SearchBar from './SearchBar';
@@ -24,6 +25,8 @@ const MapComponent = () => {
     const mapContainer = useRef(null);
     const [map, setMap] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
+    const { routeName, tripId, userId } = useParams();
+
 
     useEffect(() => {
         mapboxgl.accessToken = 'pk.eyJ1Ijoic2hhcmF0MjEiLCJhIjoiY2x0MHFrZzA2MTFjZjJrbm40dHZhZGVndSJ9.O43Ja8GWOrgq286dvKnxCA';
@@ -92,7 +95,7 @@ const MapComponent = () => {
 
     return (
         <div>
-            <TripDetailsHeader/>
+            <TripDetailsHeader userId={userId}/>
             <NavBar/>
             <AppBar position="static" sx={{ width: '100%' }}>
                 <Toolbar>

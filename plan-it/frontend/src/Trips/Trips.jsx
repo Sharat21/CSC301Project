@@ -199,7 +199,7 @@ const Trips = () => {
     setOpenEditDialog(false);
   };
 
-  const handleClickOnCard = (e, trip) => {
+  const handleClickOnCard = (e, trip, groupId) => {
     // Check if any button inside the card was clicked
     if (e.target.tagName === "BUTTON" || e.target.tagName === "ICONBUTTON") {
         // If a button was clicked, prevent further propagation of the click event
@@ -207,7 +207,6 @@ const Trips = () => {
     } else {
         // Handle the click event on the card
         navigate(`/ideas/${groupId}/${trip.id}/${userId}`);
-        
     }
 };
 
@@ -308,7 +307,8 @@ const Trips = () => {
             onMouseEnter={() => handleCardHover(trip)}
             onMouseLeave={() => handleCardHover(null)}
             //onClick={() => handleEditDetails(trip)}
-            onClick={(e) => handleClickOnCard(e, trip)}
+           
+            onClick={(e) => handleClickOnCard(e, trip, groupId)}
           >
             <CardContent>
               <Typography variant="h6">{trip.Name}</Typography>

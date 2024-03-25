@@ -8,13 +8,16 @@ const IdeaList = ({ ideas }) => {
       <Grid container spacing={2}>
         {ideas.map((idea) => (
           <Grid item key={idea.id} xs={12} sm={6} md={4} lg={3}>
-            <Idea 
-              name={idea.Name} 
-              type={idea.Type} 
-              description={idea.Description}
-              link={idea.link}
-              price={idea.price}
-            />
+              <Idea 
+                name={idea.Name} 
+                type={idea.Type} 
+                description={idea.Description}
+                link={idea.link}
+                price={idea.price}
+                max_budget={idea.max_budget}
+                proposed_by={idea.Proposed_by}
+                deadline={idea.Voting_End}
+              />
           </Grid>
         ))}
       </Grid>

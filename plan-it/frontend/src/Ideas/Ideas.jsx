@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-
 import { Button, Container, CssBaseline, Typography, AppBar, Toolbar} from '@mui/material';
 import { format } from 'date-fns';
 import IdeaList from './components/IdeaList';
@@ -20,7 +19,8 @@ const Ideas = () => {
     Type: '',
     Description: '',
     link: '',
-    price: ''
+    price: '',
+    max_budget: ''
   });
   const baseURL = `http://localhost:14000/api/ideas`;
 
@@ -58,16 +58,19 @@ const Ideas = () => {
 
   const handleSubmit = () => {
     const currentDate = new Date();
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
 
     const submittedIdea = {
       ...newIdea,
       price: newIdea.price ? newIdea.price: '0',
+      max_budget: newIdea.max_budget ? newIdea.max_budget : '0',
       Votes: 0,
       Confirmed: false,
-      Proposed_by: "",
+      Proposed_by: userId,
       Date_Proposed: format(currentDate, 'yyyy-MM-dd'),
       Trip: tripId,
-      Voting_End: format(currentDate, 'yyyy-MM-dd')
+      Voting_End: format(endDate, 'yyyy-MM-dd')
     };
 
     addIdea(submittedIdea);
@@ -81,13 +84,19 @@ const Ideas = () => {
           
           <Typography variant="h6" sx={{ flex: 1, fontSize: "24px" }}>
             Ideas
-          </Typography>
+          </Typography >
+          <Button component={Link} to={`/trips/${groupId}`} variant="contained" sx={{ marginRight: "8px" }}>
+            Back to trips
+          </Button>
+          <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}/${groupId}`} variant="contained">
+            To confirmed ideas
+          </Button>
         </Toolbar>
       </AppBar>
 
       <Container component="main" maxWidth="md">
         <CssBaseline />
-        <Button variant='contained' onClick={handleOpenDialog}>
+        <Button variant='contained' onClick={handleOpenDialog} sx={{ width: '100%', marginTop: "8px"}}>
           Add Idea
         </Button>
         <Button component={Link} to={`/trip-details/destinationtransportation/${groupId}/${tripId}/${userId}`} variant="contained">

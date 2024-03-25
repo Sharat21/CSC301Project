@@ -29,7 +29,7 @@ const BudgetSheet = () => {
   ]);
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [overallTotal, setOverallTotal] = useState(0);
-  const { tripId } = useParams();
+  const { routeName, tripId, userId } = useParams();
   const baseURL = `http://localhost:14000/api/ideas`;
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const BudgetSheet = () => {
 
   return (
     <div>
-      <TripDetailsHeader/>
+      <TripDetailsHeader userId={userId}/>
       <NavBar/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>

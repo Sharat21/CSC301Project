@@ -132,7 +132,7 @@ const Accommodation = () => {
 
   return (
     <div style={{ width: '100%' }}>
-      <TripDetailsHeader/>
+      <TripDetailsHeader userId={userId}/>
       <NavBar/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
