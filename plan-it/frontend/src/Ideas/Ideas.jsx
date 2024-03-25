@@ -12,6 +12,7 @@ import axios from 'axios';
 const Ideas = () => {
   const { tripId, groupId, userId } = useParams();
   const [ideas, setIdeas] = useState([]);
+  const [group, setGroup] = useState({});
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [newIdea, setNewIdea] = useState({
@@ -22,12 +23,12 @@ const Ideas = () => {
     price: '',
     max_budget: ''
   });
-  const baseURL = `http://localhost:14000/api/ideas`;
+  const baseURL = `http://localhost:14000/api`;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/unconfirmed-ideas-trip/${tripId}`);
+        const response = await axios.get(`${baseURL}/ideas/unconfirmed-ideas-trip/${tripId}`);
         setIdeas(response.data); 
       } catch (error) {
         setError(error.message);
@@ -48,11 +49,20 @@ const Ideas = () => {
 
   const addIdea = async (idea) => {
     try {
-      const response = await axios.post(`${baseURL}/create-idea`, idea);
+      const response = await axios.post(`${baseURL}/ideas/create-idea`, idea);
 
       window.location.reload();
     } catch (error) {
       console.error("Error adding idea: ", error.message);
+    }
+  }
+
+  const deleteIdea = async (ideaId) => {
+    try {
+      const response = await axios.delete(`${baseURL}/ideas/delete-idea/${ideaId}`);
+      setIdeas(ideas.filter(idea => idea._id !== ideaId));
+    } catch (error) {
+      console.error("Error deleting idea: ", error.message);
     }
   }
 
@@ -106,7 +116,7 @@ const Ideas = () => {
           setNewIdea={setNewIdea}
           handleSubmit={handleSubmit}
         />
-        <IdeaList ideas={ideas} />
+        <IdeaList ideas={ideas} userId={userId} groupId={groupId} deleteIdea={deleteIdea} />
       </Container>
     </div>
   );
