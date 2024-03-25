@@ -128,8 +128,8 @@ router.post('/add-trip', async (req, res) => {
       const { tripId, userId } = req.params;
       const objectTripID = new ObjectId(tripId);
       const existingTrip = await findTrip({ _id: objectTripID });
-      if (!existingTrip.UsersFinalized.includes(userId)) {
-        existingTrip.UsersFinalized.push(userId);
+      if (!existingTrip.UsersFinalized.includes(userId.toString())) {
+        existingTrip.UsersFinalized.push(userId.toString());
       }
       const result = await updateTrip({ _id: objectTripID }, {UsersFinalized: existingTrip.UsersFinalized});
       res.json({
@@ -138,7 +138,34 @@ router.post('/add-trip', async (req, res) => {
         user: result
       });
     } catch(error) {
-        console.log("Fetching ideas by type failed: ", error);
+        console.log("Fetching trip failed: ", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  router.post('/cancel-finalized/:tripId/:userId', async (req, res) => {
+    try {
+      const { tripId, userId } = req.params;
+      const objectTripID = new ObjectId(tripId);
+      const existingTrip = await findTrip({ _id: objectTripID });
+      if (existingTrip.UsersFinalized.includes(userId.toString())) {
+        const updatedUsersFinalized = existingTrip.UsersFinalized.filter(id => id !== userId.toString());
+        const result = await updateTrip({ _id: objectTripID }, {UsersFinalized: updatedUsersFinalized});
+
+        res.json({
+          success: true,
+          message: 'User finalization cancelled successfully',
+          user: result
+        });
+      }
+      else {
+        res.json({
+          success: false,
+          message: 'User had not previously finalized.'
+        })
+      }
+    } catch(error) {
+        console.log("Fetching trip failed: ", error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
   });
