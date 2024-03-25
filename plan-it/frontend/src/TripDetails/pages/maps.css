@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center; /* Align items to the center */
-    height: 100vh;
+    /* height: 100vh; */
 }
 
 .search-container {
@@ -10,7 +10,12 @@
     margin-bottom: 20px; /* Add space between search bar and map */
     
 }
-
+.pinned-locations-box-container {
+    position: absolute;
+    top: 500px; /* Adjust this value to position it vertically */
+    left: 70px; /* Adjust this value to position it horizontally */
+    z-index: 1000; /* Ensure it's above other elements */
+}
 .search-container input[type="text"] {
     width: 300px; /* Adjust width as needed */
     padding: 10px;
@@ -41,6 +46,40 @@
     height: 70vh;
     border: 2px solid #ccc;
     border-radius: 10px;
-    margin-left: 20px; /* Move the map to the right */
-    margin-top: 20px; /* Move the map down */
+    margin-left: 20px;
+    margin-top: 20px;
 }
+
+
+/* maps.css */
+
+.map-container {
+    position: relative;
+    width: 70vw;
+    height: 70vh;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.marker {
+    position: absolute;
+
+    background-image: url('./marker.png'); /* Use the custom marker image */
+    width: 30px; /* Adjust the width of the marker */
+    height: 30px; /* Adjust the height of the marker */
+    cursor: pointer;
+    z-index: 1000; /* Ensure the marker is above other map elements */
+}
+
+
+  
+  .mapboxgl-popup {
+    max-width: 200px;
+  }
+  
+  .mapboxgl-popup-content {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+  }

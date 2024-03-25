@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 
 const DestinationTransportation = () => {
   const { tripId } = useParams();
