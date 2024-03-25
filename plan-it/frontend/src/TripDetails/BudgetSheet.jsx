@@ -53,14 +53,14 @@ const BudgetSheet = () => {
         let categoryTotal = 0;
     
         const budgets = ideasByType[index].map(idea => {
-          const price = idea.price;
+          const price = parseInt(idea.price);
           categoryTotal += price;
           overallTotal += price;
     
           return {
             name: idea.Name,
             amount: price,
-            max: idea.max_budget,
+            max: parseInt(idea.max_budget),
           };
         });
     
