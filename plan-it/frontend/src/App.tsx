@@ -2,7 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
-
+import HomePage from './components/HomePage';
+import AboutPage from './components/About';
+import HowPage from './components/How';
 import DestinationTransportation from './TripDetails/pages/DestinationTransportation';
 import Accommodation from './TripDetails/pages/Accommodation';
 import Activities from './TripDetails/pages/Activities';
@@ -19,8 +21,11 @@ const App = () => {
   return (
       <Router>
           <Routes>
+              <Route path="/home" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="*" element={<LoginPage />} />              
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/how" element={<HowPage />} />
+              <Route path="*" element={<HomePage />} />              
               <Route path="/register" element={<RegisterPage />} />
               <Route path="settings/:userId" element={<Settings />} />
               <Route path="/groups/:userId" element={<Groups />} />
