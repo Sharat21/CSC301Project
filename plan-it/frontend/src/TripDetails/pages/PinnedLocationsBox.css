@@ -1,0 +1,46 @@
+.dialog-title {
+    font-size: 44px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  
+  .category-header {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .location-list {
+    list-style-type: none;
+    padding: 10px;
+  }
+  
+  .location-item {
+    margin-bottom: 10px;
+  }
+  
+  .location-name {
+    margin: 0;
+    padding: 10px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    text-align: center;
+    border-radius: 10px;
+  }
+  
+  .location-name:hover {
+    color: blue; /* Change color on hover */
+    background-color: lightgray;
+    transform: scale(1.1);
+  }
+  
+  .close-button {
+    color: red;
+    transition: color 0.3s ease;
+  }
+  
+  .close-button:hover {
+    color: darkred; /* Change color on hover */
+  }
+  
