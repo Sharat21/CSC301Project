@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Button,
@@ -17,97 +17,67 @@ import {
 import './BudgetSheet.css';
 import NavBar from './pages/components/NavBar';
 import TripDetailsHeader from './pages/components/TripDetailsHeader';
-
-// All dependencies and budget sheet functions
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const BudgetSheet = () => {
-  const [openAddDialog, setOpenAddDialog] = useState(false);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
   const [categories, setCategories] = useState([
-    { name: 'Accommodation', budgets: [] },
-    { name: 'Activities', budgets: [] },
-    { name: 'Restaurants', budgets: [] },
-    { name: 'Transportation', budgets: [] },
-    { name: 'Other', budgets: [] },
+    { name: 'Accommodation', budgets: [], total: 0 },
+    { name: 'Activity', budgets: [], total: 0 },
+    { name: 'Restaurant', budgets: [], total: 0 },
+    { name: 'Transportation', budgets: [], total: 0 }
   ]);
-  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(null);
-  const [currentBudgetIndex, setCurrentBudgetIndex] = useState(null);
-  const [newBudgetName, setNewBudgetName] = useState('');
-  const [newBudgetAmount, setNewBudgetAmount] = useState('');
-  const [newBudgetMax, setNewBudgetMax] = useState('');
-  
+  const [totalExpenses, setTotalExpenses] = useState(0);
+  const [overallTotal, setOverallTotal] = useState(0);
+  const { routeName, tripId, userId } = useParams();
+  const baseURL = `http://localhost:14000/api/ideas`;
 
-  const handleAddBudget = () => {
-    if (!newBudgetName || !newBudgetAmount || !newBudgetMax || newBudgetAmount < 0 || newBudgetMax < 0 || currentCategoryIndex === null) {
-      alert('Please fill in all fields and select a category!');
-      return;
-    }
-  
-    const updatedCategories = [...categories];
-    const newBudget = {
-      name: newBudgetName || '',
-      amount: parseFloat(newBudgetAmount),
-      max: parseFloat(newBudgetMax),
+  useEffect(() => {
+    const fetchIdeasByType = async (type) => {
+      try {
+        const response = await axios.get(`${baseURL}/confirmed-ideas-trip/${type}/${tripId}`);
+        return response.data;
+      } catch (error) {
+        console.error(`Fetching ideas of type ${type} failed:`, error);
+      }
+      return [];
     };
-    updatedCategories[currentCategoryIndex].budgets.push(newBudget);
-    setCategories(updatedCategories);
-    setOpenAddDialog(false);
-    setNewBudgetName('');
-    setNewBudgetAmount('');
-    setNewBudgetMax('');
-    setCurrentCategoryIndex(0);
-  };
 
-  const handleEditBudget = () => {
-    // if (!currentCategoryIndex || !currentBudgetIndex || !newBudgetName || !newBudgetAmount || !newBudgetMax || newBudgetAmount < 0 || newBudgetMax < 0) {
-    //   alert('Please fill in all fields and select a category and budget!');
-    //   return;
-    // }
-
-    const updatedCategories = [...categories];
-    const editedBudget = {
-      name: newBudgetName,
-      amount: parseFloat(newBudgetAmount),
-      max: parseFloat(newBudgetMax),
+    const fetchAllIdeasAndCategorize = async () => {
+      let overallTotal = 0;
+    
+      const promises = categories.map(category => fetchIdeasByType(category.name));
+      const ideasByType = await Promise.all(promises);
+    
+      const updatedCategories = categories.map((category, index) => {
+        let categoryTotal = 0;
+    
+        const budgets = ideasByType[index].map(idea => {
+          const price = parseInt(idea.price);
+          categoryTotal += price;
+          overallTotal += price;
+    
+          return {
+            name: idea.Name,
+            amount: price,
+            max: parseInt(idea.max_budget),
+          };
+        });
+    
+        return {
+          ...category,
+          budgets,
+          total: categoryTotal,
+        };
+      });
+    
+      setCategories(updatedCategories);
+      setOverallTotal(overallTotal);
     };
-    updatedCategories[currentCategoryIndex].budgets[currentBudgetIndex] = editedBudget;
-    setCategories(updatedCategories);
-    setOpenEditDialog(false);
-  };
 
-  const handleRemoveBudget = () => {
-    if (!categories.some(category => category.budgets.length > 0)) {
-      alert('No budgets available to remove.');
-      return;
-    }
-    setOpenRemoveDialog(true);
-  };
+    fetchAllIdeasAndCategorize();
+  }, [tripId]);
   
-  const handleConfirmRemoveBudget = () => {
-    if (currentCategoryIndex === null || currentBudgetIndex === null) {
-      alert('Please select a category and a budget to remove.');
-      return;
-    }
-  
-    const updatedCategories = [...categories];
-    updatedCategories[currentCategoryIndex].budgets.splice(currentBudgetIndex, 1);
-    setCategories(updatedCategories);
-    setOpenRemoveDialog(false);
-  };
-  
-  const handleCancelRemoveBudget = () => {
-    setOpenRemoveDialog(false);
-  };
-
-  const handleOpenEditDialog = (categoryIndex, budgetIndex) => {
-    setCurrentCategoryIndex(categoryIndex);
-    setCurrentBudgetIndex(budgetIndex);
-    setNewBudgetName(categories[categoryIndex].budgets[budgetIndex].name);
-    setNewBudgetAmount(categories[categoryIndex].budgets[budgetIndex].amount);
-    setNewBudgetMax(categories[categoryIndex].budgets[budgetIndex].max);
-    setOpenEditDialog(true);
-  };
 
   const getCategoryColor = (budget) => {
     if (budget.amount >= budget.max) {
@@ -121,7 +91,7 @@ const BudgetSheet = () => {
 
   return (
     <div>
-      <TripDetailsHeader/>
+      <TripDetailsHeader userId={userId}/>
       <NavBar/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
@@ -130,18 +100,12 @@ const BudgetSheet = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
-        <Button variant="contained" onClick={() => setOpenAddDialog(true)}>Add Budget</Button>
-        <Button variant="contained" onClick={handleRemoveBudget} style={{ marginLeft: '10px', backgroundColor: '#ff1a1a' }}>Remove Budget</Button>
-        {categories.some(category => category.budgets.length > 0) &&
-          <Button variant="contained" onClick={() => setOpenEditDialog(true)} style={{ marginLeft: '10px' }}>Edit Budget</Button>
-        }
-      </div>
       {categories.map((category, index) => (
         <div key={index} style={{ marginBottom: '20px' }}>
           <Card className="category-card">
             <CardContent>
               <Typography variant="h5" className="category-header">{category.name}</Typography>
+              <Typography variant="subtitle1">Total: ${category.total.toFixed(2)}</Typography>
               <div className="budget-container">
                 {category.budgets.map((budget, idx) => (
                   <Card
@@ -170,154 +134,13 @@ const BudgetSheet = () => {
           </Card>
         </div>
       ))}
-      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>Add Budget</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Name"
-            fullWidth
-            value={newBudgetName}
-            onChange={(e) => setNewBudgetName(e.target.value)}
-            style={{ marginBottom: '10px', marginTop: '10px'  }}
-          />
-          <TextField
-            label="Amount"
-            fullWidth
-            type="number"
-            value={newBudgetAmount}
-            onChange={(e) => setNewBudgetAmount(e.target.value)}
-            style={{ marginBottom: '10px' }}
-            InputProps={{ inputProps: { min: 0 } }}
-          />
-          <TextField
-            label="Max"
-            fullWidth
-            type="number"
-            value={newBudgetMax}
-            onChange={(e) => setNewBudgetMax(e.target.value)}
-            style={{ marginBottom: '20px' }}
-            InputProps={{ inputProps: { min: 0 } }}
-          />
-          <TextField
-            select
-            label="Category"
-            fullWidth
-            value={currentCategoryIndex}
-            onChange={(e) => setCurrentCategoryIndex(e.target.value)}
-            style={{ marginBottom: '20px' }}
-          >
-            {categories.map((category, index) => (
-              <MenuItem key={index} value={index}>
-                {category.name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleAddBudget} color="primary">Add</Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-        <DialogTitle>Edit Budget</DialogTitle>
-        <DialogContent>
-          <TextField
-            select
-            label="Category"
-            fullWidth
-            value={currentCategoryIndex}
-            onChange={(e) => setCurrentCategoryIndex(e.target.value)}
-            style={{ marginBottom: '10px',  marginTop: '10px'}}
-          >
-            {categories.map((category, index) => (
-              <MenuItem key={index} value={index}>
-                {category.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          {currentCategoryIndex !== null &&
-            <TextField
-              select
-              label="Budget"
-              fullWidth
-              value={currentBudgetIndex}
-              onChange={(e) => setCurrentBudgetIndex(e.target.value)}
-              style={{ marginBottom: '10px' }}
-            >
-              {categories[currentCategoryIndex].budgets.map((budget, index) => (
-                <MenuItem key={index} value={index}>
-                  {budget.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          }
-          <TextField
-            label="Name"
-            fullWidth
-            value={newBudgetName}
-            onChange={(e) => setNewBudgetName(e.target.value)}
-            style={{ marginBottom: '10px' }}
-          />
-          <TextField
-            label="Amount"
-            fullWidth
-            type="number"
-            value={newBudgetAmount}
-            onChange={(e) => setNewBudgetAmount(e.target.value)}
-            style={{ marginBottom: '10px' }}
-            InputProps={{ inputProps: { min: 0 } }}
-          />
-          <TextField
-            label="Max"
-            fullWidth
-            type="number"
-            value={newBudgetMax}
-            onChange={(e) => setNewBudgetMax(e.target.value)}
-            style={{ marginBottom: '10px' }}
-            InputProps={{ inputProps: { min: 0 } }}
-          />
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleEditBudget} color="primary">Edit</Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={openRemoveDialog} onClose={() => setOpenRemoveDialog(false)}>
-  <DialogTitle>Remove Budget</DialogTitle>
-  <DialogContent>
-    <TextField
-      select
-      label="Category"
-      fullWidth
-      value={currentCategoryIndex}
-      onChange={(e) => setCurrentCategoryIndex(e.target.value)}
-      style={{ marginBottom: '20px',  marginTop: '11px' }}
-    >
-      {categories.map((category, index) => (
-        <MenuItem key={index} value={index}>
-          {category.name}
-        </MenuItem>
-      ))}
-    </TextField>
-    <TextField
-      select
-      label="Budget"
-      fullWidth
-      value={currentBudgetIndex}
-      onChange={(e) => setCurrentBudgetIndex(e.target.value)}
-      style={{ marginBottom: '20px' }}
-    >
-      {categories[currentCategoryIndex]?.budgets.map((budget, index) => (
-        <MenuItem key={index} value={index}>
-          {budget.name}
-        </MenuItem>
-      ))}
-    </TextField>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleCancelRemoveBudget} color="primary">Cancel</Button>
-    <Button onClick={handleConfirmRemoveBudget} color="primary">Remove</Button>
-  </DialogActions>
-</Dialog>
+      <Card className="category-card">
+        <CardContent>
+          <Typography variant="h5" style={{ fontWeight: 'bold', fontSize: 30 }}>
+            Total Expenses: ${overallTotal.toFixed(2)}
+          </Typography>
+        </CardContent>
+      </Card>
     </div>
   );
 };

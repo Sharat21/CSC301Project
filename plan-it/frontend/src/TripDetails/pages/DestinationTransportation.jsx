@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import {
   AppBar,
@@ -17,6 +18,7 @@ import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
 
 const DestinationTransportation = () => {
+  const { tripId, userId } = useParams();
   const [error, setError] = useState(null);
   const [confirmedDestination, setConfirmedDestination] = useState(null);
   const [openDestinationDialog, setOpenDestinationDialog] = useState(false);
@@ -38,7 +40,7 @@ const DestinationTransportation = () => {
   useEffect(() => {
     const fetchDestinationData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/confirmed-ideas/Destination`);
+        const response = await axios.get(`${baseURL}/confirmed-ideas-trip/Destination/${tripId}`);
         setConfirmedDestination(response.data);
         setDestinationData(response.data);
         console.log('Confirmed Destination: ', response.data);
@@ -54,7 +56,7 @@ const DestinationTransportation = () => {
   useEffect(() => {
     const fetchTransportationData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/confirmed-ideas/Transportation`);
+        const response = await axios.get(`${baseURL}/confirmed-ideas-trip/Transportation/${tripId}`);
         setConfirmedTransportation(response.data);
         setTransportationData(response.data);
         console.log('Confirmed Transportation: ', response.data);
@@ -193,7 +195,7 @@ const DestinationTransportation = () => {
 
   return (
     <div style={{ width: '100%' }}>
-      <TripDetailsHeader/>
+      <TripDetailsHeader userId={userId}/>
       <NavBar/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>

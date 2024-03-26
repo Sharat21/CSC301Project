@@ -1,17 +1,19 @@
 import React from "react";
 import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 const NavBar = () => {
-    const page = useLocation();
+    const { groupId, tripId, userId } = useParams()
 
     const links = [
-      { path: "/trip-details/destinationtransportation", label: "Destination & Transportation" },
-      { path: "/trip-details/accommodation", label: "Accommodation" },
-      { path: "/trip-details/activities", label: "Activities" },
-      { path: "/trip-details/restaurants", label: "Restaurants" },
-      { path: "/trip-details/budgetsheet", label: "Budget Sheet" },
-      { path: "/ideas/1", label: "Go Back to Trip Board", className: "bottom-link" }
+      { path: `/trip-details/destinationtransportation/${groupId}/${tripId}/${userId}`, label: "Destination & Transportation" },
+      { path: `/trip-details/accommodation/${groupId}/${tripId}/${userId}`, label: "Accommodation" },
+      { path: `/trip-details/activities/${groupId}/${tripId}/${userId}`, label: "Activities" },
+      { path: `/trip-details/restaurants/${groupId}/${tripId}/${userId}`, label: "Restaurants" },
+      { path: `/trip-details/budgetsheet/${groupId}/${tripId}/${userId}`, label: "Budget Sheet" },
+      { path: `/trip-details/map/${groupId}/${tripId}/${userId}`, label: "Map" },
+      { path: `/trip-details/confirmation/${groupId}/${tripId}/${userId}`, label: "Confirmation" },
+      { path: `/ideas/${groupId}/${tripId}/${userId}`, label: "Go Back to Trip Board" }
     ];
 
     return (

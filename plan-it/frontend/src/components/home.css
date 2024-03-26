@@ -1,0 +1,54 @@
+/* homepage.css */
+
+/* Styling for TypeAnimation */
+.type-animation-container {
+    margin-left: 100px; /* Left margin to push it slightly left */
+    margin-top: 100px; /* Top margin to push it slightly down */
+    margin-bottom: -50px;
+  }
+  
+  .type-animation {
+    font-size: 3rem; /* Larger font size */
+    font-weight: bold; /* Bold font weight */
+    color: #0097a7; /* Cyan text color */
+  }
+
+  .type-animation-container span {
+    font-size: 2.5rem; /* Adjust as needed */
+    margin-right: 10px; /* Adjust as needed */
+    margin-top: 20px; /* Adjust as needed */
+    margin-bottom: 30px;
+  }
+
+  .type-animation-para{
+    font-size: 20px; /* Adjust as needed */
+    margin-right: 10px; /* Adjust as needed */
+    margin-top: 0px; /* Adjust as needed */
+    text-align: left;
+    color: gray;
+    padding-left: 5%;
+    padding-right: 10%;
+  }
+
+  .plane {
+    width: 550px; /* Adjust the width of the plane image */
+    height: 550px; /* Maintain aspect ratio */
+    animation: rotate 4s infinite linear;
+
+  }
+  
+  .container {
+    display: flex;
+    align-items: center; /* Vertically center the items */
+  }
+
+  @keyframes rotate{
+    0%, 100% {
+      transform: translateY(0px);
+  
+    }
+    50% {
+      transform: translateY(30px);
+    }
+  }
+  

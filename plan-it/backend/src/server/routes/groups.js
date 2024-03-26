@@ -35,6 +35,20 @@ router.get('/findUser/:userId', async (req, res) => {
     }
 });
 
+router.get('/get-group/:groupId', async (req, res) => {
+    try {
+        const {groupId} = req.params;
+        const objectTripID = new ObjectId(String(groupId));
+        const query = { _id: objectTripID };
+  
+        const trips = await findGroup(query);
+        res.json(trips);
+    } catch(error) {
+        console.log("Fetching user failed: ", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
 router.post('/create-group', async (req, res) => {
     try {
         const today = new Date();

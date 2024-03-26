@@ -1,6 +1,6 @@
 const { query } = require('express');
 require('dotenv').config();
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 // Connection URI
 const uri = process.env.MONGO_URI;
 // Database Name
@@ -264,6 +264,26 @@ async function fetchUnconfirmedIdeas(userQuery = {}, collectionName = "ideas") {
   }
 }
 
+/* Fetch all unconfirmed trip ideas from the database based on tripID. 
+
+Returns an array of ideas as objects 
+*/
+async function fetchUnconfirmedByTrip(tripID, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+  
+    try {
+      await client.connect();
+      const db = client.db(dbName);
+      const collection = db.collection(collectionName);
+      const query = {Confirmed: false, Trip: tripID}
+      const result = await collection.find(query).toArray();
+      return result;
+    } finally {
+      await client.close();
+    }
+  
+}
+
 /* Fetch all confirmed trip ideas from the database based on the idea type.
 Type parameter specifies the type of ideas to be retrieved. 
 
@@ -277,6 +297,48 @@ async function fetchConfirmedByType(type, collectionName = "ideas") {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
     const query = {Confirmed: true, Type: type}
+    const result = await collection.find(query).toArray();
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+/* Fetch all confirmed trip ideas from the database based on the tripID.
+TripID parameter specifies which trip the ideas belong to. 
+
+Returns an array of ideas as objects 
+*/
+async function fetchConfirmedByTrip(tripID, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+    
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {Confirmed: true, Trip: tripID}
+    const result = await collection.find(query).toArray();
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+
+/* Fetch all confirmed trip ideas from the database based on the idea type and tripID.
+Type parameter specifies the type of ideas to be retrieved. 
+TripID parameter specifies which trip the ideas should belong to.
+
+Returns an array of ideas as objects 
+*/
+async function fetchConfirmedByTypeAndTrip(tripID, type, collectionName = "ideas") {
+  const client = new MongoClient(uri);
+    
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {Confirmed: true, Type: type, Trip: tripID};
     const result = await collection.find(query).toArray();
     return result;
   } finally {
@@ -300,6 +362,34 @@ async function addIdea(data, collectionName = 'ideas') {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
     const result = await collection.insertOne(data);
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+/*
+Update an idea in the database. 
+
+The query parameter can take in any attribute the Idea has, and if it exists,
+it will update that idea. For certainty with update, the id of
+the Idea can be taken and put in as a parameter like so:
+
+const query = { _id: [idea id] };
+
+data parameter must have the following structure:
+{ Name: "Kirby Road" }
+
+Returns success status of updating idea.
+*/
+async function updateIdea(query, newData, collectionName = 'ideas') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.updateOne(query, { $set: newData });
     return result;
   } finally {
     await client.close();
@@ -425,6 +515,26 @@ async function deleteTrip(query, collectionName = 'trips') {
   }
 }
 
+/*
+Get all the users that have confirmed their finalization for a particular trip. 
+
+Returns delete status.
+*/
+async function fetchFinalized(tripID, collectionName = 'trips') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {_id: tripID};
+    const result = await collection.findOne(query);
+    return result ? result.UsersFinalized : [];
+  } finally {
+    await client.close();
+  }
+}
+
 module.exports = {
   addUser,
   findUser,
@@ -437,11 +547,16 @@ module.exports = {
   fetchAllIdeas,
   fetchConfirmedIdeas,
   fetchUnconfirmedIdeas,
+  fetchUnconfirmedByTrip,
   fetchConfirmedByType,
+  fetchConfirmedByTrip,
+  fetchConfirmedByTypeAndTrip,
   addIdea,
+  updateIdea,
   deleteIdea,
-    addTrip,
+  addTrip,
   updateTrip,
   findTrip,
-  deleteTrip
+  deleteTrip,
+  fetchFinalized
 };

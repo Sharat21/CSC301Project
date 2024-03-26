@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import Header from './../components/Header';
 
 import {
   AppBar,
@@ -31,56 +32,6 @@ import { ArrowBack } from "@mui/icons-material";
 
 
 
-// let tripsData = [
-//   {
-//     Name: "Trip 1",
-//     Duration: "3 days",
-//     startDate: "2024-02-10",
-//     endDate: "2024-02-13",
-//     Description: "A wonderful trip to explore new places.",
-//     Status: "Planned",
-//   },
-//   {
-//     Name: "Trip 2",
-//     Duration: "5 days",
-//     startDate: "2024-03-15",
-//     endDate: "2024-03-20",
-//     Description: "An adventurous journey to the mountains.",
-//     Status: "In Progress",
-//   },
-//   {
-//     Name: "Trip 3",
-//     Duration: "7 days",
-//     startDate: "2024-04-22",
-//     endDate: "2024-04-28",
-//     Description: "A relaxing beach vacation.",
-//     Status: "Completed",
-//   },
-//   {
-//     Name: "Trip 4",
-//     Duration: "4 days",
-//     startDate: "2024-06-10",
-//     endDate: "2024-06-14",
-//     Description: "Exploring historical landmarks and museums.",
-//     Status: "Planned",
-//   },
-//   {
-//     Name: "Trip 5",
-//     Duration: "6 days",
-//     startDate: "2024-08-01",
-//     endDate: "2024-08-06",
-//     Description: "Hiking in the mountains and camping.",
-//     Status: "In Progress",
-//   },
-//   {
-//     Name: "Trip 6",
-//     Duration: "4 days",
-//     startDate: "2024-09-10",
-//     endDate: "2024-09-14",
-//     Description: "Cultural exploration in a new city.",
-//     Status: "Planned",
-//   },
-// ];
 const formatDate = (dateString) => {
   const dateObject = new Date(dateString);
   const year = dateObject.getFullYear();
@@ -97,11 +48,12 @@ function formatStatus(status) {
 const Trips = () => {
   const baseURL = `http://localhost:14000/api/trips`;
   var [tripsData, setTripsData] = useState([]);
-  const { groupId } = useParams(); // Extract userId from the URL
+  const { groupId, userId } = useParams(); // Extract userId from the URL
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedTrip, setEditedTrip] = useState({});
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
+
   const navigate = useNavigate(); // Initialize useNavigate hook
 
   const handleGoBack = () => {
@@ -114,7 +66,7 @@ const Trips = () => {
     startDate: "",
     endDate: "",
     Description: "",
-    Status: "",
+    Status: ""
   });
   useEffect(() => {
     const fetchData = async () => {
@@ -159,7 +111,7 @@ const Trips = () => {
         //setError(error.message);
         console.log('Error', error.message);
       }
-    }
+    };
 
     fetchData();
   }, []);
@@ -198,23 +150,18 @@ const Trips = () => {
           console.error('Error registering:', error);
       }
   }
-    
-
-    
-
     // Close the dialog
     setOpenEditDialog(false);
   };
 
-  const handleClickOnCard = (e, trip) => {
+  const handleClickOnCard = (e, trip, groupId) => {
     // Check if any button inside the card was clicked
     if (e.target.tagName === "BUTTON" || e.target.tagName === "ICONBUTTON") {
         // If a button was clicked, prevent further propagation of the click event
         e.stopPropagation();
     } else {
         // Handle the click event on the card
-        navigate(`/ideas/${trip.id}`);
-        
+        navigate(`/ideas/${groupId}/${trip.id}/${userId}`);
     }
 };
 
@@ -290,6 +237,7 @@ const Trips = () => {
 
   return (
     <div style={{ width: '100%' }}>
+      <Header userId={userId}/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
         <IconButton
@@ -324,7 +272,8 @@ const Trips = () => {
             onMouseEnter={() => handleCardHover(trip)}
             onMouseLeave={() => handleCardHover(null)}
             //onClick={() => handleEditDetails(trip)}
-            onClick={(e) => handleClickOnCard(e, trip)}
+           
+            onClick={(e) => handleClickOnCard(e, trip, groupId)}
           >
             <CardContent>
               <Typography variant="h6">{trip.Name}</Typography>

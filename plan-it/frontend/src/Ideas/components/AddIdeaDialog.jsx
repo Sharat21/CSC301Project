@@ -79,6 +79,16 @@ const AddIdeaDialog = ({ open, handleClose, newIdea, setNewIdea, handleSubmit })
                     value={newIdea.price}
                     onChange={handleChange}
                 />
+                <TextField
+                    margin="dense"
+                    name="max_budget"
+                    label="Maximum Allocated Budget for the Idea (Optional)"
+                    type="text"
+                    fullWidth
+                    variant="outlined"
+                    value={newIdea.max_budget}
+                    onChange={handleChange}
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Close</Button>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import Header from './../components/Header';
 
 import {
   AppBar,
@@ -19,6 +20,7 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
+
 import { Cancel, Add, FileCopy } from "@mui/icons-material";
 import { useNavigate  } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -52,6 +54,7 @@ const formatDate = (dateString) => {
 const Groups = () => {
   const baseURL = `http://localhost:14000/api/groups`;
   const [groupsData, setGroupsData] = useState([]);
+
   const [copiedGroupId, setCopiedGroupId] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
@@ -105,8 +108,7 @@ const Groups = () => {
 
     fetchData();
   }, []);
-  
-  
+
 
 
 
@@ -114,8 +116,7 @@ const Groups = () => {
     // Handle click event, navigate to group details page
     console.log(`Clicked on group with ID: ${groupId}`);
     // Navigate to the group details page
-    navigate(`/trips/${groupId}`);
-
+    navigate(`/trips/${groupId}/${userId}`);
   };
 
   const handleJoinGroup = () => {
@@ -201,9 +202,12 @@ const Groups = () => {
   };
 
   return (
+
     <div style={{ width: "100%", position: "relative", minHeight: "100vh" }}>
+      <Header userId={userId}/>
       <AppBar position="static" sx={{ width: "100%" }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
+
         <IconButton
           edge="start"
           color="inherit"
@@ -235,9 +239,9 @@ const Groups = () => {
         >
           {groupsData.map((group, index) => (
             <Grid item key={index} xs={12} sm={6} md={4} lg={3} sx={{ padding: 0 }}>
-              <Card 
+              <Card
                 sx={{ width: "100%", height: "100%", position: "relative" }}
-                
+
                 onClick={() => handleClick(group._id)}
               >
                 <CardContent>
@@ -260,7 +264,7 @@ const Groups = () => {
                   <Cancel />
                 </IconButton>
               </Card>
-          </Grid>
+            </Grid>
 
           ))}
         </Grid>

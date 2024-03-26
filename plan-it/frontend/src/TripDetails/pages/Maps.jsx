@@ -1,12 +1,32 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import './maps.css'; // Import the maps.css file
 import SearchBar from './SearchBar';
+import {
+    AppBar,
+    Button,
+    Card,
+    CardContent,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    MenuItem,
+    TextField,
+    Typography,
+    Toolbar,
+    LinearProgress,
+  } from '@mui/material';
+import NavBar from './components/NavBar';
+import TripDetailsHeader from './components/TripDetailsHeader';
 
 const MapComponent = () => {
     const mapContainer = useRef(null);
     const [map, setMap] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
+    const { routeName, tripId, userId } = useParams();
+
 
     useEffect(() => {
         mapboxgl.accessToken = 'pk.eyJ1Ijoic2hhcmF0MjEiLCJhIjoiY2x0MHFrZzA2MTFjZjJrbm40dHZhZGVndSJ9.O43Ja8GWOrgq286dvKnxCA';
@@ -74,15 +94,26 @@ const MapComponent = () => {
     };
 
     return (
-        <div className="container">
-        <div className="search-container">
-            <SearchBar onSearch={handleSearch} />
-            <div className={`${suggestions.length > 0 ? 'transition ease-in duration-300 opacity-100' : 'transition ease-out duration-300 opacity-0 invisible'}`}>
-                {suggestions.length > 0 && renderSuggestions()}
+        <div>
+            <TripDetailsHeader userId={userId}/>
+            <NavBar/>
+            <AppBar position="static" sx={{ width: '100%' }}>
+                <Toolbar>
+                <Typography variant="h6" sx={{ fontSize: '24px' }}>
+                    Map
+                </Typography>
+                </Toolbar>
+            </AppBar>
+            <div className="container">
+            <div className="search-container">
+                <SearchBar onSearch={handleSearch} />
+                <div className={`${suggestions.length > 0 ? 'transition ease-in duration-300 opacity-100' : 'transition ease-out duration-300 opacity-0 invisible'}`}>
+                    {suggestions.length > 0 && renderSuggestions()}
+                </div>
+            </div>
+            <div className="map-container" ref={mapContainer} />
             </div>
         </div>
-        <div className="map-container" ref={mapContainer} />
-    </div>
     );
 };
 
