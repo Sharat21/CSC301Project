@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import './maps.css'; // Import the maps.css file
 import SearchBar from './SearchBar';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import PinnedLocationsBox from './PinnedLocationsBox'; // Import the PinnedLocationsBox component
 import { Marker } from 'mapbox-gl'; // Import Mapbox GL JS library and Marker
@@ -18,7 +17,6 @@ import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
 
 const MapComponent = () => {
-    const { tripId } = useParams();
     const mapContainer = useRef(null);
     const [map, setMap] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
