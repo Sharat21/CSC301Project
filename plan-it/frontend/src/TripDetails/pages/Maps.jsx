@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import mapboxgl from 'mapbox-gl';
 import './maps.css'; // Import the maps.css file
 import SearchBar from './SearchBar';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import PinnedLocationsBox from './PinnedLocationsBox'; // Import the PinnedLocationsBox component
 import { Marker } from 'mapbox-gl'; // Import Mapbox GL JS library and Marker
@@ -18,7 +17,7 @@ import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
 
 const MapComponent = () => {
-    const { tripId } = useParams();
+    //const { tripId } = useParams();
     const mapContainer = useRef(null);
     const [map, setMap] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
@@ -53,7 +52,7 @@ const MapComponent = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const destinationResponse = await axios.get(`${baseURL}/confirmed-ideas-trip/Destination/${tripId}`);
+                const destinationResponse = await axios.get(`${baseURL}/confirmed-ideas-trip/Accommodation/${tripId}`);
                 const restaurantResponse = await axios.get(`${baseURL}/confirmed-ideas-trip/Restaurant/${tripId}`);
 
                 const mergedData = [...destinationResponse.data, ...restaurantResponse.data];
@@ -79,6 +78,7 @@ const MapComponent = () => {
     };
 
     const handlePinned = async (location) => {
+        console.log("location:  " + location);
         try {
             const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?access_token=${mapboxgl.accessToken}`);
             const data = await response.json();
@@ -89,17 +89,20 @@ const MapComponent = () => {
                     const currDistance = mapboxgl.LngLat.convert(curr.center).distanceTo(map.getCenter());
                     return prevDistance < currDistance ? prev : curr;
                 });
-    
-                map.flyTo({ center: bestMatch.center, zoom: 10 });
-                const marker = new mapboxgl.Marker()
-                    .setDraggable(false) 
-                    .setLngLat(bestMatch.center)
-                    .pitchAlignment('map')
-                    .addTo(map);
+                var longitude = -1;
+                var latitude = -1;
+                [longitude, latitude] = bestMatch.center;
+                map.flyTo({ center: bestMatch.center, zoom: 18 });
+                // const marker = new mapboxgl.Marker()
+                //     .setDraggable(false) 
+                //     .setLngLat([longitude, latitude])
+                //    // .pitchAlignment('map')
+                //     .addTo(map);
                 
-                markers.current.push(marker);
+                // markers.current.push(marker);
 
-                console.log( bestMatch.center + "location is")
+                // console.log( latitude + "location is")
+                return bestMatch;
 
             } else {
                 console.log('No suggestions found for:', location);

@@ -13,6 +13,7 @@ import {
 import './PinnedLocationsBox.css'; // Import the CSS file for styling
 
 const PinnedLocationsBox = ({ pinnedLocations, onLocationClick, onRestaurantClick}) => {
+    console.log(pinnedLocations);
     const accommodationLocations = pinnedLocations[0];
     const restaurantLocations = pinnedLocations[1];
     const [open, setOpen] = useState(false); // State to control dialog visibility
@@ -54,7 +55,7 @@ const PinnedLocationsBox = ({ pinnedLocations, onLocationClick, onRestaurantClic
                             {accommodationLocations && accommodationLocations.Name && (
                             
                             <li className="location-item">
-                                <button className="location-name" onClick={() => handleLocationClick(accommodationLocations.Name)}>
+                                <button className="location-name" onClick={() => handleLocationClick(accommodationLocations.link)}>
                                     {accommodationLocations.Name}
                                 </button>
                             </li>
