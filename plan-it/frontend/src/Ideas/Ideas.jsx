@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-
 import { Button, Container, CssBaseline, Typography, AppBar, Toolbar} from '@mui/material';
 import { format } from 'date-fns';
 import IdeaList from './components/IdeaList';
@@ -12,33 +10,79 @@ import axios from 'axios';
 
 
 const Ideas = () => {
-  const { tripId, userId } = useParams();
+  const { groupId, tripId, userId } = useParams();
   const [ideas, setIdeas] = useState([]);
+  const [deletedIdeas, setDeletedIdeas] = useState([]);
+  const [group, setGroup] = useState(null);
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const { tripId, userId } = useParams();
   const [newIdea, setNewIdea] = useState({
     Name: '',
     Type: '',
     Description: '',
     link: '',
-    price: ''
+    price: '',
+    max_budget: ''
   });
-  const baseURL = `http://localhost:14000/api/ideas`;
+  const baseURL = `http://localhost:14000/api`;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/unconfirmed-ideas-trip/${tripId}`);
+        const response = await axios.get(`${baseURL}/ideas/unconfirmed-ideas-trip/${tripId}`);
         setIdeas(response.data); 
       } catch (error) {
         setError(error.message);
         console.log('Could not retrieve unconfirmed ideas.');
       }
     };
-
     fetchData();
   }, [tripId]);
+
+  useEffect(() => {
+    const fetchGroup = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/trips/get_trip_ids/${groupId}`)
+        setGroup(response.data);
+      } catch (error) {
+        setError(error.message);
+        console.log('Could not retrieve group information.');
+      }
+    }
+    fetchGroup();
+  }, [groupId]);
+
+
+  // useEffect to confirm or deny ideas
+  useEffect(() => {
+    const confirmIdeas = async () => {
+      const currentDate = new Date();
+      for (let i = 0; i < ideas.length; i++) {
+        const ideaDate = new Date(ideas[i].Voting_End);
+        if (currentDate >= ideaDate) {
+          if (ideas[i].Votes.length * 2 >= group[0].Users.length) {
+            const updatedIdea = {
+              Votes: ideas[i].Votes,
+              Confirmed: true
+            }
+            updateIdea(updatedIdea, ideas[i]._id);
+          } else {
+            if (!deletedIdeas.includes(ideas[i]._id)) {
+              deleteIdea(ideas[i]._id);
+              setDeletedIdeas([...deletedIdeas, ideas[i]._id]);
+            }
+          }
+          const updatedIdeas = ideas.filter(idea => idea._id !== ideas[i]._id);
+          setIdeas(updatedIdeas);
+        }
+      }
+    }
+    
+    if (ideas.length && group) {
+      confirmIdeas();
+    }
+  }, [ideas, group]);
+
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -50,26 +94,45 @@ const Ideas = () => {
 
   const addIdea = async (idea) => {
     try {
-      const response = await axios.post(`${baseURL}/create-idea`, idea);
-
+      const response = await axios.post(`${baseURL}/ideas/create-idea`, idea);
       window.location.reload();
     } catch (error) {
       console.error("Error adding idea: ", error.message);
     }
   }
 
+  const updateIdea = async (idea, ideaId) => {
+    try {
+      const response = await axios.put(`${baseURL}/ideas/update-idea/${ideaId}`, idea);
+    } catch (error) {
+      console.error("Error updating idea: ", error.message);
+    }
+  }
+
+  const deleteIdea = async (ideaId) => {
+    try {
+      const response = await axios.delete(`${baseURL}/ideas/delete-idea/${ideaId}`);
+      setIdeas(ideas.filter(idea => idea._id !== ideaId));
+    } catch (error) {
+      console.error("Error deleting idea: ", error.message);
+    }
+  }
+
   const handleSubmit = () => {
     const currentDate = new Date();
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
 
     const submittedIdea = {
       ...newIdea,
       price: newIdea.price ? newIdea.price: '0',
-      Votes: 0,
+      max_budget: newIdea.max_budget ? newIdea.max_budget : '0',
+      Votes: [userId],
       Confirmed: false,
-      Proposed_by: "",
+      Proposed_by: userId,
       Date_Proposed: format(currentDate, 'yyyy-MM-dd'),
       Trip: tripId,
-      Voting_End: format(currentDate, 'yyyy-MM-dd')
+      Voting_End: format(endDate, 'yyyy-MM-dd')
     };
 
     addIdea(submittedIdea);
@@ -83,17 +146,20 @@ const Ideas = () => {
           
           <Typography variant="h6" sx={{ flex: 1, fontSize: "24px" }}>
             Ideas
-          </Typography>
+          </Typography >
+          <Button component={Link} to={`/trips/${groupId}/${userId}`} variant="contained" sx={{ marginRight: "8px" }}>
+            Back to trips
+          </Button>
+          <Button component={Link} to={`/trip-details/destinationtransportation/${groupId}/${tripId}/${userId}`} variant="contained">
+            To confirmed ideas
+          </Button>
         </Toolbar>
       </AppBar>
 
       <Container component="main" maxWidth="md">
         <CssBaseline />
-        <Button variant='contained' onClick={handleOpenDialog}>
+        <Button variant='contained' onClick={handleOpenDialog} sx={{ width: '100%', marginTop: "8px"}}>
           Add Idea
-        </Button>
-        <Button component={Link} to={`/trip-details/destinationtransportation/${tripId}/${userId}`} variant="contained">
-          Confirmed
         </Button>
         <AddIdeaDialog
           open={openDialog}
@@ -102,7 +168,7 @@ const Ideas = () => {
           setNewIdea={setNewIdea}
           handleSubmit={handleSubmit}
         />
-        <IdeaList ideas={ideas} />
+        <IdeaList ideas={ideas} userId={userId} groupId={groupId} deleteIdea={deleteIdea} />
       </Container>
     </div>
   );

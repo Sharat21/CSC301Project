@@ -18,7 +18,7 @@ import TripDetailsHeader from './components/TripDetailsHeader';
 import { useParams } from 'react-router-dom';
 
 const Activities = () => {
-  const { tripId } = useParams();
+  const { tripId, userId } = useParams();
   const [confirmedActivities, setConfirmedActivities] = useState([]);
   const [error, setError] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -130,7 +130,7 @@ const Activities = () => {
 
   return (
     <div style={{ width: '100%' }}>
-      <TripDetailsHeader/>
+      <TripDetailsHeader userId={userId}/>
       <NavBar/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>

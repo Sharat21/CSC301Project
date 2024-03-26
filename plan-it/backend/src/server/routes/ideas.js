@@ -1,7 +1,7 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
-const { fetchAllIdeas, fetchConfirmedIdeas, fetchConfirmedByTrip, fetchUnconfirmedIdeas, fetchConfirmedByType, addIdea, deleteIdea, fetchConfirmedByTypeAndTrip, fetchUnconfirmedByTrip } = require('../../database');
+const { fetchAllIdeas, fetchConfirmedIdeas, fetchConfirmedByTrip, fetchUnconfirmedIdeas, fetchConfirmedByType, addIdea, updateIdea, deleteIdea, fetchConfirmedByTypeAndTrip, fetchUnconfirmedByTrip } = require('../../database');
 
 // Define routes for Ideas endpoint
 
@@ -29,6 +29,28 @@ router.post('/create-idea', async (req, res) => {
         console.log("Adding idea failed: ", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
+});
+
+router.put('/update-idea/:ideaId', async (req, res) => {
+    try { 
+        const { ideaId } = req.params;
+        const { Votes, Confirmed } = req.body; 
+        const updateFields = { Votes: Votes, Confirmed: Confirmed}
+
+        const objectIdeaID = new ObjectId(String(ideaId));
+        const query = { _id: objectIdeaID };
+
+        const result = await updateIdea(query, updateFields);
+
+        res.json({
+            success: true,
+            message: 'Idea updated successfully',
+            idea: result
+          });
+        } catch (error) {
+          console.error('Error updating idea:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
 });
 
 router.get('/all-unconfirmed-ideas', async (req, res) => {
@@ -65,7 +87,7 @@ router.get('/confirmed-ideas', async (req, res) => {
 router.get('/all-confirmed-ideas-trip/:tripId', async (req, res) => {
     try {
         const { tripId } = req.params;
-        const confirmedIdeasByTrip = await fetchConfirmedByTrip(new ObjectId(tripId));
+        const confirmedIdeasByTrip = await fetchConfirmedByTrip(tripId);
         res.json(confirmedIdeasByTrip);
     } catch(error) {
         console.log("Fetching all confirmed ideas failed: ", error);
@@ -87,7 +109,8 @@ router.get('/confirmed-ideas/:type', async (req, res) => {
 router.get('/confirmed-ideas-trip/:type/:tripId', async (req, res) => {
     try {
         const { type, tripId } = req.params;
-        const ideasByTypeAndTrip = await fetchConfirmedByTypeAndTrip(new ObjectId(tripId), type);
+        console.log(type, tripId);
+        const ideasByTypeAndTrip = await fetchConfirmedByTypeAndTrip(tripId.toString(), type);
         res.json(ideasByTypeAndTrip);
     } catch(error) {
         console.log("Fetching ideas by type and trip failed: ", error);

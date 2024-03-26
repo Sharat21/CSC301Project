@@ -369,6 +369,34 @@ async function addIdea(data, collectionName = 'ideas') {
 }
 
 /*
+Update an idea in the database. 
+
+The query parameter can take in any attribute the Idea has, and if it exists,
+it will update that idea. For certainty with update, the id of
+the Idea can be taken and put in as a parameter like so:
+
+const query = { _id: [idea id] };
+
+data parameter must have the following structure:
+{ Name: "Kirby Road" }
+
+Returns success status of updating idea.
+*/
+async function updateIdea(query, newData, collectionName = 'ideas') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.updateOne(query, { $set: newData });
+    return result;
+  } finally {
+    await client.close();
+  }
+}
+
+/*
 Delete an idea in the database. 
 The query parameter can take in any attribute the idea has, and if it exists,
 it will delete that idea. For certainty with delete, the id of
@@ -487,6 +515,26 @@ async function deleteTrip(query, collectionName = 'trips') {
   }
 }
 
+/*
+Get all the users that have confirmed their finalization for a particular trip. 
+
+Returns delete status.
+*/
+async function fetchFinalized(tripID, collectionName = 'trips') {
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const query = {_id: tripID};
+    const result = await collection.findOne(query);
+    return result ? result.UsersFinalized : [];
+  } finally {
+    await client.close();
+  }
+}
+
 module.exports = {
   addUser,
   findUser,
@@ -504,9 +552,11 @@ module.exports = {
   fetchConfirmedByTrip,
   fetchConfirmedByTypeAndTrip,
   addIdea,
+  updateIdea,
   deleteIdea,
   addTrip,
   updateTrip,
   findTrip,
-  deleteTrip
+  deleteTrip,
+  fetchFinalized
 };

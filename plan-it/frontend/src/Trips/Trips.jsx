@@ -28,59 +28,10 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams } from "react-router-dom";
 import { useNavigate  } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
 
 
 
-// let tripsData = [
-//   {
-//     Name: "Trip 1",
-//     Duration: "3 days",
-//     startDate: "2024-02-10",
-//     endDate: "2024-02-13",
-//     Description: "A wonderful trip to explore new places.",
-//     Status: "Planned",
-//   },
-//   {
-//     Name: "Trip 2",
-//     Duration: "5 days",
-//     startDate: "2024-03-15",
-//     endDate: "2024-03-20",
-//     Description: "An adventurous journey to the mountains.",
-//     Status: "In Progress",
-//   },
-//   {
-//     Name: "Trip 3",
-//     Duration: "7 days",
-//     startDate: "2024-04-22",
-//     endDate: "2024-04-28",
-//     Description: "A relaxing beach vacation.",
-//     Status: "Completed",
-//   },
-//   {
-//     Name: "Trip 4",
-//     Duration: "4 days",
-//     startDate: "2024-06-10",
-//     endDate: "2024-06-14",
-//     Description: "Exploring historical landmarks and museums.",
-//     Status: "Planned",
-//   },
-//   {
-//     Name: "Trip 5",
-//     Duration: "6 days",
-//     startDate: "2024-08-01",
-//     endDate: "2024-08-06",
-//     Description: "Hiking in the mountains and camping.",
-//     Status: "In Progress",
-//   },
-//   {
-//     Name: "Trip 6",
-//     Duration: "4 days",
-//     startDate: "2024-09-10",
-//     endDate: "2024-09-14",
-//     Description: "Cultural exploration in a new city.",
-//     Status: "Planned",
-//   },
-// ];
 const formatDate = (dateString) => {
   const dateObject = new Date(dateString);
   const year = dateObject.getFullYear();
@@ -102,9 +53,12 @@ const Trips = () => {
   const [editedTrip, setEditedTrip] = useState({});
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  const navigate = useNavigate(); // Use useNavigate hook
-  
-  
+
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous page in history
+  };
   const [newTrip, setNewTrip] = useState({
     id: "",
     Name: "",
@@ -112,7 +66,7 @@ const Trips = () => {
     startDate: "",
     endDate: "",
     Description: "",
-    Status: "",
+    Status: ""
   });
   useEffect(() => {
     const fetchData = async () => {
@@ -157,12 +111,13 @@ const Trips = () => {
         //setError(error.message);
         console.log('Error', error.message);
       }
-    }
+    };
 
     fetchData();
   }, []);
-  const handleEditDetails = (trip) => {
-    console.log("EditTrip:  ", trip);
+  const handleEditDetails = (event, trip) => {
+    event.stopPropagation();
+
     setEditedTrip({ ...trip }); // Initialize editedTrip with the data of the selected trip
     // setEditedTrip(prevState => ({ ...prevState, id: trip.id }));
 
@@ -195,23 +150,18 @@ const Trips = () => {
           console.error('Error registering:', error);
       }
   }
-    
-
-    
-
     // Close the dialog
     setOpenEditDialog(false);
   };
 
-  const handleClickOnCard = (e, trip) => {
+  const handleClickOnCard = (e, trip, groupId) => {
     // Check if any button inside the card was clicked
     if (e.target.tagName === "BUTTON" || e.target.tagName === "ICONBUTTON") {
         // If a button was clicked, prevent further propagation of the click event
         e.stopPropagation();
     } else {
         // Handle the click event on the card
-        navigate(`/ideas/${trip.id}/${userId}`);
-        
+        navigate(`/ideas/${groupId}/${trip.id}/${userId}`);
     }
 };
 
@@ -270,7 +220,8 @@ const Trips = () => {
     // Close the dialog
     setOpenCreateDialog(false);
   };
-  const handleDeleteTrip = async (tripId) => {
+  const handleDeleteTrip = async (event, tripId) => {
+    event.stopPropagation();
     try {
         // Remove the trip with the specified ID
         await axios.get(`${baseURL}/delete-trip/${tripId}/${groupId}`);
@@ -289,6 +240,15 @@ const Trips = () => {
       <Header userId={userId}/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="go back"
+          onClick={handleGoBack}
+          sx={{ mr: 2 }} // Add margin to the right
+        >
+          <ArrowBack />
+        </IconButton>
           <Typography variant="h6" sx={{ fontSize: "24px" }}>
             My Trips
           </Typography>
@@ -312,7 +272,8 @@ const Trips = () => {
             onMouseEnter={() => handleCardHover(trip)}
             onMouseLeave={() => handleCardHover(null)}
             //onClick={() => handleEditDetails(trip)}
-            onClick={(e) => handleClickOnCard(e, trip)}
+           
+            onClick={(e) => handleClickOnCard(e, trip, groupId)}
           >
             <CardContent>
               <Typography variant="h6">{trip.Name}</Typography>
@@ -333,7 +294,7 @@ const Trips = () => {
               </Typography>
 
               {/* Edit Details Button */}
-              <Button variant="outlined" color="primary" onClick={() => handleEditDetails(trip)} sx={{ marginTop: 2 }}>
+              <Button variant="outlined" color="primary" onClick={(event) => handleEditDetails(event, trip)} sx={{ marginTop: 2, zIndex: 1000 }}>
                 Edit Details
                 
               </Button>
@@ -341,7 +302,7 @@ const Trips = () => {
               <IconButton
                 color="error"
                 aria-label="delete trip"
-                onClick={() => handleDeleteTrip(trip.id)}
+                onClick={(event) => handleDeleteTrip(event, trip.id)}
                 sx={{ position: "absolute", top: 8, right: 8 }}
               >
                 <DeleteIcon />

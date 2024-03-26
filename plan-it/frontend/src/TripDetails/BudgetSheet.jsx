@@ -29,7 +29,7 @@ const BudgetSheet = () => {
   ]);
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [overallTotal, setOverallTotal] = useState(0);
-  const { tripId } = useParams();
+  const { routeName, tripId, userId } = useParams();
   const baseURL = `http://localhost:14000/api/ideas`;
 
   useEffect(() => {
@@ -53,14 +53,14 @@ const BudgetSheet = () => {
         let categoryTotal = 0;
     
         const budgets = ideasByType[index].map(idea => {
-          const price = idea.price;
+          const price = parseInt(idea.price);
           categoryTotal += price;
           overallTotal += price;
     
           return {
             name: idea.Name,
             amount: price,
-            max: idea.max_budget,
+            max: parseInt(idea.max_budget),
           };
         });
     
@@ -91,7 +91,7 @@ const BudgetSheet = () => {
 
   return (
     <div>
-      <TripDetailsHeader/>
+      <TripDetailsHeader userId={userId}/>
       <NavBar/>
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
