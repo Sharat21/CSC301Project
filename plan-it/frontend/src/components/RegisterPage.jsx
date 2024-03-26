@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '.././index.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import Navbar from './NavBar';
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('');
@@ -51,6 +51,9 @@ const RegisterPage = () => {
     };
 
     return (
+        <div>
+
+        <Navbar/>
         <div className="register-page">
             <h1 className="text-5xl font-bold">Create an Account</h1>
             <div className="register-container">
@@ -118,6 +121,7 @@ const RegisterPage = () => {
                     </form>
                 </div>
             </div>
+        </div>
         </div>
     );
 };

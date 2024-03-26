@@ -22,6 +22,7 @@ import axios from 'axios';
 
 const BudgetSheet = () => {
   const [categories, setCategories] = useState([
+    { name: 'Destination', budgets: [], total: 0 },
     { name: 'Accommodation', budgets: [], total: 0 },
     { name: 'Activity', budgets: [], total: 0 },
     { name: 'Restaurant', budgets: [], total: 0 },

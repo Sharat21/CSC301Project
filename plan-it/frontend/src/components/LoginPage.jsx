@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '.././index.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import Navbar from './NavBar';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,6 +39,9 @@ const LoginPage = () => {
     };
 
     return (
+        <div>
+
+        <Navbar/>
         <div className="login-page">
             <h1 className="text-5xl font-bold" >Welcome to PlanIt!</h1>
             <div className="login-container">
@@ -86,6 +89,7 @@ const LoginPage = () => {
                     </form>
                 </div>
             </div>
+        </div>
         </div>
     );
 };
