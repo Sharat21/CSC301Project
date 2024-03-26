@@ -100,7 +100,7 @@ const Confirmation = () => {
                     categories[category].push({name: idea.Name, description: idea.Description, price: idea.price});
                 }
             });
-
+            console.log("categories:  " + categories);
             setCategorizedIdeas(categories);
             return categories;
           } catch (error) {
@@ -165,7 +165,8 @@ const Confirmation = () => {
             if (tempGroup){
               await fetchUserNames(finalizedUserIds);
               const notFinalizedNames = await fetchNotFinalizedUsers(tempGroup.Users, finalizedUserIds);
-              if(notFinalizedNames.length == 0 && emailAddr) {
+              if(notFinalizedNames==0 && emailAddr) {
+                console.log("email address3: " + emailAddr);
                 const tempCategories = await fetchConfirmedIdeas();
                 await sendEmail(tempCategories, emailAddr);
                 setEmailSent(true);
@@ -266,7 +267,7 @@ const Confirmation = () => {
 
     const sendEmail = async (categories, addr) => {
         const emailContent = generateEmail(categories);
-
+        console.log("email address2: " + addr);
         const templateParams = {message: emailContent, recipient: addr, trip_name: tripName};
 
         try {
