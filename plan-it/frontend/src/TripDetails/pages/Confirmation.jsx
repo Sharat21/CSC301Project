@@ -40,6 +40,7 @@ const Confirmation = () => {
     const { groupId, tripId, userId } = useParams();
     const [user, setUser] = useState({});
     const [username, setUsername] = useState('');
+    const [userEmail, setUserEmail] = useState('');
     const [hasFinalized, setHasFinalized] = useState(false);
     const [trip, setTrip] = useState({});
     const [group, setGroup] = useState({});
@@ -56,6 +57,12 @@ const Confirmation = () => {
       const fetchTripAndUsers = async () => {
         setIsLoading(true);
         try {
+          const userResponse = await axios.get(`${baseURLUsers}/get-user/${userId}`);
+          const userData = userResponse.data;
+          setUser(userData);
+          setUserEmail(userData.Email);
+          setFinalized(tripData.UsersFinalized ? tripData.UsersFinalized : []);
+
           const tripResponse = await axios.get(`${baseURLTrips}/get-trip/${tripId}`);
           const tripData = tripResponse.data;
           setTrip(tripData);
@@ -77,8 +84,10 @@ const Confirmation = () => {
         }
       };
     
-      fetchTripAndUsers();
-    }, [tripId, groupId]);
+      if(userId && tripId && groupId){ 
+        fetchTripAndUsers();
+      }
+    }, [userId, tripId, groupId]);
     
     const fetchUserDetails = async (userIds, setStateCallback) => {
       if (userIds.length > 0) {
@@ -94,6 +103,28 @@ const Confirmation = () => {
         setStateCallback([]);
       }
     };
+
+    useEffect(() => {
+      const fetchTrip = async () => {
+          const tripResponse = await axios.get(`${baseURLTrips}/get-trip/${tripId}`);
+          const tripData = tripResponse.data;
+          setTrip(tripData);
+          setTripName(tripData.Name)
+          setFinalized(tripData.UsersFinalized ? tripData.UsersFinalized : []);
+      }
+
+      fetchTrip();
+    }, [tripId]);
+
+    useEffect(() => {
+      const fetchGroup = async () => {
+        const groupResponse = await axios.get(`${baseURLGroups}/get-group/${groupId}`);
+        const groupData = groupResponse.data[0];
+        setGroup(groupData);
+      }
+
+      fetchGroup();
+    }, [groupId]);
     
     useEffect(() => {
       const fetchUserNames = async () => {
@@ -173,15 +204,14 @@ const Confirmation = () => {
 
     useEffect(() => {
       const email = () => {
-        console.log(notFinalizedNames);
-        if(notFinalizedNames.length == 0){
-          // sendEmail();
+        if(notFinalizedNames.length == 0 && trip){
+          sendEmail(categorizedIdeas, userEmail, trip.Name);
           setEmailSent(true);
         }
       }
 
       email();
-    }, [notFinalizedNames]);
+    }, [notFinalizedNames, categorizedIdeas, userEmail, trip]);
     
 
     const handleOpenDialog = () => setOpenDialog(true);
@@ -267,10 +297,9 @@ const Confirmation = () => {
         return htmlContent;
     };
 
-    const sendEmail = async (categories, addr) => {
+    const sendEmail = async (categories, addr, tripname) => {
         const emailContent = generateEmail(categories);
-        console.log("email address2: " + addr);
-        const templateParams = {message: emailContent, recipient: addr, trip_name: tripName};
+        const templateParams = {message: emailContent, recipient: addr, trip_name: tripname};
 
         try {
             const response = await emailjs.send(serviceID, templateID, templateParams, public_key);
