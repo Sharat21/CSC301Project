@@ -11,7 +11,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  CircularProgress
 } from '@mui/material';
 import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
@@ -20,6 +21,7 @@ import { useParams } from 'react-router-dom';
 const Restaurants = () => {
   const { tripId, userId } = useParams();
   const [confirmedRestaurants, setConfirmedRestaurants] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedRestaurants, setEditedRestaurants] = useState({});
@@ -31,6 +33,7 @@ const Restaurants = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${baseURL}/confirmed-ideas-trip/Restaurant/${tripId}`);
         setConfirmedRestaurants(response.data);
@@ -39,6 +42,8 @@ const Restaurants = () => {
       } catch (error) {
         setError(error.message);
         console.log('Could not retrieve confirmed restaurants.');
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -139,48 +144,53 @@ const Restaurants = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-
-      <Container
-        disableGutters
-        maxWidth={false}
-        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
-      >
-        {RestaurantsData.map((Restaurants, index) => (
-          <Card
-            key={index}
-            sx={{
-              width: '100%',
-              marginBottom: 2,
-              cursor: 'pointer',
-              '&:hover': {
-                backgroundColor: '#f0f0f0',
-              },
-              border: selectedRestaurants && selectedRestaurants.id === Restaurants.id ? '2px solid #1976D2' : '1px solid #ddd',
-            }}
-            onMouseEnter={() => handleCardHover(Restaurants)}
-            onMouseLeave={() => handleCardHover(null)}
-            onClick={() => handleEditDetails(Restaurants)}
-          >
-            <CardContent>
-              <Typography variant="h6">{Restaurants.Name}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Type: {Restaurants.Type}
-              </Typography>
-              {/* Add more details as needed */}
-              <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
-                View Details
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </Container>
-
+  
+      {isLoading ? (
+        <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </Container>
+      ) : (
+        <Container
+          disableGutters
+          maxWidth={false}
+          sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
+        >
+          {RestaurantsData.map((Restaurants, index) => (
+            <Card
+              key={index}
+              sx={{
+                width: '100%',
+                marginBottom: 2,
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '#f0f0f0',
+                },
+                border: selectedRestaurants && selectedRestaurants.id === Restaurants.id ? '2px solid #1976D2' : '1px solid #ddd',
+              }}
+              onMouseEnter={() => handleCardHover(Restaurants)}
+              onMouseLeave={() => handleCardHover(null)}
+              onClick={() => handleEditDetails(Restaurants)}
+            >
+              <CardContent>
+                <Typography variant="h6">{Restaurants.Name}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Type: {Restaurants.Type}
+                </Typography>
+                {/* Add more details as needed */}
+                <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
+                  View Details
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </Container>
+      )}
+  
       <RestaurantDialog open={openEditDialog} onClose={handleCloseDialog} restaurant={editedRestaurants}></RestaurantDialog>
-
       <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} restaurant={editedRestaurants} />
-
     </div>
   );
+  
 };
 
 export default Restaurants;

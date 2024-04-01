@@ -169,7 +169,6 @@ const Confirmation = () => {
               const userPromises = notFinalizedUserIds.map(user_id => axios.get(`${baseURLUsers}/get-user/${user_id}`));
               const userResponses = await Promise.all(userPromises);
               const names = userResponses.map(res => `${res.data.Firstname} ${res.data.Lastname}`);
-              console.log(names)
               setNotFinalizedNames(names);
               setFinalizedCheck(true);
             } else {
@@ -208,7 +207,6 @@ const Confirmation = () => {
                     categories[category].push({name: idea.Name, description: idea.Description, price: idea.price});
                 }
             });
-            console.log("categories:  " + categories);
             setCategorizedIdeas(categories);
             return categories;
           } catch (error) {
@@ -225,7 +223,6 @@ const Confirmation = () => {
     useEffect(() => {
       const email = () => {
         if(namesLoaded && notFinalizedNames.length === 0 && trip){
-          console.log(notFinalizedNames);
           sendEmail(categorizedIdeas, userEmail, trip.Name);
           setEmailSent(true);
         }

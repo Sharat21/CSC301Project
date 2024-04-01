@@ -11,7 +11,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  CircularProgress
 } from '@mui/material';
 import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
@@ -20,6 +21,7 @@ import { useParams } from 'react-router-dom';
 const Activities = () => {
   const { tripId, userId } = useParams();
   const [confirmedActivities, setConfirmedActivities] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [editedActivity, setEditedActivity] = useState({});
@@ -31,6 +33,7 @@ const Activities = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${baseURL}/confirmed-ideas-trip/Activity/${tripId}`);
         setConfirmedActivities(response.data);
@@ -39,6 +42,8 @@ const Activities = () => {
       } catch (error) {
         setError(error.message);
         console.log('Could not retrieve confirmed activities.');
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -139,46 +144,52 @@ const Activities = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-
-      <Container
-        disableGutters
-        maxWidth={false}
-        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
-      >
-        {activitiesData.map((activity, index) => (
-          <Card
-            key={index}
-            sx={{
-              width: '100%',
-              marginBottom: 2,
-              cursor: 'pointer',
-              '&:hover': {
-                backgroundColor: '#f0f0f0',
-              },
-              border: selectedActivity && selectedActivity.id === activity.id ? '2px solid #1976D2' : '1px solid #ddd',
-            }}
-            onMouseEnter={() => handleCardHover(activity)}
-            onMouseLeave={() => handleCardHover(null)}
-            onClick={() => handleEditDetails(activity)}
-          >
-            <CardContent>
-              <Typography variant="h6">{activity.Name}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Type: {activity.Type}
-              </Typography>
-              <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
-                View Details
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </Container>
-
+  
+      {isLoading ? (
+        <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </Container>
+      ) : (
+        <Container
+          disableGutters
+          maxWidth={false}
+          sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
+        >
+          {activitiesData.map((activity, index) => (
+            <Card
+              key={index}
+              sx={{
+                width: '100%',
+                marginBottom: 2,
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '#f0f0f0',
+                },
+                border: selectedActivity && selectedActivity.id === activity.id ? '2px solid #1976D2' : '1px solid #ddd',
+              }}
+              onMouseEnter={() => handleCardHover(activity)}
+              onMouseLeave={() => handleCardHover(null)}
+              onClick={() => handleEditDetails(activity)}
+            >
+              <CardContent>
+                <Typography variant="h6">{activity.Name}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Type: {activity.Type}
+                </Typography>
+                <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
+                  View Details
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </Container>
+      )}
+  
       <ActivityDialog open={openEditDialog} onClose={handleCloseDialog} activity={editedActivity} />
-
       <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} activity={editedActivity} />
     </div>
   );
+  
 };
 
 export default Activities;
