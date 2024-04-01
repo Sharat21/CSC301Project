@@ -27,9 +27,9 @@ const Confirmation = () => {
     const [emailSent, setEmailSent] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [openCancelDialog, setOpenCancelDialog] = useState(false)
-    const [tripName, setTripName] = useState('');
     const [finalized, setFinalized] = useState([]);
     const [finalizedNames, setFinalizedNames] = useState([]);
+    const [namesLoaded, setNamesLoaded] = useState(false);
     const [notFinalizedNames, setNotFinalizedNames] = useState([]);
     const [categorizedIdeas, setCategorizedIdeas] = useState({
         'Activity': [],
@@ -38,12 +38,11 @@ const Confirmation = () => {
         'Transportation': []
     });
     const { groupId, tripId, userId } = useParams();
-    const [user, setUser] = useState({});
-    const [username, setUsername] = useState('');
     const [userEmail, setUserEmail] = useState('');
     const [hasFinalized, setHasFinalized] = useState(false);
     const [trip, setTrip] = useState({});
     const [group, setGroup] = useState({});
+    const [finalizedCheck, setFinalizedCheck] = useState(false);
     const baseURLIdeas = `http://localhost:14000/api/ideas`;
     const baseURLTrips = `http://localhost:14000/api/trips`;
     const baseURLUsers = `http://localhost:14000/api/users`;
@@ -59,7 +58,6 @@ const Confirmation = () => {
         try {
           const userResponse = await axios.get(`${baseURLUsers}/get-user/${userId}`);
           const userData = userResponse.data;
-          setUser(userData);
           setUserEmail(userData.Email);
           setFinalized(tripData.UsersFinalized ? tripData.UsersFinalized : []);
 
@@ -106,11 +104,15 @@ const Confirmation = () => {
 
     useEffect(() => {
       const fetchTrip = async () => {
+        setIsLoading(true);
+        try { 
           const tripResponse = await axios.get(`${baseURLTrips}/get-trip/${tripId}`);
           const tripData = tripResponse.data;
           setTrip(tripData);
-          setTripName(tripData.Name)
           setFinalized(tripData.UsersFinalized ? tripData.UsersFinalized : []);
+        } finally {
+            setIsLoading(false);
+        }
       }
 
       fetchTrip();
@@ -118,9 +120,15 @@ const Confirmation = () => {
 
     useEffect(() => {
       const fetchGroup = async () => {
-        const groupResponse = await axios.get(`${baseURLGroups}/get-group/${groupId}`);
-        const groupData = groupResponse.data[0];
-        setGroup(groupData);
+        setIsLoading(true);
+        try { 
+          const groupResponse = await axios.get(`${baseURLGroups}/get-group/${groupId}`);
+          const groupData = groupResponse.data[0];
+          setGroup(groupData);
+        }
+        finally {
+          setIsLoading(false);
+        }
       }
 
       fetchGroup();
@@ -129,13 +137,17 @@ const Confirmation = () => {
     useEffect(() => {
       const fetchUserNames = async () => {
         if (finalized.length > 0) {
+          setIsLoading(true);
           try {
             const userPromises = finalized.map(user_id => axios.get(`${baseURLUsers}/get-user/${user_id}`));
             const userResponses = await Promise.all(userPromises);
             const names = userResponses.map(res => `${res.data.Firstname} ${res.data.Lastname}`);
             setFinalizedNames(names);
+            setNamesLoaded(true);
           } catch (err) {
             console.error("Fetching user names failed", err);
+          } finally {
+            setIsLoading(false);
           }
         } else {
           setFinalizedNames([]);
@@ -148,6 +160,7 @@ const Confirmation = () => {
     useEffect(() => {
       const fetchNotFinalizedUsers = async () => {
         if (group.Users) {
+          setIsLoading(true);
           try {
             const allUserIds = group.Users;
             const notFinalizedUserIds = allUserIds.filter(id => !finalized.includes(id));
@@ -156,12 +169,16 @@ const Confirmation = () => {
               const userPromises = notFinalizedUserIds.map(user_id => axios.get(`${baseURLUsers}/get-user/${user_id}`));
               const userResponses = await Promise.all(userPromises);
               const names = userResponses.map(res => `${res.data.Firstname} ${res.data.Lastname}`);
+              console.log(names)
               setNotFinalizedNames(names);
+              setFinalizedCheck(true);
             } else {
               setNotFinalizedNames([]);
             }
           } catch (error) {
             console.error("Fetching non-finalized users failed", error);
+          } finally {
+            setIsLoading(false);
           }
         }
       };
@@ -172,6 +189,7 @@ const Confirmation = () => {
     useEffect(() => {
       const fetchConfirmedIdeas = async () => {
         if(notFinalizedNames.length == 0) {
+          setIsLoading(true);
           try {
             const response = await axios.get(`${baseURLIdeas}/all-confirmed-ideas-trip/${tripId}`);
             const ideas = response.data;
@@ -195,6 +213,8 @@ const Confirmation = () => {
             return categories;
           } catch (error) {
             console.error("Fetching confirmed ideas failed: ", error);
+          } finally {
+            setIsLoading(false);
           }
         }
       };
@@ -204,7 +224,8 @@ const Confirmation = () => {
 
     useEffect(() => {
       const email = () => {
-        if(notFinalizedNames.length == 0 && trip){
+        if(namesLoaded && notFinalizedNames.length === 0 && trip){
+          console.log(notFinalizedNames);
           sendEmail(categorizedIdeas, userEmail, trip.Name);
           setEmailSent(true);
         }
@@ -326,7 +347,7 @@ const Confirmation = () => {
           </Container>
         ) : (
           <>
-            {emailSent && notFinalizedNames.length === 0 ? (
+            {(notFinalizedNames.length === 0) ? (
               <Container style={{ marginTop: '20px' }}>
                 <Card style={{ padding: '20px', margin: 'auto', maxWidth: '800px', maxHeight: 'auto' }}>
                   <CardContent>
@@ -341,7 +362,7 @@ const Confirmation = () => {
                 <Container style={{ marginTop: '20px' }}>
                   <Card style={{ padding: '20px', margin: 'auto', maxWidth: '800px', maxHeight: 'auto' }}>
                     <CardContent>
-                      {hasFinalized ? (
+                      {hasFinalized && finalizedCheck ? (
                         <>
                           <Typography gutterBottom>
                             You have already voted to finalize this trip. Would you like to cancel your vote?
