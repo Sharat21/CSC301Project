@@ -19,6 +19,7 @@ import {
   DialogContentText,
   TextField,
   Tooltip,
+  CircularProgress
 } from "@mui/material";
 
 import { Cancel, Add, FileCopy } from "@mui/icons-material";
@@ -26,22 +27,6 @@ import { useNavigate  } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
 
-
-// const groupsData = [
-//   {
-//     id: 1,
-//     name: "Family",
-//     members: ["John", "Jane", "Alice"],
-//     date: "2023-05-15",
-//   },
-//   {
-//     id: 2,
-//     name: "Friends",
-//     members: ["Tom", "Emily", "Mike"],
-//     date: "2023-06-20",
-//   },
-//   // Add more group data as needed
-// ];
 const formatDate = (dateString) => {
   const dateObject = new Date(dateString);
   const year = dateObject.getFullYear();
@@ -54,7 +39,7 @@ const formatDate = (dateString) => {
 const Groups = () => {
   const baseURL = `http://localhost:14000/api/groups`;
   const [groupsData, setGroupsData] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [copiedGroupId, setCopiedGroupId] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
@@ -65,9 +50,10 @@ const Groups = () => {
   const navigate = useNavigate(); // Use useNavigate hook
 
   const handleGoBack = () => {
-    navigate(-1); // Go back to the previous page in history
+    navigate(`/login`); // Go back to the previous page in history
   };
   const fetchData = async () => {
+    setIsLoading(true);
     try {
       console.log('User data:', userId);
 
@@ -98,6 +84,8 @@ const Groups = () => {
     } catch (error) {
       //setError(error.message);
       console.log('Error', error.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -202,22 +190,20 @@ const Groups = () => {
   };
 
   return (
-
-    <div style={{ width: "100%", position: "relative", minHeight: "100vh" }}>
+    <div style={{ width: '100%', position: 'relative', minHeight: '100vh' }}>
       <Header userId={userId}/>
-      <AppBar position="static" sx={{ width: "100%" }}>
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="go back"
-          onClick={handleGoBack}
-          sx={{ mr: 2 }} // Add margin to the right
-        >
-          <ArrowBack />
-        </IconButton>
-          <Typography variant="h6" sx={{ flex: 1, fontSize: "24px" }}>
+      <AppBar position="static" sx={{ width: '100%' }}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="go back"
+            onClick={handleGoBack}
+            sx={{ mr: 2 }}
+          >
+            <ArrowBack />
+          </IconButton>
+          <Typography variant="h6" sx={{ flex: 1, fontSize: '24px' }}>
             Groups
           </Typography>
           <Button color="inherit" onClick={handleJoinGroup}>
@@ -228,48 +214,51 @@ const Groups = () => {
           </Button>
         </Toolbar>
       </AppBar>
-
-      <Container disableGutters maxWidth={false}>
-        <Grid
-          container
-          spacing={2}
-          justifyContent="flex-start"
-          alignItems="flex-start"
-          sx={{ marginTop: 4 }}
-        >
-          {groupsData.map((group, index) => (
-            <Grid item key={index} xs={12} sm={6} md={4} lg={3} sx={{ padding: 0 }}>
-              <Card
-                sx={{ width: "100%", height: "100%", position: "relative" }}
-
-                onClick={() => handleClick(group._id)}
-              >
-                <CardContent>
-                  <Typography variant="h6">{group.Name}</Typography>
-                  <Typography variant="body1">
-                    Members: {group.members.join(", ")}
-                  </Typography>
-                  <Typography variant="body2">Date Created: {group.date}</Typography>
-                  <Typography variant="body3">Group ID: {group._id}</Typography>
-                  <Button variant="outlined" onClick={(e) => { e.stopPropagation(); handleCopyGroupId(group._id); }}>
-                  {copiedGroupId === group._id ? 'Copied' : 'Copy ID'}
-                  </Button>
-                </CardContent>
-                <IconButton
-                  aria-label="leave group"
-                  onClick={(event) => handleLeaveGroup(event, group._id)}
-
-                  sx={{ position: "absolute", top: 8, right: 8 }}
+  
+      {isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </div>
+      ) : (
+        <Container disableGutters maxWidth={false}>
+          <Grid
+            container
+            spacing={2}
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            sx={{ marginTop: 4 }}
+          >
+            {groupsData.map((group, index) => (
+              <Grid item key={index} xs={12} sm={6} md={4} lg={3} sx={{ padding: 0 }}>
+                <Card
+                  sx={{ width: '100%', height: '100%', position: 'relative' }}
+                  onClick={() => handleClick(group._id)}
                 >
-                  <Cancel />
-                </IconButton>
-              </Card>
-            </Grid>
-
-          ))}
-        </Grid>
-      </Container>
-
+                  <CardContent>
+                    <Typography variant="h6">{group.Name}</Typography>
+                    <Typography variant="body1">
+                      Members: {group.members.join(', ')}
+                    </Typography>
+                    <Typography variant="body2">Date Created: {group.date}</Typography>
+                    <Typography variant="body3">Group ID: {group._id}</Typography>
+                    <Button variant="outlined" onClick={(e) => { e.stopPropagation(); handleCopyGroupId(group._id); }}>
+                      {copiedGroupId === group._id ? 'Copied' : 'Copy ID'}
+                    </Button>
+                  </CardContent>
+                  <IconButton
+                    aria-label="leave group"
+                    onClick={(event) => handleLeaveGroup(event, group._id)}
+                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                  >
+                    <Cancel />
+                  </IconButton>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      )}
+  
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>Add New Group</DialogTitle>
         <DialogContent>
@@ -289,7 +278,7 @@ const Groups = () => {
           <Button onClick={handleCreateGroup}>Create</Button>
         </DialogActions>
       </Dialog>
-
+  
       <Dialog open={joinGroupDialogOpen} onClose={() => setJoinGroupDialogOpen(false)}>
         <DialogTitle>Join Group</DialogTitle>
         <DialogContent>
@@ -308,26 +297,26 @@ const Groups = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Dialog open={openConfirmationDialog} onClose={() => setOpenConfirmationDialog(false)}
-       >
-      <DialogTitle>Leave Group Confirmation</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Are you sure you want to leave the group?
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setOpenConfirmationDialog(false) } color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleConfirmLeave} color="primary">
-          Leave Group
-        </Button>
-      </DialogActions>
-    </Dialog>
+  
+      <Dialog open={openConfirmationDialog} onClose={() => setOpenConfirmationDialog(false)}>
+        <DialogTitle>Leave Group Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to leave the group?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenConfirmationDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmLeave} color="primary">
+            Leave Group
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
+  
 };
 
 export default Groups;

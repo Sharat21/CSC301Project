@@ -12,7 +12,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  CircularProgress
 } from '@mui/material';
 import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
@@ -20,6 +21,7 @@ import TripDetailsHeader from './components/TripDetailsHeader';
 const DestinationTransportation = () => {
   const { tripId, userId } = useParams();
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [confirmedDestination, setConfirmedDestination] = useState(null);
   const [openDestinationDialog, setOpenDestinationDialog] = useState(false);
   const [editedDestination, setEditedDestination] = useState({});
@@ -39,6 +41,7 @@ const DestinationTransportation = () => {
 
   useEffect(() => {
     const fetchDestinationData = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${baseURL}/confirmed-ideas-trip/Destination/${tripId}`);
         setConfirmedDestination(response.data);
@@ -47,6 +50,8 @@ const DestinationTransportation = () => {
       } catch (error) {
         setError(error.message);
         console.log('Could not retrieve confirmed Destination.');
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -204,44 +209,50 @@ const DestinationTransportation = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-
-      <Container
-        disableGutters
-        maxWidth={false}
-        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
-      >
-        {DestinationData.map((Destination, index) => (
-          <Card
-            key={index}
-            sx={{
-              width: '100%',
-              marginBottom: 2,
-              cursor: 'pointer',
-              '&:hover': {
-                backgroundColor: '#f0f0f0',
-              },
-              border: selectedDestination && selectedDestination.id === Destination.id ? '2px solid #1976D2' : '1px solid #ddd',
-            }}
-            onMouseEnter={() => handleCardDestinationHover(Destination)}
-            onMouseLeave={() => handleCardDestinationHover(null)}
-            onClick={() => handleEditDestinationDetails(Destination)}
-          >
-            <CardContent>
-              <Typography variant="h6">{Destination.Name}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Type: {Destination.Type}
-              </Typography>
-              {/* Add more details as needed */}
-              <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
-                View Details
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </Container>
-
+  
+      {isLoading ? (
+        <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </Container>
+      ) : (
+        <Container
+          disableGutters
+          maxWidth={false}
+          sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
+        >
+          {DestinationData.map((Destination, index) => (
+            <Card
+              key={index}
+              sx={{
+                width: '100%',
+                marginBottom: 2,
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '#f0f0f0',
+                },
+                border: selectedDestination && selectedDestination.id === Destination.id ? '2px solid #1976D2' : '1px solid #ddd',
+              }}
+              onMouseEnter={() => handleCardDestinationHover(Destination)}
+              onMouseLeave={() => handleCardDestinationHover(null)}
+              onClick={() => handleEditDestinationDetails(Destination)}
+            >
+              <CardContent>
+                <Typography variant="h6">{Destination.Name}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Type: {Destination.Type}
+                </Typography>
+                {/* Add more details as needed */}
+                <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
+                  View Details
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </Container>
+      )}
+  
       <DestinationDialog open={openDestinationDialog} onClose={handleCloseDestinationDialog} destination={editedDestination}></DestinationDialog>
-
+  
       <AppBar position="static" sx={{ width: '100%' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ fontSize: '24px' }}>
@@ -249,47 +260,54 @@ const DestinationTransportation = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-
-      <Container
-        disableGutters
-        maxWidth={false}
-        sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
-      >
-        {transportationData.map((Transportation, index) => (
-          <Card
-            key={index}
-            sx={{
-              width: '100%',
-              marginBottom: 2,
-              cursor: 'pointer',
-              '&:hover': {
-                backgroundColor: '#f0f0f0',
-              },
-              border: selectedTransportation && selectedTransportation.id === Transportation.id ? '2px solid #1976D2' : '1px solid #ddd',
-            }}
-            onMouseEnter={() => handleCardTransportationHover(Transportation)}
-            onMouseLeave={() => handleCardTransportationHover(null)}
-            onClick={() => handleEditTransportationDetails(Transportation)}
-          >
-            <CardContent>
-              <Typography variant="h6">{Transportation.Name}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Type: {Transportation.Type}
-              </Typography>
-              {/* Add more details as needed */}
-              <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
-                View Details
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </Container>
-
+  
+      {isLoading ? (
+        <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </Container>
+      ) : (
+        <Container
+          disableGutters
+          maxWidth={false}
+          sx={{ width: '100%', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
+        >
+          {transportationData.map((Transportation, index) => (
+            <Card
+              key={index}
+              sx={{
+                width: '100%',
+                marginBottom: 2,
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '#f0f0f0',
+                },
+                border: selectedTransportation && selectedTransportation.id === Transportation.id ? '2px solid #1976D2' : '1px solid #ddd',
+              }}
+              onMouseEnter={() => handleCardTransportationHover(Transportation)}
+              onMouseLeave={() => handleCardTransportationHover(null)}
+              onClick={() => handleEditTransportationDetails(Transportation)}
+            >
+              <CardContent>
+                <Typography variant="h6">{Transportation.Name}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Type: {Transportation.Type}
+                </Typography>
+                {/* Add more details as needed */}
+                <Button variant="outlined" color="primary" sx={{ marginTop: 2 }}>
+                  View Details
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </Container>
+      )}
+  
       <TransportationDialog open={openTransportationDialog} onClose={handleCloseTransportationDialog} transportation={editedTransportation}></TransportationDialog>
-
+  
       <DeleteDialog open={openConfirmDialog} onClose={handleCloseDeleteDialog} idea={editedTransportation || editedDestination} />
     </div>
   );
+  
 };
 
 export default DestinationTransportation;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Button, Container, CssBaseline, Typography, AppBar, Toolbar} from '@mui/material';
+import { Button, Container, CssBaseline, Typography, AppBar, Toolbar, CircularProgress} from '@mui/material';
 import { format } from 'date-fns';
 import IdeaList from './components/IdeaList';
 import IdeaForm from './components/IdeaForm';
@@ -11,6 +11,7 @@ import axios from 'axios';
 
 const Ideas = () => {
   const { groupId, tripId, userId } = useParams();
+  const [isLoading, setIsLoading] = useState(false);
   const [ideas, setIdeas] = useState([]);
   const [deletedIdeas, setDeletedIdeas] = useState([]);
   const [group, setGroup] = useState(null);
@@ -28,12 +29,15 @@ const Ideas = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${baseURL}/ideas/unconfirmed-ideas-trip/${tripId}`);
         setIdeas(response.data); 
       } catch (error) {
         setError(error.message);
         console.log('Could not retrieve unconfirmed ideas.');
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -41,12 +45,15 @@ const Ideas = () => {
 
   useEffect(() => {
     const fetchGroup = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${baseURL}/trips/get_trip_ids/${groupId}`)
         setGroup(response.data);
       } catch (error) {
         setError(error.message);
         console.log('Could not retrieve group information.');
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchGroup();
@@ -155,23 +162,30 @@ const Ideas = () => {
           </Button>
         </Toolbar>
       </AppBar>
-
-      <Container component="main" maxWidth="md">
-        <CssBaseline />
-        <Button variant='contained' onClick={handleOpenDialog} sx={{ width: '100%', marginTop: "8px"}}>
-          Add Idea
-        </Button>
-        <AddIdeaDialog
-          open={openDialog}
-          handleClose={handleCloseDialog}
-          newIdea={newIdea}
-          setNewIdea={setNewIdea}
-          handleSubmit={handleSubmit}
-        />
-        <IdeaList ideas={ideas} userId={userId} groupId={groupId} deleteIdea={deleteIdea} />
-      </Container>
+  
+      {isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </div>
+      ) : (
+        <Container component="main" maxWidth="md">
+          <CssBaseline />
+          <Button variant='contained' onClick={handleOpenDialog} sx={{ width: '100%', marginTop: "8px"}}>
+            Add Idea
+          </Button>
+          <AddIdeaDialog
+            open={openDialog}
+            handleClose={handleCloseDialog}
+            newIdea={newIdea}
+            setNewIdea={setNewIdea}
+            handleSubmit={handleSubmit}
+          />
+          <IdeaList ideas={ideas} userId={userId} groupId={groupId} deleteIdea={deleteIdea} />
+        </Container>
+      )}
     </div>
   );
+  
 };
 
 export default Ideas;
