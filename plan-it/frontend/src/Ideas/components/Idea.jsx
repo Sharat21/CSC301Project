@@ -128,7 +128,7 @@ const Idea = ({ ideaId, name, type, description, link, price, max_budget, propos
             Description: {description ? description : "No description available"}
           </Typography>
           <Typography variant="body2">
-            Link: {link ? link: "No link given"}
+            Address: {link ? link: "No Address given"}
           </Typography>
           <Typography variant="body2">
             Price: {price ? price : "No price given"}
