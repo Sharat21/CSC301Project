@@ -106,7 +106,10 @@ const Idea = ({ ideaId, name, type, description, link, price, max_budget, propos
   }
 
   const handleDelete = () => {
-    deleteIdea(ideaId);
+    const updatedIdea = {
+      Archived: true
+    }
+    deleteIdea(updatedIdea, ideaId);
     setOpenDialog(false);
   }
 

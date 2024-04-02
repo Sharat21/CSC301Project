@@ -34,8 +34,24 @@ router.post('/create-idea', async (req, res) => {
 router.put('/update-idea/:ideaId', async (req, res) => {
     try { 
         const { ideaId } = req.params;
-        const { Votes, Confirmed } = req.body; 
-        const updateFields = { Votes: Votes, Confirmed: Confirmed}
+        const { Votes, Confirmed, Archived } = req.body; 
+        const updateFields = {};
+
+        // const { ideaId } = req.params;
+        // const { Votes, Confirmed } = req.body; 
+        // const updateFields = { Votes: Votes, Confirmed: Confirmed}
+
+        if (Votes !== undefined) {
+            updateFields.Votes = Votes;
+        }
+
+        if (Confirmed !== undefined) {
+            updateFields.Confirmed = Confirmed;
+        }
+
+        if (Archived !== undefined) {
+            updateFields.Archived = Archived;
+        }
 
         const objectIdeaID = new ObjectId(String(ideaId));
         const query = { _id: objectIdeaID };

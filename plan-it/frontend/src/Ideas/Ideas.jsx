@@ -75,7 +75,10 @@ const Ideas = () => {
             updateIdea(updatedIdea, ideas[i]._id);
           } else {
             if (!deletedIdeas.includes(ideas[i]._id)) {
-              deleteIdea(ideas[i]._id);
+              const updatedIdea = {
+                Archived: true
+              }
+              deleteIdea(updatedIdea, ideas[i]._id);
               setDeletedIdeas([...deletedIdeas, ideas[i]._id]);
             }
           }
@@ -116,9 +119,9 @@ const Ideas = () => {
     }
   }
 
-  const deleteIdea = async (ideaId) => {
+  const deleteIdea = async (idea, ideaId) => {
     try {
-      const response = await axios.delete(`${baseURL}/ideas/delete-idea/${ideaId}`);
+      const response = await axios.put(`${baseURL}/ideas/update-idea/${ideaId}`, idea);
       setIdeas(ideas.filter(idea => idea._id !== ideaId));
     } catch (error) {
       console.error("Error deleting idea: ", error.message);
@@ -139,7 +142,8 @@ const Ideas = () => {
       Proposed_by: userId,
       Date_Proposed: format(currentDate, 'yyyy-MM-dd'),
       Trip: tripId,
-      Voting_End: format(endDate, 'yyyy-MM-dd')
+      Voting_End: format(endDate, 'yyyy-MM-dd'),
+      Archived: false
     };
 
     addIdea(submittedIdea);
