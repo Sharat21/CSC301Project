@@ -41,39 +41,64 @@ const PinnedLocationsBox = ({ pinnedLocations, onLocationClick, onRestaurantClic
     };
 
     console.log(restaurantLocations);
+    const accommodations = pinnedLocations.filter(location => location.Type === 'Accommodation');
+    const restaurants = pinnedLocations.filter(location => location.Type === 'Restaurant');
+    const activities = pinnedLocations.filter(location => location.Type === 'Activity');
 
+    console.log(accommodations);
+    console.log(restaurants);
     return (
         <>
             <Button onClick={handleOpen} className="pinned-locations-button">Pinned Locations</Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle className="dialog-title">Pinned Locations</DialogTitle>
                 <DialogContent>
+
                     <div className="location-type">
                         <h3 className="category-header">Accommodation</h3>
                         <ul className="location-list">
-                            {/* Output Accommodation names */}
-                            {accommodationLocations && accommodationLocations.Name && (
-                            
-                            <li className="location-item">
-                                <button className="location-name" onClick={() => handleLocationClick(accommodationLocations.link)}>
-                                    {accommodationLocations.Name}
-                                </button>
-                            </li>
-                            )}
+                            {accommodations.map((location, index) => (
+                                <li key={index} className="location-item">
+                                    <button className="location-name" onClick={() => {
+                                        onLocationClick(location.link);
+                                        handleClose();
+                                    }}>
+                                        {location.Name}
+                                    </button>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                     <div className="location-type">
                         <h3 className="category-header">Restaurant</h3>
                         <ul className="location-list">
-                            {/* Output Restaurant names */}
-                            {restaurantLocations && restaurantLocations.link && (
-                                <li className="location-item">
-                                    {/* <h4 className="location-name">{restaurantLocations.Name}</h4> */}
-                                    <button className="location-name" onClick={() => handleRestaurantClick(restaurantLocations.link)}>
-                                    {restaurantLocations.Name}
-                                </button>
+                            {restaurants.map((location, index) => (
+                                <li key={index} className="location-item">
+                                    <button className="location-name" onClick={() => {
+                                        onRestaurantClick(location.link);
+                                        handleClose();
+                                    }}>
+                                        {location.Name}
+                                    </button>
                                 </li>
-                            )}
+                            ))}
+                        </ul>
+                    </div>
+
+
+                    <div className="location-type">
+                        <h3 className="category-header">Activity</h3>
+                        <ul className="location-list">
+                            {activities.map((location, index) => (
+                                <li key={index} className="location-item">
+                                    <button className="location-name" onClick={() => {
+                                        onActivityClick(location.link);
+                                        handleClose();
+                                    }}>
+                                        {location.Name}
+                                    </button>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </DialogContent>
