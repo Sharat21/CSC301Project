@@ -47,10 +47,9 @@ const Confirmation = () => {
     const baseURLTrips = `http://localhost:14000/api/trips`;
     const baseURLUsers = `http://localhost:14000/api/users`;
     const baseURLGroups = `http://localhost:14000/api/groups`;
-    const [recipient, setRecipient] = useState('ryanr.4849@gmail.com');
-    const serviceID = 'service_0jm96eq';
-    const templateID = 'template_r63buj5';
-    const public_key = 'HjoZ2e7hdmfdThEB1';
+    const serviceID = 'service_ltixjl3';
+    const templateID = 'template_vvf3gbb';
+    const public_key = 'Y4_zv8vCNCjLPt4hU';
 
     useEffect(() => {
       const fetchTripAndUsers = async () => {
@@ -183,7 +182,7 @@ const Confirmation = () => {
       };
     
       fetchNotFinalizedUsers();
-    }, [group, finalized]); 
+    }, [group, finalizedNames]); 
 
     useEffect(() => {
       const fetchConfirmedIdeas = async () => {
@@ -223,13 +222,15 @@ const Confirmation = () => {
     useEffect(() => {
       const email = () => {
         if(namesLoaded && notFinalizedNames.length === 0 && trip){
-          sendEmail(categorizedIdeas, userEmail, trip.Name);
-          setEmailSent(true);
+          if (!emailSent) {
+            sendEmail(categorizedIdeas, userEmail, trip.Name);
+            setEmailSent(true);
+          }
         }
       }
 
       email();
-    }, [notFinalizedNames, categorizedIdeas, userEmail, trip]);
+    }, [notFinalizedNames, categorizedIdeas, userEmail, trip, finalizedCheck]);
     
 
     const handleOpenDialog = () => setOpenDialog(true);
@@ -382,7 +383,7 @@ const Confirmation = () => {
                       )}
                       <List>
                         Members who have finalized: <br />
-                        {finalizedNames.length > 0 ? (
+                        {finalizedNames.length > 0 && namesLoaded && finalizedCheck ? (
                           finalizedNames.map((fullname, index) => (
                             <ListItem key={index}>
                               <ListItemText>• {fullname}</ListItemText>
