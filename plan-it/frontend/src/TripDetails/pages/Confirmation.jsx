@@ -27,9 +27,9 @@ const Confirmation = () => {
     const [emailSent, setEmailSent] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [openCancelDialog, setOpenCancelDialog] = useState(false)
-    const [tripName, setTripName] = useState('');
     const [finalized, setFinalized] = useState([]);
     const [finalizedNames, setFinalizedNames] = useState([]);
+    const [namesLoaded, setNamesLoaded] = useState(false);
     const [notFinalizedNames, setNotFinalizedNames] = useState([]);
     const [categorizedIdeas, setCategorizedIdeas] = useState({
         'Activity': [],
@@ -38,11 +38,11 @@ const Confirmation = () => {
         'Transportation': []
     });
     const { groupId, tripId, userId } = useParams();
-    const [user, setUser] = useState({});
-    const [username, setUsername] = useState('');
+    const [userEmail, setUserEmail] = useState('');
     const [hasFinalized, setHasFinalized] = useState(false);
     const [trip, setTrip] = useState({});
     const [group, setGroup] = useState({});
+    const [finalizedCheck, setFinalizedCheck] = useState(false);
     const baseURLIdeas = `http://localhost:14000/api/ideas`;
     const baseURLTrips = `http://localhost:14000/api/trips`;
     const baseURLUsers = `http://localhost:14000/api/users`;
@@ -53,35 +53,142 @@ const Confirmation = () => {
     const public_key = 'HjoZ2e7hdmfdThEB1';
 
     useEffect(() => {
-        const fetchTrip = async () => {
-            try {
-                const trip_response = await axios.get(`${baseURLTrips}/get-trip/${tripId}`);
-                setTrip(trip_response.data);
-                setTripName(`<h2> ${trip_response.data.Name} Final Itinerary </h2>`);
-                setFinalized(trip_response.data.UsersFinalized ? trip_response.data.UsersFinalized : []);
-                return trip_response.data.UsersFinalized;
-            } catch (error) {
-                console.error("Fetching trip name failed: ", error);
-            }
-            return [];
-        }
+      const fetchTripAndUsers = async () => {
+        setIsLoading(true);
+        try {
+          const userResponse = await axios.get(`${baseURLUsers}/get-user/${userId}`);
+          const userData = userResponse.data;
+          setUserEmail(userData.Email);
+          setFinalized(tripData.UsersFinalized ? tripData.UsersFinalized : []);
 
-        const fetchUserNames = async(userIds) => {
-          try{
-            const userPromises = userIds.map(user_id => axios.get(`${baseURLUsers}/get-user/${user_id}`));
+          const tripResponse = await axios.get(`${baseURLTrips}/get-trip/${tripId}`);
+          const tripData = tripResponse.data;
+          setTrip(tripData);
+          setFinalized(tripData.UsersFinalized ? tripData.UsersFinalized : []);
+    
+          const groupResponse = await axios.get(`${baseURLGroups}/get-group/${groupId}`);
+          const groupData = groupResponse.data[0];
+          setGroup(groupData);
+    
+          const allUserIds = groupData.Users;
+          const notFinalizedUserIds = allUserIds.filter(id => !tripData.UsersFinalized.includes(id));
+    
+          await fetchUserDetails(tripData.UsersFinalized, setFinalizedNames);
+          await fetchUserDetails(notFinalizedUserIds, setNotFinalizedNames);
+        } catch (error) {
+          console.error("Error fetching trip and user details: ", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+    
+      if(userId && tripId && groupId){ 
+        fetchTripAndUsers();
+      }
+    }, [userId, tripId, groupId]);
+    
+    const fetchUserDetails = async (userIds, setStateCallback) => {
+      if (userIds.length > 0) {
+        try {
+          const userPromises = userIds.map(userId => axios.get(`${baseURLUsers}/get-user/${userId}`));
+          const userResponses = await Promise.all(userPromises);
+          const userNames = userResponses.map(response => `${response.data.Firstname} ${response.data.Lastname}`);
+          setStateCallback(userNames);
+        } catch (error) {
+          console.error("Error fetching user details: ", error);
+        }
+      } else {
+        setStateCallback([]);
+      }
+    };
+
+    useEffect(() => {
+      const fetchTrip = async () => {
+        setIsLoading(true);
+        try { 
+          const tripResponse = await axios.get(`${baseURLTrips}/get-trip/${tripId}`);
+          const tripData = tripResponse.data;
+          setTrip(tripData);
+          setFinalized(tripData.UsersFinalized ? tripData.UsersFinalized : []);
+        } finally {
+            setIsLoading(false);
+        }
+      }
+
+      fetchTrip();
+    }, [tripId]);
+
+    useEffect(() => {
+      const fetchGroup = async () => {
+        setIsLoading(true);
+        try { 
+          const groupResponse = await axios.get(`${baseURLGroups}/get-group/${groupId}`);
+          const groupData = groupResponse.data[0];
+          setGroup(groupData);
+        }
+        finally {
+          setIsLoading(false);
+        }
+      }
+
+      fetchGroup();
+    }, [groupId]);
+    
+    useEffect(() => {
+      const fetchUserNames = async () => {
+        if (finalized.length > 0) {
+          setIsLoading(true);
+          try {
+            const userPromises = finalized.map(user_id => axios.get(`${baseURLUsers}/get-user/${user_id}`));
             const userResponses = await Promise.all(userPromises);
-            const names = userResponses.map(res => (`${res.data.Firstname} ${res.data.Lastname}`));
-            if (names.includes(username)) {
-              setHasFinalized(true);
-            }
+            const names = userResponses.map(res => `${res.data.Firstname} ${res.data.Lastname}`);
             setFinalizedNames(names);
+            setNamesLoaded(true);
           } catch (err) {
-            console.error("Fetching user names failed", error);
+            console.error("Fetching user names failed", err);
+          } finally {
+            setIsLoading(false);
           }
-          
+        } else {
+          setFinalizedNames([]);
         }
+      };
+    
+      fetchUserNames();
+    }, [finalized]);
+    
+    useEffect(() => {
+      const fetchNotFinalizedUsers = async () => {
+        if (group.Users) {
+          setIsLoading(true);
+          try {
+            const allUserIds = group.Users;
+            const notFinalizedUserIds = allUserIds.filter(id => !finalized.includes(id));
+    
+            if (notFinalizedUserIds.length > 0) {
+              const userPromises = notFinalizedUserIds.map(user_id => axios.get(`${baseURLUsers}/get-user/${user_id}`));
+              const userResponses = await Promise.all(userPromises);
+              const names = userResponses.map(res => `${res.data.Firstname} ${res.data.Lastname}`);
+              setNotFinalizedNames(names);
+              setFinalizedCheck(true);
+            } else {
+              setNotFinalizedNames([]);
+            }
+          } catch (error) {
+            console.error("Fetching non-finalized users failed", error);
+          } finally {
+            setIsLoading(false);
+          }
+        }
+      };
+    
+      fetchNotFinalizedUsers();
+    }, [group, finalized]); 
 
-        const fetchConfirmedIdeas = async () => {
+    useEffect(() => {
+      const fetchConfirmedIdeas = async () => {
+        if(notFinalizedNames.length == 0) {
+          setIsLoading(true);
           try {
             const response = await axios.get(`${baseURLIdeas}/all-confirmed-ideas-trip/${tripId}`);
             const ideas = response.data;
@@ -100,87 +207,30 @@ const Confirmation = () => {
                     categories[category].push({name: idea.Name, description: idea.Description, price: idea.price});
                 }
             });
-            console.log("categories:  " + categories);
             setCategorizedIdeas(categories);
             return categories;
           } catch (error) {
             console.error("Fetching confirmed ideas failed: ", error);
-          }
-        };
-
-        const fetchUser = async () => {
-          try {
-            const user_response = await axios.get(`${baseURLUsers}/get-user/${userId}`);
-            setUser(user_response.data);
-            setUsername(`${user_response.data.Firstname} ${user_response.data.Lastname}`)
-            setRecipient(user_response.data.Email);
-            return user_response.data.Email;
-          } catch (error) {
-              console.error("Fetching user failed: ", error);
-          }
-        };
-
-        const fetchGroup = async () => {
-          try {
-            const group_response = await axios.get(`${baseURLGroups}/get-group/${groupId}`);
-            setGroup(group_response.data[0]);
-            return group_response.data[0];
-          } catch (error) {
-            console.error("Fetching group failed: ", error);
-          }
-        };
-
-        const fetchNotFinalizedUsers = async (users, finalizedIds) => {
-          let notFinalizedUserIds = [];
-          if (finalizedIds.length == 0) {
-            notFinalizedUserIds = users
-          }
-          else {
-            notFinalizedUserIds = users.filter(id => !finalizedIds.includes(id));
-          }
-          console.log(notFinalizedUserIds);
-          try {
-            if(notFinalizedUserIds.length != 0) {
-              const userPromises = notFinalizedUserIds.map(user_id => axios.get(`${baseURLUsers}/get-user/${user_id}`));
-              const userResponses = await Promise.all(userPromises);
-              const names = userResponses.map(res => `${res.data.Firstname} ${res.data.Lastname}`);
-              setNotFinalizedNames(names);
-              return names;
-            }
-            else {
-              setNotFinalizedNames([]);
-              return [];
-            }
-          } catch (error) {
-            console.error("Fetching non-finalized users failed", error);
-          }
-        };
-
-        const fetchData = async () => {
-          setIsLoading(true);
-          try {
-            const emailAddr = await fetchUser();
-            const tempGroup = await fetchGroup();
-            const finalizedUserIds = await fetchTrip();
-            if (tempGroup){
-              await fetchUserNames(finalizedUserIds);
-              const notFinalizedNames = await fetchNotFinalizedUsers(tempGroup.Users, finalizedUserIds);
-              if(notFinalizedNames==0 && emailAddr) {
-                console.log("email address3: " + emailAddr);
-                const tempCategories = await fetchConfirmedIdeas();
-                await sendEmail(tempCategories, emailAddr);
-                setEmailSent(true);
-              }
-            }
-          } catch (error) {
-            console.error("Error during data fetch: ", error);
           } finally {
             setIsLoading(false);
           }
-        };
+        }
+      };
 
-        fetchData();
-    }, [groupId, userId, tripId, username, emailSent]);
+      fetchConfirmedIdeas();
+    }, [tripId, notFinalizedNames]);
+
+    useEffect(() => {
+      const email = () => {
+        if(namesLoaded && notFinalizedNames.length === 0 && trip){
+          sendEmail(categorizedIdeas, userEmail, trip.Name);
+          setEmailSent(true);
+        }
+      }
+
+      email();
+    }, [notFinalizedNames, categorizedIdeas, userEmail, trip]);
+    
 
     const handleOpenDialog = () => setOpenDialog(true);
 
@@ -265,10 +315,9 @@ const Confirmation = () => {
         return htmlContent;
     };
 
-    const sendEmail = async (categories, addr) => {
+    const sendEmail = async (categories, addr, tripname) => {
         const emailContent = generateEmail(categories);
-        console.log("email address2: " + addr);
-        const templateParams = {message: emailContent, recipient: addr, trip_name: tripName};
+        const templateParams = {message: emailContent, recipient: addr, trip_name: tripname};
 
         try {
             const response = await emailjs.send(serviceID, templateID, templateParams, public_key);
@@ -295,7 +344,7 @@ const Confirmation = () => {
           </Container>
         ) : (
           <>
-            {notFinalizedNames.length === 0 && emailSent ? (
+            {(notFinalizedNames.length === 0) ? (
               <Container style={{ marginTop: '20px' }}>
                 <Card style={{ padding: '20px', margin: 'auto', maxWidth: '800px', maxHeight: 'auto' }}>
                   <CardContent>
@@ -306,88 +355,92 @@ const Confirmation = () => {
                 </Card>
               </Container>
             ) : (
-              <Container style={{ marginTop: '20px' }}>
-                <Card style={{ padding: '20px', margin: 'auto', maxWidth: '800px', maxHeight: 'auto' }}>
-                  <CardContent>
-                    {hasFinalized ? (
-                      <>
-                        <Typography gutterBottom>
-                          You have already voted to finalize this trip. Would you like to cancel your vote?
-                        </Typography>
-                        <Button variant="outlined" color="secondary" style={{ marginTop: '20px', marginBottom: '20px' }} onClick={handleCancelDialog}>
-                          Cancel Finalization
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Typography gutterBottom>
-                          Are you content with all the ideas planned for the trip and would you like to finalize it?
-                          <br /><br />
-                          When all group members have finalized, you will receive an email with the final trip itinerary.
-                        </Typography>
-                        <Button variant="outlined" color="primary" style={{ marginTop: '20px', marginBottom: '20px' }} onClick={handleOpenDialog}>
-                          Finalize Ideas
-                        </Button>
-                      </>
-                    )}
-                    <List>
-                      Members who have finalized: <br />
-                      {finalizedNames.length > 0 ? (
-                        finalizedNames.map((fullname, index) => (
+              <>
+                <Container style={{ marginTop: '20px' }}>
+                  <Card style={{ padding: '20px', margin: 'auto', maxWidth: '800px', maxHeight: 'auto' }}>
+                    <CardContent>
+                      {hasFinalized && finalizedCheck ? (
+                        <>
+                          <Typography gutterBottom>
+                            You have already voted to finalize this trip. Would you like to cancel your vote?
+                          </Typography>
+                          <Button variant="outlined" color="secondary" style={{ marginTop: '20px', marginBottom: '20px' }} onClick={handleCancelDialog}>
+                            Cancel Finalization
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Typography gutterBottom>
+                            Are you content with all the ideas planned for the trip and would you like to finalize it?
+                            <br /><br />
+                            When all group members have finalized, you will receive an email with the final trip itinerary.
+                          </Typography>
+                          <Button variant="outlined" color="primary" style={{ marginTop: '20px', marginBottom: '20px' }} onClick={handleOpenDialog}>
+                            Finalize Ideas
+                          </Button>
+                        </>
+                      )}
+                      <List>
+                        Members who have finalized: <br />
+                        {finalizedNames.length > 0 ? (
+                          finalizedNames.map((fullname, index) => (
+                            <ListItem key={index}>
+                              <ListItemText>• {fullname}</ListItemText>
+                            </ListItem>
+                          ))
+                        ) : (
+                          <Typography variant="body2" style={{ marginTop: '20px' }}>
+                            No members have finalized yet.
+                          </Typography>
+                        )}
+                      </List>
+                      <List>
+                        Members who have not finalized: <br />
+                        {notFinalizedNames.map((fullname, index) => (
                           <ListItem key={index}>
                             <ListItemText>• {fullname}</ListItemText>
                           </ListItem>
-                        ))
-                      ) : (
-                        <Typography variant="body2" style={{ marginTop: '20px' }}>
-                          No members have finalized yet.
-                        </Typography>
-                      )}
-                    </List>
-                    <List>
-                      Members who have not finalized: <br />
-                      {notFinalizedNames.map((fullname, index) => (
-                        <ListItem key={index}>
-                          <ListItemText>• {fullname}</ListItemText>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </CardContent>
-                </Card>
-              </Container>
-            )}
-            {confirmationDialog}
-            {cancelFinalizationDialog}
-            <Container maxWidth="md" style={{ marginTop: '20px' }}>
-              <Card style={{ padding: '20px' }}>
-                <CardContent>
-                  {Object.keys(categorizedIdeas).map((category) => (
-                    <Card key={category} style={{ marginBottom: '20px' }}>
+                        ))}
+                      </List>
+                    </CardContent>
+                  </Card>
+                </Container>
+                {confirmationDialog}
+                {cancelFinalizationDialog}
+                {notFinalizedNames.length !== 0 && (
+                  <Container maxWidth="md" style={{ marginTop: '20px' }}>
+                    <Card style={{ padding: '20px' }}>
                       <CardContent>
-                        <Typography variant="h5" gutterBottom style={{ fontWeight: 'bold' }}>
-                          {category}
-                        </Typography>
-                        {categorizedIdeas[category].length > 0 ? (
-                          categorizedIdeas[category].map((idea, index) => (
-                            <Typography key={index} variant="body1" style={{ marginLeft: '20px' }}>
-                              • {idea.name}
-                            </Typography>
-                          ))
-                        ) : (
-                          <Typography variant="body2" style={{ marginLeft: '20px' }}>
-                            No ideas confirmed for this category.
-                          </Typography>
-                        )}
+                        {Object.keys(categorizedIdeas).map((category) => (
+                          <Card key={category} style={{ marginBottom: '20px' }}>
+                            <CardContent>
+                              <Typography variant="h5" gutterBottom style={{ fontWeight: 'bold' }}>
+                                {category}
+                              </Typography>
+                              {categorizedIdeas[category].length > 0 ? (
+                                categorizedIdeas[category].map((idea, index) => (
+                                  <Typography key={index} variant="body1" style={{ marginLeft: '20px' }}>
+                                    • {idea.name}
+                                  </Typography>
+                                ))
+                              ) : (
+                                <Typography variant="body2" style={{ marginLeft: '20px' }}>
+                                  No ideas confirmed for this category.
+                                </Typography>
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))}
                       </CardContent>
                     </Card>
-                  ))}
-                </CardContent>
-              </Card>
-            </Container>
+                  </Container>
+                )}
+              </>
+            )}
           </>
         )}
       </div>
-    );
-};
-
+  )
+}
+    
 export default Confirmation;

@@ -62,7 +62,7 @@ const AddIdeaDialog = ({ open, handleClose, newIdea, setNewIdea, handleSubmit })
                 <TextField
                     margin="dense"
                     name="link"
-                    label="Link for the Idea (Optional)"
+                    label="Address for the Idea (Optional)"
                     type="url"
                     fullWidth
                     variant="outlined"

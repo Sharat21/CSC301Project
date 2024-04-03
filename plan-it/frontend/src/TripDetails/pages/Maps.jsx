@@ -17,7 +17,6 @@ import NavBar from './components/NavBar';
 import TripDetailsHeader from './components/TripDetailsHeader';
 
 const MapComponent = () => {
-    //const { tripId } = useParams();
     const mapContainer = useRef(null);
     const [map, setMap] = useState(null);
     const [suggestions, setSuggestions] = useState([]);

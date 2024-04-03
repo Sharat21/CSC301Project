@@ -13,6 +13,7 @@ import {
   Typography,
   Toolbar,
   LinearProgress,
+  CircularProgress
 } from '@mui/material';
 import './BudgetSheet.css';
 import NavBar from './pages/components/NavBar';
@@ -29,12 +30,14 @@ const BudgetSheet = () => {
     { name: 'Transportation', budgets: [], total: 0 }
   ]);
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [overallTotal, setOverallTotal] = useState(0);
   const { routeName, tripId, userId } = useParams();
   const baseURL = `http://localhost:14000/api/ideas`;
 
   useEffect(() => {
     const fetchIdeasByType = async (type) => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${baseURL}/confirmed-ideas-trip/${type}/${tripId}`);
         return response.data;
@@ -74,6 +77,7 @@ const BudgetSheet = () => {
     
       setCategories(updatedCategories);
       setOverallTotal(overallTotal);
+      setIsLoading(false);
     };
 
     fetchAllIdeasAndCategorize();
@@ -101,49 +105,58 @@ const BudgetSheet = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-      {categories.map((category, index) => (
-        <div key={index} style={{ marginBottom: '20px' }}>
+      {isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </div>
+      ) : (
+        <>
+          {categories.map((category, index) => (
+            <div key={index} style={{ marginBottom: '20px' }}>
+              <Card className="category-card">
+                <CardContent>
+                  <Typography variant="h5" className="category-header">{category.name}</Typography>
+                  <Typography variant="subtitle1">Total: ${category.total.toFixed(2)}</Typography>
+                  <div className="budget-container">
+                    {category.budgets.map((budget, idx) => (
+                      <Card
+                        key={idx}
+                        onDoubleClick={() => handleOpenEditDialog(index, idx)}
+                        className="budget-card"
+                        style={{ backgroundColor: getCategoryColor(budget) }}
+                      >
+                        <CardContent>
+                          <Typography variant="h6">{budget.name}</Typography>
+                          <Typography variant="body1">Amount: {budget.amount}</Typography>
+                          <Typography variant="body1">Max: {budget.max}</Typography>
+                          <LinearProgress
+                            className="progress-bar"
+                            variant="determinate"
+                            value={(budget.amount / budget.max) * 100}
+                            style={{
+                              backgroundColor: budget.amount >= budget.max ? '#FF0000' : '',
+                            }}
+                          />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
           <Card className="category-card">
             <CardContent>
-              <Typography variant="h5" className="category-header">{category.name}</Typography>
-              <Typography variant="subtitle1">Total: ${category.total.toFixed(2)}</Typography>
-              <div className="budget-container">
-                {category.budgets.map((budget, idx) => (
-                  <Card
-                    key={idx}
-                    onDoubleClick={() => handleOpenEditDialog(index, idx)}
-                    className="budget-card"
-                    style={{ backgroundColor: getCategoryColor(budget) }}
-                  >
-                    <CardContent>
-                      <Typography variant="h6">{budget.name}</Typography>
-                      <Typography variant="body1">Amount: {budget.amount}</Typography>
-                      <Typography variant="body1">Max: {budget.max}</Typography>
-                      <LinearProgress
-                        className="progress-bar"
-                        variant="determinate"
-                        value={(budget.amount / budget.max) * 100}
-                        style={{
-                          backgroundColor: budget.amount >= budget.max ? '#FF0000' : '',
-                        }}
-                      />
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <Typography variant="h5" style={{ fontWeight: 'bold', fontSize: 30 }}>
+                Total Expenses: ${overallTotal.toFixed(2)}
+              </Typography>
             </CardContent>
           </Card>
-        </div>
-      ))}
-      <Card className="category-card">
-        <CardContent>
-          <Typography variant="h5" style={{ fontWeight: 'bold', fontSize: 30 }}>
-            Total Expenses: ${overallTotal.toFixed(2)}
-          </Typography>
-        </CardContent>
-      </Card>
+        </>
+      )}
     </div>
   );
+  
 };
 
 export default BudgetSheet;
