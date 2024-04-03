@@ -25,37 +25,54 @@ const MapComponent = () => {
     const markers = useRef([]); // Ref to store marker instances
     const baseURL = `http://localhost:14000/api/ideas`;
     const { tripId, userId } = useParams();
-
     useEffect(() => {
         mapboxgl.accessToken = 'pk.eyJ1Ijoic2hhcmF0MjEiLCJhIjoiY2x0MHFrZzA2MTFjZjJrbm40dHZhZGVndSJ9.O43Ja8GWOrgq286dvKnxCA';
-
+    
         const newMap = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v12',
             center: [-79.3832, 43.6532],
             zoom: 12,
-            pitch: 0,
+            pitch: 20,
             attributionControl: false,
             pitchWithRotate: false,
         });
-
+    
+        // Calculate padding coordinates relative to the center
+        const paddingPercentage = 5; // Percentage of the map's span for padding
+        const paddingLongitude = 0.02 * paddingPercentage; // Longitude padding in degrees
+        const paddingLatitude = 0.015 * paddingPercentage; // Latitude padding in degrees
+    
+        const paddingCoordinates = [
+            [-79.3832 - paddingLongitude, 43.6532 + paddingLatitude], // Top-left corner of the padding area
+            [-79.3832 + paddingLongitude, 43.6532 - paddingLatitude]  // Bottom-right corner of the padding area
+        ];
+    
+        // Fit the map to contain the specified bounding box with padding
+        newMap.fitBounds(paddingCoordinates);
+    
         newMap.on('load', () => {
             newMap.doubleClickZoom.disable();
         });
-
+    
         setMap(newMap);
-
+    
         return () => newMap.remove();
     }, []);
+    
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const destinationResponse = await axios.get(`${baseURL}/confirmed-ideas-trip/Accommodation/${tripId}`);
                 const restaurantResponse = await axios.get(`${baseURL}/confirmed-ideas-trip/Restaurant/${tripId}`);
+                const activityResponse = await axios.get(`${baseURL}/confirmed-ideas-trip/Activity/${tripId}`);
 
-                const mergedData = [...destinationResponse.data, ...restaurantResponse.data];
-                
+                const mergedData = [
+                    ...destinationResponse.data,
+                    ...restaurantResponse.data,
+                    ...activityResponse.data
+                ];                
                 setPinnedLocations(mergedData);
             } catch (error) {
                 setError(error.message);
@@ -92,15 +109,15 @@ const MapComponent = () => {
                 var latitude = -1;
                 [longitude, latitude] = bestMatch.center;
                 map.flyTo({ center: bestMatch.center, zoom: 18 });
-                // const marker = new mapboxgl.Marker()
-                //     .setDraggable(false) 
-                //     .setLngLat([longitude, latitude])
-                //    // .pitchAlignment('map')
-                //     .addTo(map);
+                const marker = new mapboxgl.Marker()
+                    .setDraggable(false) 
+                    .setLngLat([longitude, latitude])
+                   // .pitchAlignment('map')
+                    .addTo(map);
                 
-                // markers.current.push(marker);
+                markers.current.push(marker);
 
-                // console.log( latitude + "location is")
+                console.log( latitude + "location is")
                 return bestMatch;
 
             } else {
@@ -125,8 +142,10 @@ const MapComponent = () => {
                 map.flyTo({ center: bestMatch.center, zoom: 16 });
                 const markerElement = document.createElement('div');
                 markerElement.className = 'marker';
-
+    
+                // Create the marker with the custom element
                 const marker = new mapboxgl.Marker({
+                    element: markerElement, // Use a custom DOM element for the marker
                     color: '#FF0000',
                     draggable: false,
                     anchor: 'center',
@@ -134,12 +153,26 @@ const MapComponent = () => {
                     pitchAlignment: 'map',
                     scale: 1.5,
                     offset: [0, -20],
-                  });
-                  
-                  marker.setLngLat(bestMatch.center);
-                  marker.addTo(map);
-                
-                  markers.current.push(marker);
+                });
+    
+                // Set the marker's position
+                marker.setLngLat(bestMatch.center);
+    
+                // Add the marker to the map
+                marker.addTo(map);
+    
+                // Add event listener for map move event
+                map.on('move', () => {
+                    const mapBounds = map.getBounds();
+                    const markerLngLat = marker.getLngLat();
+                    
+                    // Check if marker is within map bounds
+                    if (!mapBounds.contains(markerLngLat)) {
+                        markerElement.style.visibility = 'hidden'; // Hide the marker
+                    } else {
+                        markerElement.style.visibility = 'visible'; // Show the marker
+                    }
+                });
 
 
                   console.log( bestMatch.center + "location is")
@@ -182,14 +215,14 @@ const MapComponent = () => {
         );
     };
 
-    useEffect(() => {
-        if (!map) return;
+    // useEffect(() => {
+    //     if (!map) return;
 
-        const resizer = new ResizeObserver(() => map.resize());
-        resizer.observe(mapContainer.current);
+    //     const resizer = new ResizeObserver(() => map.resize());
+    //     resizer.observe(mapContainer.current);
 
-        return () => resizer.disconnect();
-    }, [map]);
+    //     return () => resizer.disconnect();
+    // }, [map]);
 
     const moveHandler = () => {
         // Update the position of each marker when the map moves
