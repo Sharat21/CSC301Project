@@ -2,21 +2,27 @@ const express = require('express');
 const router = express.Router();
 const { findUser, addUser, updateUser, deleteUser } = require('../../database');
 const { ObjectId } = require('mongodb');
+const bcrypt = require('bcrypt');
 
 // Login route
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await findUser({ Email: email, password: password });
+    const user = await findUser({ Email: email });
 
     if (user) {
-      console.log('User found:', user);
-      res.json(user);
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (passwordMatch) {
+        console.log('User found:', user);
+        res.json(user);
+      } else {
+        res.status(401).json({ error: 'Invalid credentials' });
+      }
     } else {
       res.status(401).json({ error: 'Invalid credentials' });
     }
   } catch (error) {
-    console.log("it didn't work");
+    console.log("Error:", error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -36,14 +42,15 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'User with this email already exists' });
     }
 
-    // Create a new user
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = {
       Firstname: firstName,
       Lastname: lastName,
       Groups: [],
       Trips: [],
       Email: email,
-      password: password,
+      password: hashedPassword,
     };
 
     const result = await addUser(newUser);
@@ -88,8 +95,10 @@ router.post('/update', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     console.log(oldEmail, foundUser.Email, oldPassword, foundUser.password)
-    if (newEmail === '' && oldPassword === foundUser.password) {
-      const updatedUser = await updateUser({ _id: objectUserID }, { password: newPassword });
+    const passwordMatch = await bcrypt.compare(oldPassword, foundUser.password);
+    if (newEmail === '' && passwordMatch) {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const updatedUser = await updateUser({ _id: objectUserID }, { password: hashedPassword });
       res.status(200).json({ success: true, message: 'User updated successfully', user: updatedUser });
     } else if (newPassword === '' && foundUser.Email === oldEmail) {
       const updatedUser = await updateUser({ _id: objectUserID }, { Email: newEmail });
