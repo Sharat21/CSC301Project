@@ -432,6 +432,7 @@ const Trips = () => {
             }
             fullWidth
             margin="normal"
+            InputLabelProps={{ shrink: true }}
           />
           <TextField
             label="End Date"
@@ -440,6 +441,7 @@ const Trips = () => {
             onChange={(e) => setNewTrip({ ...newTrip, endDate: e.target.value })}
             fullWidth
             margin="normal"
+            InputLabelProps={{ shrink: true }}
           />
           <TextField
             label="Description"
